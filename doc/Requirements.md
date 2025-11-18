@@ -83,14 +83,16 @@ Consider that the document should be delivered to another team (unknown to you)
 \<describe here each interface in the context diagram>
 
 
-|   Actor         | Logical Interface | Physical Interface |
-| :-------:       | :---------------: | :----------------: |
-| Store Manager   |                   |                    |
-| Cashier |                   |                    |
-| Actor x.. |                   |                    |
-| Actor x.. |                   |                    |
-| Actor x.. |                   |                    |
-| Actor x.. |                   |                    |
+|   Actor          | Logical Interface | Physical Interface |
+| :-------:        | :---------------: | :----------------: |
+| Store Manager    | GUI for PC        |  PC                |
+| Cashier          | GUI for PC        |  PC                |
+| Shop Assistant   |           |                    |
+| Supplier         |                   |                    |
+| Payment Service  |                   |                    |
+| Maintenance      |                   |                    |
+| Accountant       |                   |                    |
+| Fiscal authority |                   |                    |
 
 
 
