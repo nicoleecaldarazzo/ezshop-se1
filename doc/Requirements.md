@@ -106,8 +106,7 @@ Consider that the document should be delivered to another team (unknown to you)
 
 |  ID   | Description |
 | :---: | :---------: |
-|  FR1: Manage Payments| 
-- Manage payment of certain amount given credit card number
+|  FR1: Manage Payments| - Manage payment of certain amount given credit card number
 - Manage payment of certain amount given Apple Pay ID
 - Manage payment of certain amount given cash            |
 |  FR2: Manage User|             |
