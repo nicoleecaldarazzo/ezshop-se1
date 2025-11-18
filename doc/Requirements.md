@@ -140,16 +140,17 @@ Consider that the document should be delivered to another team (unknown to you)
 
 ## Use case brief
 |  UC name                    | Goal                                | Description                |
-| :---:                       | :---------:                         | :---:                      |
-|Create Account               |Create an account for each user      |Main Actor: Store Manager  Manager creates an account for each employee in the shop|
-|Authenticate                 |Recognize the user                   |Main Actor: Store Manager, Employee Users authenticate to enter the software       |
-|Modify Inventory             |Update the inventory                 |Main Actor: Store Manager, Employee, System  At the beinning the inventory has to bi filled with all the items availablein the shop by the workers. When the inventory is ready it will be automatically updated after each sell event. When a new order from the supplier has arrived , the employees need to manually update the inventory|
-|Process Transaction          |Process the sale                     |Main Actor: Employee, Payment Service, System The employee initiate transaction,the payment service processes the payment,and the inventory is automatically updated  |
-|Manage Orders to Supplier    |Replenish stock by ordering products |Main Actor: Store Manager : The System create order for products needed and generate an excell with list,after the manager checks if the list is correct, the system send the order to supplier                  |
-| :---:         | :---------:                   | :---:                      |
-
-
-
+| :---:                       | :---------:                                       | :---:                      |
+|Create Account               |Create an account for each user                    |Main Actor: Store Manager  Manager creates an account for each employee in the shop|
+|Authenticate                 |Recognize the user                                 |Main Actor: Store Manager, Employee Users authenticate to enter the software       |
+|Modify Inventory             |Update the inventory                               |Main Actor: Store Manager, Employee, System  At the beinning the inventory has to bi filled with all the items availablein the shop by the workers. When the inventory is ready it will be automatically updated after each sell event. When a new order from the supplier has arrived , the employees need to manually update the inventory|
+|Process Transaction          |Process the sale                                   |Main Actor: Employee, Payment Service, System The employee initiate transaction,the payment service processes the payment,and the inventory is automatically updated  |
+|Manage Orders to Supplier    |Replenish stock by ordering products               |Main Actor: Store Manager : The System create order for products needed and generate an excel with list,after the manager checks if the list is correct, the system send the order to supplier                  |
+|Manage Returns and Exchanges |Handle product Returns or item changes after save  |Main Actor: Employees, Payment Service  Register Returned items, update inventory accordingly and manage Payback with payment service     |
+|Support Accounting           |Provide financial data                             |Main Actor: System  create a dail - weekly - monthly report of saves        |
+|Manage Discounts             |Configure and apply saves promotions               |Main Actor: Store Manager,System
+|Manage Loyalty Points        |Reward costumers with points and free items        |Main Actor: Store Manager  Manager creates an account for each employee in the shop|
+|Support Maintenance          |Report and track technical issues with the system  |Main actor: System, Store Manager, Employees, Maintenance Service  employeeor or manager log a problem 
 
 ## Use case diagram
 @startuml EZShop_UseCases
