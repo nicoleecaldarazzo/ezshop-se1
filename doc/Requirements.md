@@ -103,15 +103,16 @@ Consider that the document should be delivered to another team (unknown to you)
 |  ID   | Description |
 | :---: | :---------: |
 |  FR1: Manage Payments| - Manage payment of certain amount given credit card number - Manage payment of certain amount given Apple Pay ID - Manage payment of certain amount given cash            |
-|  FR2: Manage User|             |
-| FR3: Support Maintenance|             |
-| FR4: Manage Inventory|             |
-| FR5: Manage Order|             |
-| FR6: Support Accounting|             |
-| FR7: Manage Catalogue|             |
-| FR8: Manage Returns and Exchanges|             |
-| FR9: Manage Discounts|             |
-| FR10: Manage Loyalty Points|             |
+|  FR2: Manage User| 
+- Different interfaces for each user type - Authenticate User            |
+| FR3: Support Maintenance| -Update firmware -Perform diagnostic            |
+| FR4: Manage Inventory| - Check the availability of items - Update the availability of items -Update the list of items needed if we are running out of an item          |
+| FR5: Manage Order| Prepare the order in which the type and amount of items we need from the supplier is specified            |
+| FR6: Support Accounting| Create daily, weekly, monthly report of sales            |
+| FR7: Manage Catalogue| Create a table with item and their price            |
+| FR8: Manage Returns and Exchanges| -Update stock -Refound customer            |
+| FR9: Manage Discounts|-The manager defines discount percentage and dates for selected products -The manager can edit the discount             |
+| FR10: Manage Loyalty Points| -Give one point for every 1 euro spent -Give a 10 euros product for free at the customer when he arrives at 100 points            |
 
 ## Non Functional Requirements
 
