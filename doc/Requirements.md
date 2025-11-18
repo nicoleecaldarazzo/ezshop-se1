@@ -127,13 +127,14 @@ Consider that the document should be delivered to another team (unknown to you)
 
 # Table of rights
 
-|  Actor   | FR1         | FRx |
-| :---:    | :---------: | :---: |
-| Manager         |             |       |
-| Employee         |             |       |
-| Supplier         |             |       |
-| Inventory         |             |       |
-| End Users (Cashier, Store Manager)         |             |       |
+|  Actor   | FR1         | FR2 | FR3 | FR4 | FR5 | FR6 | FR7 | FR8 | FR9 | FR10 |
+| :---:    | :---------: | :---: |:---: |:---: |:---: |:---: |:---: |:---: |:---: |:---: |
+| Manager         |    *         |       *|*|*|*|*|*|*|*|*|
+| Cashier         |     *        |       ||||||*|||
+| Accountant         |             |       ||||*|||||
+| Supplier         |             |       |||*||||||
+| Inventory         |             |       ||*|||||||
+| Maintenance         |             |       |*||||||||
 
 # Use case diagram and use cases
 
