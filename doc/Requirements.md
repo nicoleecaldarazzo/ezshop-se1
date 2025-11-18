@@ -58,7 +58,17 @@ Consider that the document should be delivered to another team (unknown to you)
 
 | Stakeholder name | Description |
 | :--------------: | :---------: |
-| Stakeholder x..  |             |
+| Store manager    | Manages the store and the employees, check the order to the supplier, decides what discount applies on items|
+| Cashier          | Operates the register, performs daily transactions |
+| Shop assistant   | Helps clients and organizes items in the store |
+| Supplier         | Provides the item available in the shop |
+| Payment Service  | Handles credit card/Apple Pay transactions via integrated terminals |
+| Maintenance      | Provides Hardware/Software maintenance |
+| Accountant       | Uses system reports to manage finances|
+| Fiscal Authority | Receives daily sales summarie |
+
+
+
 
 # Context Diagram and interfaces
 
@@ -73,9 +83,15 @@ Consider that the document should be delivered to another team (unknown to you)
 \<describe here each interface in the context diagram>
 
 
-|   Actor   | Logical Interface | Physical Interface |
-| :-------: | :---------------: | :----------------: |
+|   Actor         | Logical Interface | Physical Interface |
+| :-------:       | :---------------: | :----------------: |
+| Store Manager   |                   |                    |
 | Actor x.. |                   |                    |
+| Actor x.. |                   |                    |
+| Actor x.. |                   |                    |
+| Actor x.. |                   |                    |
+| Actor x.. |                   |                    |
+
 
 
 # Functional and non functional requirements
