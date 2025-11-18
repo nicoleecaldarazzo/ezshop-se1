@@ -119,9 +119,7 @@ Consider that the document should be delivered to another team (unknown to you)
 
 |   ID    | Type (efficiency, reliability, ..) | Description | Refers to |
 | :-----: | :--------------------------------: | :---------: | :-------: |
-|  NFR1   | Efficiency                                   |   Opening the software has to take less than 3 seconds
-Time to login has to take less than 3 seconds
-Processing transactions and propagate changes to the inventory has to take less than 5 seconds          |           |
+|  NFR1   | Efficiency                                   |   - Opening the software has to take less than 3 seconds - Time to login has to take less than 3 seconds - Processing transactions and propagate changes to the inventory has to take less than 5 seconds          |           |
 |  NFR2   | Security                                   | Role based access            |           |
 |  NFR3   | Reliability                                   | ?            |           |
 |  NFR4   | Portability                                   | The software has to work even if the shop changes the computer            |           |
