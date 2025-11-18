@@ -135,6 +135,92 @@ Consider that the document should be delivered to another team (unknown to you)
 
 
 ## Use case diagram
+@startuml EZShop_UseCases
+' --- USE CASE DIAGRAMS ---
+
+left to right direction
+
+actor "Store Manager" as Manager
+actor "Cashier" as Cashier
+actor "Shop Asistant" as ShopAsistant
+actor "Supplier" as Supplier
+actor "Payment Service" as PaymentService
+actor "Maintenance Service" as Maintenance
+actor "System" as SystemActor
+actor "Tax Authority" as TaxAuthority
+
+rectangle "EZShop" {
+
+  ' --- Use cases ---
+
+  usecase "UC1 - Create Account" as UC1_CreateAccount
+  usecase "UC2 - Authenticate" as UC2_Authenticate
+  usecase "UC3 - Modify Inventory" as UC3_ModifyInventory
+  usecase "UC4 - Process Transaction" as UC4_ProcessTransaction
+  usecase "UC5 - Manage Orders\nto Supplier" as UC5_ManageOrders
+  usecase "UC6 - Manage Returns\nand Exchanges" as UC6_ManageReturns
+  usecase "UC7 - Support Accounting\n(Reports & Analytics)" as UC7_SupportAccounting
+  usecase "UC8 - Manage Discounts" as UC8_ManageDiscounts
+  usecase "UC9 - Manage Loyalty Points" as UC9_ManageLoyalty
+  usecase "UC10 - Support Maintenance" as UC10_SupportMaintenance
+  usecase "UC11 - Fiscal Transmission\n(Z-Report)" as UC11_FiscalTransmission
+
+  ' --- Optional internal shared UCs (includes/extends) ---
+
+  usecase "Handle Payment" as UC_Payment
+  usecase "Generate Report" as UC_GenerateReport
+
+}
+
+' --- Actors to Use Cases ---
+
+' Manager
+Manager --> UC1_CreateAccount
+Manager --> UC2_Authenticate
+Manager --> UC3_ModifyInventory
+Manager --> UC5_ManageOrders
+Manager --> UC7_SupportAccounting
+Manager --> UC8_ManageDiscounts
+Manager --> UC10_SupportMaintenance
+
+' Cashier
+Cashier --> UC2_Authenticate
+Cashier --> UC4_ProcessTransaction
+Cashier --> UC6_ManageReturns
+Cashier --> UC9_ManageLoyalty
+Cashier --> UC10_SupportMaintenance
+
+' ShopAsistant
+ShopAsistant --> UC3_ModifyInventory
+ShopAsistant --> UC2_Authenticate
+
+' Supplier
+Supplier --> UC5_ManageOrders : "receives POs,\nsends deliveries"
+
+' Payment Service
+PaymentService --> UC_Payment
+
+' Maintenance
+Maintenance --> UC10_SupportMaintenance
+
+' System scheduled tasks
+SystemActor --> UC11_FiscalTransmission
+SystemActor --> UC7_SupportAccounting
+
+' Tax Authority
+TaxAuthority --> UC11_FiscalTransmission
+
+' --- include / extend relations ---
+
+UC4_ProcessTransaction --> UC_Payment : <<include>>
+UC6_ManageReturns --> UC_Payment : <<include>>  : "refund"
+
+UC7_SupportAccounting --> UC_GenerateReport : <<include>>
+
+' Fiscal transmission uses reports (Z-report)
+UC11_FiscalTransmission --> UC_GenerateReport : <<include>>
+
+@enduml
 
 \<define here UML Use case diagram UCD summarizing all use cases, and their relationships>
 
