@@ -86,7 +86,7 @@ Consider that the document should be delivered to another team (unknown to you)
 |   Actor         | Logical Interface | Physical Interface |
 | :-------:       | :---------------: | :----------------: |
 | Store Manager   |                   |                    |
-| Actor x.. |                   |                    |
+| Cashier |                   |                    |
 | Actor x.. |                   |                    |
 | Actor x.. |                   |                    |
 | Actor x.. |                   |                    |
