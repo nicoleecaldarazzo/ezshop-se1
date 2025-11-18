@@ -87,9 +87,9 @@ Consider that the document should be delivered to another team (unknown to you)
 | :-------:        | :---------------: | :----------------: |
 | Store Manager    | GUI for PC        |  PC                |
 | Cashier          | GUI for PC        |  PC                |
-| Shop Assistant   |           |                    |
-| Supplier         |                   |                    |
-| Payment Service  |                   |                    |
+| Shop Assistant   | GUI for PC        |  PC                |
+| Supplier         | GUI for PC        |  PC                |
+| Payment Service  | Credit Card Circuit API, Apple Pay API, Cash             |    Cash Register                |
 | Maintenance      |                   |                    |
 | Accountant       |                   |                    |
 | Fiscal authority |                   |                    |
