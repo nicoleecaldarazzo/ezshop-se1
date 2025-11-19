@@ -74,9 +74,33 @@ Consider that the document should be delivered to another team (unknown to you)
 
 ## Context Diagram
 
-\<Define here Context diagram using UML use case diagram>
+@startuml
+skinparam backgroundColor white
+' layout più “radiale”
+top to bottom direction
 
-\<actors are a subset of stakeholders>
+' opzionale: stile un po' più pulito
+skinparam usecase {
+  BorderColor black
+  BackgroundColor white
+}
+
+actor Supplier
+actor "Payment Service" as PaymentService
+actor "Store Manager" as StoreManager
+actor "Shop Assistant" as ShopAssistant
+actor Cashier
+
+' il sistema ora è un ovale (use case), non un rettangolo
+usecase "EZShop" as EZShop
+
+' provo a disporre gli attori intorno all’ovale
+StoreManager -up-> EZShop
+Supplier -left-> EZShop
+PaymentService <-right- EZShop
+ShopAssistant -down-> EZShop
+Cashier -down-> EZShop
+@enduml
 
 ## Interfaces
 
