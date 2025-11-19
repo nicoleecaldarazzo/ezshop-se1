@@ -132,7 +132,7 @@ Consider that the document should be delivered to another team (unknown to you)
 | Cashier         |     *        |       ||||||*|||
 | Accountant         |             |       ||||*|||||
 | Supplier         |             |       |||*||||||
-| Inventory         |             |       ||*|||||||
+| Shop Assistant         |             |       |||||||||
 | Maintenance         |             |       |*||||||||
 
 # Use case diagram and use cases
