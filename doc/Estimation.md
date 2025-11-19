@@ -41,9 +41,23 @@ Estimated duration: **≈ 2.25 weeks** (team of 5 people, 8h/day, 5 days/week)
 
 ###
 step 1: activities (WBS), step 2 Gantt chart
-| Activity name | Estimated effort (person hours) |
-| ------------- | ------------------------------- |
-|               |                                 |
+
+| Activity name                          | Estimated effort (person hours) |
+|----------------------------------------|---------------------------------|
+| Requirements elicitation & analysis    | 40 ph                           |
+| Requirements document writing          | 30 ph                           |
+| System architecture definition         | 30 ph                           |
+| Detailed design (class & sequence)     | 60 ph                           |
+| Database schema & repository design    | 20 ph                           |
+| Implementation of domain classes       | 60 ph                           |
+| Implementation of services/controllers | 80 ph                           |
+| Integration with external services     | 30 ph                           |
+| UI development (POS + manager UI)      | 30 ph                           |
+| Testing (test cases + execution)       | 60 ph                           |
+| Bug fixing & refactoring               | 40 ph                           |
+| Deployment preparation & documentation | 20 ph                           |
+| **TOTAL**                              | **450 ph**                      |
+
 
 
 
