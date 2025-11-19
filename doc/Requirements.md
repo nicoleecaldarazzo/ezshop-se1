@@ -201,8 +201,7 @@ Steps
 
 # Glossary
 
-\<use UML class diagram to define important terms, or concepts in the domain of the application, and their relationships>
-
+![](doc/images/glossary.png)
 \<concepts must be used consistently all over the document, ex in use cases, requirements etc>
 
 # System Design
@@ -212,5 +211,14 @@ Steps
 \<must be consistent with Context diagram>
 
 # Hardware Software architecture
+The EZShop system is designed as a multi-tier application composed of:
 
-\<describe here the hardware software architecture using UML deployment diagram >
+Client layer (Front-end POS & Back-office UI)
+
+Application layer (Backend services)
+
+Integration layer (external services: payment, fiscal authority, email)
+
+Data layer (relational database + logs)
+
+![](doc/images/hwandsw.png)
