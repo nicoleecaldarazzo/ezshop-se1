@@ -73,11 +73,6 @@ Consider that the document should be delivered to another team (unknown to you)
 # Context Diagram and interfaces
 
 ## Context Diagram
-<details><summary><details><summary>Click to expand</summary>
-Click to expand
-</details></summary>
-
-</details>
 
 @startuml
 skinparam backgroundColor white
