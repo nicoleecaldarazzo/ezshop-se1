@@ -118,11 +118,11 @@ Consider that the document should be delivered to another team (unknown to you)
 
 |   ID    | Type (efficiency, reliability, ..) | Description | Refers to |
 | :-----: | :--------------------------------: | :---------: | :-------: |
-|  NFR1   | Efficiency                                   |   - Opening the software has to take less than 3 seconds - Time to login has to take less than 3 seconds - Processing transactions and propagate changes to the inventory has to take less than 5 seconds          |           |
-|  NFR2   | Security                                   | Role based access            |           |
-|  NFR3   | Reliability                                   | - On the front end maximum of 1 defects per 2-3 months - Databases should be available 99% of the times           |           |
-|  NFR4   | Portability                                   | The software has to work even if the shop changes the computer            |           |
-|  NFR5   | Usability                                   | Cashier should learn the system in less than 2 days            |           |
+|  NFR1   | Efficiency                                   |   - Opening the software has to take less than 3 seconds - Time to login has to take less than 3 seconds - Processing transactions and propagate changes to the inventory has to take less than 5 seconds          | FR1- FR2- FR4- FR8          |
+|  NFR2   | Security                                   | Role based access            |      FR2     |
+|  NFR3   | Reliability                                   | - On the front end maximum of 1 defects per 2-3 months - Databases should be available 99% of the times           |  All Functions         |
+|  NFR4   | Portability                                   | The software has to work even if the shop changes the computer            | All Functions          |
+|  NFR5   | Usability                                   | Users should learn the system in less than 2 days            |   ?        |
 
 # Table of rights
 
