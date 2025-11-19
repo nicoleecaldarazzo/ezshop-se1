@@ -72,8 +72,10 @@ Estimated duration: (calendar time)
 
 Report here the results of the three estimation approaches. The estimates may differ. Discuss here the possible reasons for the difference
 
-|                                    | Estimated effort (ph) | Estimated duration (calendar time, relative)|
-| ---------------------------------- | ---------------- | ------------------ |
-| estimate by size                   |                  |                    |
-| estimate by product decomposition  |                  |                    |
-| estimate by activity decomposition (Gantt) |          |                    |
+
+| Estimation method                         | Estimated effort (ph) | Estimated duration (calendar time, relative) |
+|-------------------------------------------|------------------------|-------------------------------------|
+| Estimate by size                          | 450 ph                 | 2.25 weeks                          |
+| Estimate by product decomposition         | 450 ph                 | 2.25 weeks                          |
+| Estimate by activity decomposition (Gantt)| 450 ph                 | 2.25 weeks                          |
+
