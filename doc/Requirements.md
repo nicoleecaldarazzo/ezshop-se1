@@ -73,7 +73,7 @@ Consider that the document should be delivered to another team (unknown to you)
 # Context Diagram and interfaces
 
 ## Context Diagram
-![](doc/images/contextdiagram.png)
+![](doc/images/context_diagram.png)
 
 
 @startuml
