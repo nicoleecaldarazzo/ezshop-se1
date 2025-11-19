@@ -149,7 +149,7 @@ Consider that the document should be delivered to another team (unknown to you)
 |Support Accounting           |Provide financial data                             |Main Actor: System  create a dail - weekly - monthly report of saves        |
 |Manage Discounts             |Configure and apply saves promotions               |Main Actor: Store Manager,System
 |Manage Loyalty Points        |Reward costumers with points and free items        |Main Actor: Store Manager  Manager creates an account for each employee in the shop|
-|Support Maintenance          |Report and track technical issues with the system  |Main actor: System, Store Manager, Employees, Maintenance Service  employeeor or manager log a problem 
+|Support Maintenance          |Report and track technical issues with the system  |Main actor: System, Store Manager, Employees, Maintenance Service  employeeor or manager log a problem system records ??? and contact the maintenance service, marks it as resolved when fixed
 
 ## Use case diagram
 ![](doc/images/use_case.png)
