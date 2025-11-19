@@ -259,7 +259,7 @@ steps
 | :--------------: | :------------------------------------------------------------------: |
 |   Precondition   |Cashier is authenticated; customer’s items are selected; cart total > 0|
 |  Post condition  |Sale is registered, payment status stored, inventory updated, receipt generated|
-| Nominal Scenario |Cashier initiates checkout, chooses payment type, payment service |
+| Nominal Scenario |Cashier initiates checkout, chooses payment type, payment service authorizes card payments, system stores the sale and updates inventory. |
 |     Variants     |V1: Payment type = cash. V2: Payment type = card.|
 |    Exceptions    |E1: Card payment refused → transaction cancelled or switched to cash. |
 
@@ -292,6 +292,77 @@ steps
 |                                                     |System displays error: “Payment refused” with reason (if available) |FR-SALE-8  |
 |Cashier chooses between retry or switch to Cash      |System goes back to payment options                                 |FR-SALE-9  |
 |                                                     |No sales are stored, no inventory updated until successful payment  |FR-SALE-10 |
+
+### Use case 5, UC5 
+| Actors Involved  |                                                                      |
+| :--------------: | :------------------------------------------------------------------: |
+|   Precondition   |Manager is authenticated; inventory levels are available|
+|  Post condition  |Supplier orders are created and stored; optional export/email sent to supplier|
+| Nominal Scenario |System generates order for products needed and generates order list, manager checks products to replenish, creates an order, and the order is sent to the supplier. |
+|     Variants     |V1: Manager edits order list before sending.|
+|    Exceptions    |E1 – Network/email/export failure→ System shows error: “Order could not be sent. Saved as pending.” E2 - Manager closes the order window before confirming →System discards the draft and no order is saved.|
+
+##### Scenario 5.1
+steps
+|     Actor's action                                                                  |  System action                                                                                             | FR needed |
+| :------------:                                                                      | :------------------------------:                                                                           |:---:      |
+|Manager opens “Supplier orders”                                                      |System automatically generates a low-stock order list based on inventory thresholds and displays past orders|FR-ORD-1|
+|Manager reviews the auto-generated list and adjusts quantities or removes/adds items |Payment service returns denial (refused transaction)                                                        |FR-ORD-5 |
+|Manager confirms the final order list                                                |System validates items (supplier assigned)                                                                  |FR-ORD-6 |
+|                                                                                     |System generates the order document (PDF/Excel)                                                             |FR-ORD-2  |
+|                                                                                     |System stores the order and marks it as “created”                                                           |FR-ORD-3 |
+|Manager selects “Send to supplier”                                                   |Manager sends the order to the supplier (email/export); marks order as “sent”                               |FR-ORD-4  |
+
+### Use case 6, UC6 
+| Actors Involved  |                                                                      |
+| :--------------: | :------------------------------------------------------------------: |
+|   Precondition   |Sale exists in the system; returned products are within store return policy|
+|  Post condition  |Return or exchange registered, inventory updated, refund or difference managed|
+| Nominal Scenario |Cashier searches original sale, selects items to return, system updates inventory and manages refund/exchange via payment service.|
+|     Variants     |V1: Exchange with different products instead of refund.|
+|    Exceptions    |E1: Sale not found → show error and cancel operation. E2: Return period expired → system informs cashier.|
+
+##### Scenario 6.1
+steps
+|     Actor's action                                  |  System action                                                      | FR needed |
+| :------------:                                      | :------------------------------:                                    |:---:      |
+|Cashier opens “Returns” and enters receipt ID        |Retrieves and shows sale detail                                      |FR-RET-1  |
+|Cashier selects items and reason for return          |                                                                     |        |
+|Cashier confirms refund on card                      |Sends refund request to payment service                              |FR-RET-2|
+|                                                     |If approved, records negative sale/credit note and updates inventory |FR-RET-3|
+|                                                     |Prints return receipt and shows confirmation                         |FR-RET-4|
+
+##### Scenario 6.2
+steps
+|     Actor's action                                  |  System action                                                      | FR needed |
+| :------------:                                      | :------------------------------:                                    |:---:      |
+|Cashier opens “Returns” and enters receipt ID        |Retrieves and shows sale detail                                      |FR-RET-1  |
+|Cashier selects items and reason for return          |                                                                     |        |
+|Cashier selects “Refund in cash”                     |System calculates total refund amount and displays it                |FR-RET-5|
+|Cashier confirms refund                              |System records negative sale/credit note and updates inventory       |FR-RET-3|
+|                                                     |System prints return receipt, logs cash refund and shows confirmation|FR-RET-4|
+
+##### Scenario 6.3
+steps
+|     Actor's action                                                                   |  System action                                                                                                                          | FR needed |
+| :------------:                                                                       | :------------------------------:                                                                                                        |:---:      |
+|Cashier opens “Returns” and enters receipt ID                                         |Retrieves and shows sale detail                                                                                                          |FR-RET-1  |
+|Cashier selects items and reason for return                                           |                                                                                                                                         |        |
+|Cashier chooses “Exchange” option                                                     |System calculates value of returned items                                                                                                |FR-RET-7|
+|Cashier adds new products chosen by customer to the exchange cart                     |System shows price of new products and difference vs. returned value                                                                     |FR-RET-8|
+|Cashier confirms exchange                                                             |System records return + new sale in one operation, updates inventory for both returned and new items, and customer must pay a difference |FR-RET-9|
+|If difference to pay or refund exists, cashier completes payment/refund (cash or card)|System handles difference (via payment service or cash), prints exchange receipt and shows confirmation                                  |FR-RET-10|
+
+##### Scenario 6.4
+steps
+|     Actor's action                            |  System action                                                                                        | FR needed |
+| :------------:                                | :------------------------------:                                                                      |:---:      |
+|Cashier opens “Returns” and enters receipt ID  |Retrieves and shows sale detail                                                                        |FR-RET-1  |
+|Cashier selects items and reason for return    |                                                                                                       |        |
+|Cashier attempts to proceed with the return    |System checks store return rules (e.g., expired return period, non-returnable item, missing packaging) |FR-RET-11|
+|                                               |System detects that the return violates store policy                                                   |FR-RET-12|
+|                                               |System displays a clear message: “Refund not allowed: [Reason]”                                        |FR-RET-13|
+|Cashier informs customer                       |System cancels the return flow and does not update inventory or sales records                          |FR-RET-14|
 
 
 
