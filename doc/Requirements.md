@@ -162,11 +162,11 @@ Consider that the document should be delivered to another team (unknown to you)
 
 | Actors Involved  |                                                                      |
 | :--------------: | :------------------------------------------------------------------: |
-|   Precondition   | \<Boolean expression, must evaluate to true before the UC can start> |
-|  Post condition  |  \<Boolean expression, must evaluate to true after UC is finished>   |
-| Nominal Scenario |         \<Textual description of actions executed by the UC>         |
-|     Variants     |                      \<other normal executions>                      |
-|    Exceptions    |                        \<exceptions, errors >                        |
+|   Precondition   |Manager is authenticated in the system = true|
+|  Post condition  |New employee account exists in the system and is active; credentials have been generated and stored  |
+| Nominal Scenario |The manager creates an account for a new employee by inserting personal data, role and permissions. System validates data and stores the new account.|
+|     Variants     |V1: Manager edits an existing account instead of creating a new one.|
+|    Exceptions    | E1: Inserted username already exists → system shows error and asks for a different username. E2: Mandatory data missing → system highlights missing fields and does not create the account. |
 
 ##### Scenario 1.1
 
@@ -183,24 +183,117 @@ Consider that the document should be delivered to another team (unknown to you)
 |  Precondition  | \<Boolean expression, must evaluate to true before the scenario can start> |
 | Post condition |  \<Boolean expression, must evaluate to true after scenario is finished>   |
 
-
 Steps
+|     Actor's action                                        |  System action                                                            | FR needed |
+| :------------:                                            | :------------------------------:                                          |:---:|
+|Manager chooses “Create account”                           |Displays account creation form                                             | FR-ACC-1 |
+|Manager fills required data (name, role, username, etc.)   |                                                                           |           |
+|Manager submits the form                                   |Validates fields and uniqueness of username                                |FR-ACC-2 |
+|                                                           |If data valid, creates user record with selected role and default password |FR-ACC-3 |
+|                                                           |Shows confirmation and new credentials to the manager                      |FR-ACC-4|
 
-|     Actor's action      |  System action                                                                    | FR needed |
-| :------------: | :------------------------------------------------------------------------: |:---:|
-|               |                                                                 |  |
-|   |  |  |
+
 ##### Scenario 1.2
+steps
+|     Actor's action                                                                   |  System action                                                                                   | FR needed |
+| :------------:                                                                       | :------------------------------:                                                                 |:---:      |
+|Manager opens “Manage accounts” and selects an existing employee                      |System displays the employee’s current information (name, role, salary, status, etc.)             | FR-ACC-5  |
+|Manager edits one or more fields (e.g., salary, role, personal data, account status)  |                                                                                                  |           |
+|Manager clicks “Save changes”                                                         |System validates updated fields (format, allowed values, role constraints)                        |FR-ACC-6   |
 
 ##### Scenario 1.x
 
 ### Use case 2, UC2
 
-..
+| Actors Involved  |                                                                      |
+| :--------------: | :------------------------------------------------------------------: |
+|   Precondition   |User is not authenticated; user account exists and is active|
+|  Post condition  |User is authenticated, session is started, user role is known  |
+| Nominal Scenario |The user enters credentials, the system verifies them and gives access depending on the user role.|
+|     Variants     |V1: After a period of inactivity (e.g., 15–30 minutes), the system logs the user out automatically. V2: After successful login, the system redirects to different home screens depending on the role: For manager → management dashboard (reports, inventory, users, etc.) For employee → sales/checkout screen|
+|    Exceptions    |E1: Wrong username or password → display error, remain on login page|
 
-### Use case x, UCx
+##### Scenario 2.1
 
-..
+steps
+|     Actor's action                            |  System action                                          | FR needed |
+| :------------:                                | :------------------------------:                        |:---:      |
+|User opens login page                          |Shows login form                                         |FR-AUTH-1 |
+|User enters username and password and submits  |Receives credentials                                     |           |
+|                                               |Checks credentials against user database                 |FR-AUTH-2  |
+|                                               |If valid, opens home page with menu based on role        |FR-AUTH-3  |
+|                                               |If invalid, shows error message and logs failed attempt  |FR-AUTH-4 |
+
+
+### Use case 3, UC3
+| Actors Involved  |                                                                      |
+| :--------------: | :------------------------------------------------------------------: |
+|   Precondition   |User is authenticated; product list exists|
+|  Post condition  |Inventory quantities are updated (after sale, delivery, manual correction) |
+| Nominal Scenario |User selects a product and modifies its stock (increase/decrease). System validates and updates the inventory.|
+|     Variants     |V1: Automatic update triggered by a sale or return (no manual input).|
+|    Exceptions    |E1: Quantity would become negative → system blocks operation and shows error.|
+
+##### Scenario 3.1
+
+steps
+|     Actor's action                                      |  System action                                          | FR needed |
+| :------------:                                          | :------------------------------:                        |:---:      |
+|Manager chooses “Inventory” and selects a product        |Shows current stock for the product                      |FR-INV-1 |
+|Manager enters adjustment (+/- quantity)                 |                                                         |           |
+|Manager confirms change                                  |Checks that resulting quantity ≥ 0                       |FR-INV-2 |
+|                                                         |Updates inventory and logs the change for both correction and after delivery     |FR-INV-3 |
+|                                                         |Shows updated stock to the user                          |FR-INV-4 |
+##### Scenario 3.2
+steps
+|     Actor's action                                             |  System action                                                            | FR needed |
+| :------------:                                                 | :------------------------------:                                          |:---:      |
+|(Cashier completes a sale using the “Process transaction” UC)   |System receives final list of sold products and quantities                 |FR-INV-5|
+|                                                                |For each product, system calculates new stock = old stock − sold quantity  |FR-INV-6 |
+|                                                                |Validates that stock does not fall below zero (after applying sale)        |FR-INV-7 |
+|                                                                |Updates the inventory table and logs the automatic adjustment              |FR-INV-3 |
+|                                                                |If new stock is below 10 → system generates a low-stock alert              |FR-INV-8|
+
+### Use case 4, UC4 
+| Actors Involved  |                                                                      |
+| :--------------: | :------------------------------------------------------------------: |
+|   Precondition   |Cashier is authenticated; customer’s items are selected; cart total > 0|
+|  Post condition  |Sale is registered, payment status stored, inventory updated, receipt generated|
+| Nominal Scenario |Cashier initiates checkout, chooses payment type, payment service |
+|     Variants     |V1: Payment type = cash. V2: Payment type = card.|
+|    Exceptions    |E1: Card payment refused → transaction cancelled or switched to cash. |
+
+##### Scenario 4.1
+steps
+|     Actor's action                       |  System action                                                    | FR needed |
+| :------------:                           | :------------------------------:                                  |:---:      |
+|Cashier presses “Checkout”                |Shows payment options and order summary                            |FR-SALE-1  |
+|Cashier selects “Card payment”            |Sends amount & transaction data to payment service                 |FR-SALE-2  |
+|                                          |Receives authorization/denial from payment service                 |FR-SALE-3  |
+|                                          |If authorized, stores sale, updates inventory and payment status   |FR-SALE-4  |
+|                                          |Prints receipt and shows “Payment successful”                      |FR-SALE-5  |
+
+##### Scenario 4.2
+steps
+|     Actor's action                                  |  System action                                                    | FR needed |
+| :------------:                                      | :------------------------------:                                  |:---:      |
+|Cashier selects “Cash payment”                       |System shows amount to collect and opens “cash received” field     |FR-SALE-6  |
+|Cashier enters the amount received from customer     |                                                                   |         |
+|Cashier confirms payment                             |System calculates change to return                                 |FR-SALE-7  |
+|                                                     |System stores the sale, updates inventory and payment status (paid-cash)   |FR-SALE-4  |
+|                                                     |Prints receipt and shows “Payment completed”                       |FR-SALE-5  |
+
+##### Scenario 4.3
+steps
+|     Actor's action                                  |  System action                                                     | FR needed |
+| :------------:                                      | :------------------------------:                                   |:---:      |
+|Cashier selects “Card payment”                       |System sends amount & transaction details to payment service        |FR-SALE-2  |
+|                                                     |Payment service returns denial (refused transaction)                |FR-SALE-3  |
+|                                                     |System displays error: “Payment refused” with reason (if available) |FR-SALE-8  |
+|Cashier chooses between retry or switch to Cash      |System goes back to payment options                                 |FR-SALE-9  |
+|                                                     |No sales are stored, no inventory updated until successful payment  |FR-SALE-10 |
+
+
 
 # Glossary
 
