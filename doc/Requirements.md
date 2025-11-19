@@ -134,7 +134,7 @@ Consider that the document should be delivered to another team (unknown to you)
 | Supplier         |             |       |||*||||||
 | Shop Assistant         |             |       ||*|||*||||
 | Maintenance Service        |             |       |*||||||||
-| Payment Service         |     *        |       |*|||||*|||
+| Payment Service         |     *        |       ||||||*|||
 
 # Use case diagram and use cases
 
