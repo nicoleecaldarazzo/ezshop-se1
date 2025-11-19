@@ -206,11 +206,6 @@ Steps
 
 # System Design
 
-\<describe here system design>
-
-\<must be consistent with Context diagram>
-
-# Hardware Software architecture
 The EZShop system is designed as a multi-tier application composed of:
 
 Client layer (Front-end POS & Back-office UI)
@@ -220,5 +215,7 @@ Application layer (Backend services)
 Integration layer (external services: payment, fiscal authority, email)
 
 Data layer (relational database + logs)
+
+# Hardware Software architecture
 
 ![](doc/images/hwandsw.png)
