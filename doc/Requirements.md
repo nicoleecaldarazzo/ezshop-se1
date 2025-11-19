@@ -89,6 +89,8 @@ Consider that the document should be delivered to another team (unknown to you)
 | Shop Assistant   | GUI for PC        |  PC                |
 | Supplier         | GUI for PC        |  PC                |
 | Payment Service  | Credit Card Circuit API, Apple Pay API, Cash             |    Cash Register                |
+| Accountant         | GUI for PC        |  PC                |
+| Maintenance Service         | GUI for PC - Hardware        |  PC                |
 
 
 # Functional and non functional requirements
