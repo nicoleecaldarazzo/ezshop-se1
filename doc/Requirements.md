@@ -73,7 +73,8 @@ Consider that the document should be delivered to another team (unknown to you)
 # Context Diagram and interfaces
 
 ## Context Diagram
-![](doc/images/diagram.png)
+![](doc/images/contextdiagram.png)
+
 
 @startuml
 skinparam backgroundColor white
