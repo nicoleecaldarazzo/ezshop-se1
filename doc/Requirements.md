@@ -73,7 +73,11 @@ Consider that the document should be delivered to another team (unknown to you)
 # Context Diagram and interfaces
 
 ## Context Diagram
-//www.plantuml.com/plantuml/png/RP1DYXH148NtTOf7RqR1ke28Z0uk1Q5txgAhmkfWiZAIoCWUHX7w6eBklOBhkKcVnChgwXzbTfbVl8WNBswpataPGvFl9IOo6h6XxdumBR6_qw26XwquDpS8zAZ5aUJf3mxxdqQzKE33_bVZck2AZRhhY5wCEnUDpTIawUlqcdIlaLq2eqGalJbEIIM8wvLroTnHPdnhWFTgFTjnXKsOTghisTM-DmrrhePrIIa8s_9TVQB7aQDZpRQJZbUWZ8KjwAHSknhZ8qKQs6RTJ1PmLcqruLtEafsYpxAApcJHtL7U2bkDBm6rnYD1ZV3qk-RN7GN6YoaiQjgNhn0rreAnEyL1WpQdIwm-VAuMizVnMSScqvs2q4jEQiOOWe3SrGGINIqgA8J3_iVirLo7GLjI-_OqR3dPH0D_yGl_zqnuqveCMs_FRTUnqVRw42-zI_x_yIt7lepXBm00
+<details><summary><details><summary>Click to expand</summary>
+Click to expand
+</details></summary>
+
+</details>
 
 @startuml
 skinparam backgroundColor white
