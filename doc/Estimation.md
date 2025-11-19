@@ -15,7 +15,7 @@ Consider the EZShop project as described in your requirements document, assume t
 |                                                                                                         | Estimate |
 | ------------------------------------------------------------------------------------------------------- | -------- |
 | NC = Estimated number of classes to be developed                                                        |   45       |
-| A = Estimated average size per class, in LOC                                                            |     100LOC     |
+| A = Estimated average size per class, in LOC                                                            |     100 LOC     |
 | S = Estimated size of project, in LOC (= NC \* A)                                                       |     4500 LOC     |
 | E = Estimated effort, in person hours (here use productivity 10 LOC per person hour)                    |   450 Person hour       |
 | C = Estimated cost, in euro (here use 1 person hour cost = 30 euro)                                     |    13500€       |
@@ -25,16 +25,17 @@ Consider the EZShop project as described in your requirements document, assume t
 
 ###
 
-| component name       | Estimated effort (person hours) |
-| -------------------- | ------------------------------- |
-| requirement document |                                 |
-| ....                 |                                 |
-|                      |                                 |
-|                      |                                 |
-|                      |                                 |
-|                      |                                 |
+| component name                      | Estimated effort (person hours) |
+| ----------------------------------- | ------------------------------- |
+| Requirements document               | 70 ph                           |
+| System & detailed design document   | 90 ph                           |
+| Source code (backend + UI + DB)     | 200 ph                          |
+| Test cases & test reports           | 70 ph                           |
+| User & operations documentation     | 20 ph                           |
+| **Total**                           | **450 ph**                      |
 
-Estimated duration: (calendar time)
+Estimated duration: **≈ 2.25 weeks** (team of 5 people, 8h/day, 5 days/week)
+
 
 # Estimate by activity decomposition + Gantt chart
 
