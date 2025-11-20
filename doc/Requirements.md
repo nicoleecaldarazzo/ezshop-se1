@@ -65,7 +65,7 @@ Consider that the document should be delivered to another team (unknown to you)
 | Payment Service  | Handles credit card/Apple Pay transactions via integrated terminals |
 | Maintenance      | Provides Hardware/Software maintenance |
 | Accountant       | Uses system reports to manage finances|
-| Fiscal Authority | Receives daily sales summarie |
+| Fiscal Authority | Receives daily sales summaries via Fiscal Device (telematic recorder) |
 
 
 
@@ -84,13 +84,16 @@ Consider that the document should be delivered to another team (unknown to you)
 
 |   Actor          | Logical Interface | Physical Interface |
 | :-------:        | :---------------: | :----------------: |
-| Store Manager    | GUI for PC        |  PC                |
-| Cashier          | GUI for PC        |  PC                |
-| Shop Assistant   | GUI for PC        |  PC                |
+| Store Manager    | GUI for PC        |  PC              |
+| Cashier          | GUI POS        |  Cashier station with PC + barcode scanner + receipt printer + card/NFC terminal            |
+| Shop Assistant   | GUI P0S        |  PC                |
 | Supplier         | GUI for PC        |  PC                |
-| Payment Service  | Credit Card Circuit API, Apple Pay API, Cash             |    Cash Register                |
-| Accountant         | GUI for PC        |  PC                |
-| Maintenance Service         | GUI for PC - Hardware        |  PC                |
+| Payment Service  | Credit Card Circuit API, Apple Pay API, Cash             |    Internet network (HTTPS) + card terminals provided by the provider                |
+| Accountant         | GUI for PC        |  PC              |
+| Maintenance Service         | GUI for PC - Hardware        |  PC/remote access               |
+| Fiscal Authority| Communication protocol with the Telematic Recorder        | Telematic Recorder connected to the network|
+
+
 
 
 # Functional and non functional requirements
@@ -113,6 +116,12 @@ Consider that the document should be delivered to another team (unknown to you)
 | FR8: Manage Returns and Exchanges| -Update stock -Refound customer            |
 | FR9: Manage Discounts|-The manager defines discount percentage and dates for selected products -The manager can edit the discount             |
 | FR10: Manage Loyalty Points| -Give one point for every 1 euro spent -Give a 10 euros product for free at the customer when he arrives at 100 points            |
+| FR11: Manage Hardware Integration |
+- Initialize and detect connected peripherals (scanner, POS printer, card terminal, electronic cash register)
+- Receive barcodes from the scanner and add them to the cart during a sale
+- Communicate with the card terminal to initiate and verify electronic payments
+- Send sale data to the electronic cash register for receipt issuance
+- Manage connection errors or peripheral malfunctions |
 
 ## Non Functional Requirements
 
@@ -128,31 +137,31 @@ Consider that the document should be delivered to another team (unknown to you)
 
 # Table of rights
 
-|  Actor   | FR1         | FR2 | FR3 | FR4 | FR5 | FR6 | FR7 | FR8 | FR9 | FR10 |
-| :---:    | :---------: | :---: |:---: |:---: |:---: |:---: |:---: |:---: |:---: |:---: |
-| Manager         |    *         |       *|*|*|*|*|*|*|*|*|
-| Cashier         |     *        |       ||||||*||*|
-| Accountant         |             |       ||||*|||||
-| Supplier         |             |       |||*||||||
-| Shop Assistant         |             |       ||*|||*||||
-| Maintenance Service        |             |       |*||||||||
-| Payment Service         |     *        |       ||||||*|||
+|  Actor   | FR1         | FR2 | FR3 | FR4 | FR5 | FR6 | FR7 | FR8 | FR9 | FR10 |FR11 |
+| :---:    | :---------: | :---: |:---: |:---: |:---: |:---: |:---: |:---: |:---: |:---: ||:---: |
+| Manager         |    *         |       *|*|*|*|*|*|*|*|*||
+| Cashier         |     *        |       ||||||*||*||
+| Accountant         |             |       ||||*||||||
+| Supplier         |             |       |||*|||||||
+| Shop Assistant         |             |       ||*|||*|||||
+| Maintenance Service        |             |       |*||||||||*|
+| Payment Service         |     *        |       ||||||*||||
 
 # Use case diagram and use cases
 
 ## Use case brief
 |  UC name                    | Goal                                | Description                |
 | :---:                       | :---------:                                       | :---:                      |
-|Create Account               |Create an account for each user                    |Main Actor: Store Manager  Manager creates an account for each employee in the shop|
-|Authenticate                 |Recognize the user                                 |Main Actor: Store Manager, Employee Users authenticate to enter the software       |
-|Modify Inventory             |Update the inventory                               |Main Actor: Store Manager, Employee, System  At the beinning the inventory has to bi filled with all the items availablein the shop by the workers. When the inventory is ready it will be automatically updated after each sell event. When a new order from the supplier has arrived , the employees need to manually update the inventory|
-|Process Transaction          |Process the sale                                   |Main Actor: Employee, Payment Service, System The employee initiate transaction,the payment service processes the payment,and the inventory is automatically updated  |
-|Manage Orders to Supplier    |Replenish stock by ordering products               |Main Actor: Store Manager : The System create order for products needed and generate an excel with list,after the manager checks if the list is correct, the system send the order to supplier                  |
-|Manage Returns and Exchanges |Handle product Returns or item changes after save  |Main Actor: Employees, Payment Service  Register Returned items, update inventory accordingly and manage Payback with payment service     |
-|Support Accounting           |Provide financial data                             |Main Actor: System  create a dail - weekly - monthly report of saves        |
-|Manage Discounts             |Configure and apply saves promotions               |Main Actor: Store Manager,System
-|Manage Loyalty Points        |Reward costumers with points and free items        |Main Actor: Store Manager  Manager creates an account for each employee in the shop|
-|Support Maintenance          |Report and track technical issues with the system  |Main actor: System, Store Manager, Employees, Maintenance Service  employeeor or manager log a problem system records ??? and contact the maintenance service, marks it as resolved when fixed
+|Create Account               |Create an account for each user                    |Main Actor: Store Manager. Description: Manager creates an account for each employee in the shop|
+|Authenticate                 |Recognize the user                                 |Main Actor: Store Manager, Employee. Description: users authenticate to enter the software       |
+|Modify Inventory             |Update the inventory                               |Main Actor: Store Manager, Employee, System. Description: at the beinning the inventory has to bi filled with all the items availablein the shop by the workers. When the inventory is ready it will be automatically updated after each sell event. When a new order from the supplier has arrived , the employees need to manually update the inventory|
+|Process Transaction          |Process the sale                                   |Main Actor: Employee, Payment Service, System. Description: the employee initiate transaction,the payment service processes the payment,and the inventory is automatically updated  |
+|Manage Orders to Supplier    |Replenish stock by ordering products               |Main Actor: Store Manager. Description: The System create order for products needed and generate an excel with list,after the manager checks if the list is correct, the system send the order to supplier                  |
+|Manage Returns and Exchanges |Handle product Returns or item changes after save  |Main Actor: Employees, Payment Service. Description: register Returned items, update inventory accordingly and manage Payback with payment service     |
+|Support Accounting           |Provide financial data                             |Main Actor: System. Description: create a dail - weekly - monthly report of saves        |
+|Manage Discounts             |Configure and apply saves promotions               |Main Actor: Store Manager,System.
+|Manage Loyalty Points        |Reward costumers with points and free items        |Main Actor: Store Manager. Description: manager creates an account for each employee in the shop|
+|Support Maintenance          |Report and track technical issues with the system  |Main actor: System, Store Manager, Employees, Maintenance Service. Description:  employeeor or manager log a problem system records ??? and contact the maintenance service, marks it as resolved when fixed
 
 ## Use case diagram
 ![](doc/images/use_case.png)
@@ -254,16 +263,27 @@ steps
 |                                                                |Updates the inventory table and logs the automatic adjustment              |FR-INV-3 |
 |                                                                |If new stock is below 10 → system generates a low-stock alert              |FR-INV-8|
 
+
+
 ### Use case 4, UC4 
 | Actors Involved  |                                                                      |
 | :--------------: | :------------------------------------------------------------------: |
 |   Precondition   |Cashier is authenticated; customer’s items are selected; cart total > 0|
 |  Post condition  |Sale is registered, payment status stored, inventory updated, receipt generated|
-| Nominal Scenario |Cashier initiates checkout, chooses payment type, payment service authorizes card payments, system stores the sale and updates inventory. |
+| Nominal Scenario |The cashier scans the items using the barcode scanner, the system builds the cart, and the cashier selects the payment method (cash or card terminal). For electronic payments, EZShop sends the amount to the card terminal and awaits the outcome from the Payment Service. If the payment is successful, the system records the sale, updates the inventory, and sends the data to the Electronic Register for issuing the receipt. |
 |     Variants     |V1: Payment type = cash. V2: Payment type = card.|
 |    Exceptions    |E1: Card payment refused → transaction cancelled or switched to cash. |
 
 ##### Scenario 4.1
+| Actor’s action                                | System action                                             | FR needed |
+|-----------------------------------------------|-----------------------------------------------------------|-----------|
+| Cashier brings the product close to the scanner | The system receives the barcode and identifies the item   | FR11      |
+|                                               | The item is added to the cart with updated quantity       | FR4       |
+|                                               | The updated total amount is displayed                     | FR4       |
+
+
+
+##### Scenario 4.2
 steps
 |     Actor's action                       |  System action                                                    | FR needed |
 | :------------:                           | :------------------------------:                                  |:---:      |
@@ -273,7 +293,7 @@ steps
 |                                          |If authorized, stores sale, updates inventory and payment status   |FR-SALE-4  |
 |                                          |Prints receipt and shows “Payment successful”                      |FR-SALE-5  |
 
-##### Scenario 4.2
+##### Scenario 4.3
 steps
 |     Actor's action                                  |  System action                                                    | FR needed |
 | :------------:                                      | :------------------------------:                                  |:---:      |
@@ -283,7 +303,7 @@ steps
 |                                                     |System stores the sale, updates inventory and payment status (paid-cash)   |FR-SALE-4  |
 |                                                     |Prints receipt and shows “Payment completed”                       |FR-SALE-5  |
 
-##### Scenario 4.3
+##### Scenario 4.4
 steps
 |     Actor's action                                  |  System action                                                     | FR needed |
 | :------------:                                      | :------------------------------:                                   |:---:      |
