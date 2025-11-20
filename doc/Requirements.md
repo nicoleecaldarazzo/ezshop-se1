@@ -137,15 +137,16 @@ Consider that the document should be delivered to another team (unknown to you)
 
 # Table of rights
 
-|  Actor   | FR1         | FR2 | FR3 | FR4 | FR5 | FR6 | FR7 | FR8 | FR9 | FR10 |FR11 |
-| :---:    | :---------: | :---: |:---: |:---: |:---: |:---: |:---: |:---: |:---: |:---: ||:---: |
-| Manager         |    *         |       *|*|*|*|*|*|*|*|*||
-| Cashier         |     *        |       ||||||*||*||
-| Accountant         |             |       ||||*||||||
-| Supplier         |             |       |||*|||||||
-| Shop Assistant         |             |       ||*|||*|||||
-| Maintenance Service        |             |       |*||||||||*|
-| Payment Service         |     *        |       ||||||*||||
+| Actor              | FR1 | FR2 | FR3 | FR4 | FR5 | FR6 | FR7 | FR8 | FR9 | FR10 | FR11 |
+|--------------------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:----:|:----:|
+| Manager            |  *  |  *  |  *  |  *  |  *  |  *  |  *  |  *  |  *  |  *   |    |
+| Cashier            |  *  |     |     |     |     |     |     |  *  |     |      |    |
+| Accountant         |     |     |     |     |     |  *  |     |     |     |      |      |
+| Supplier           |     |     |     |  *  |     |     |     |     |     |      |      |
+| Shop Assistant     |     |     |     |  *  |     |     |     |  *  |     |      |   |
+| Maintenance Service|     |     |  *  |     |     |     |     |     |     |      |  *   |
+| Payment Service    |  *  |     |     |     |     |     |     |     |     |      |      |
+
 
 # Use case diagram and use cases
 
