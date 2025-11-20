@@ -459,6 +459,36 @@ steps
 |After sale, cashier confirms “Add points”|Calculates points from sale amount           |FR-LOY-2|     
 |Manager clicks “Save changes”            |Updates points balance                       |FR-LOY-3|
 
+##### Scenario 9.2
+steps
+|     Actor's action                                          |  System action                                                                         | FR needed |
+| :------------:                                              | :------------------------------:                                                       |:---:      |
+|Cashier identifies customer (phone number)                   |System retrieves loyalty profile and shows current points                               |FR-LOY-1|
+|Cashier selects “Redeem free item”                           |System checks if the customer has enough points (e.g., ≥ 100)                           |FR-LOY-4|     
+|Cashier selects the free item from the eligible product list |                                                                                        |        |
+|Cashier confirms redemption                                  |System deducts the required points from customer’s balance                              |FR-LOY-5|     
+|                                                             |System adds the free item to the sale with price = 0                                    |FR-LOY-6|     
+|                                                             |System updates loyalty points and shows confirmation: “Free item redeemed successfully” |FR-LOY-7|     
+
+### Use case 10, UC10
+| Actors Involved  |                                                                      |
+| :--------------: | :------------------------------------------------------------------: |
+|   Precondition   |User is authenticated; system is running but some component may have problems|
+|  Post condition  |Incident is logged with status; optional notification sent to maintenance; status can be updated to resolved|
+| Nominal Scenario |Employee or manager reports a technical issue; system records the incident.|
+|     Variants     |V1: Manager adds extra notes or attachments (screenshots).|
+|    Exceptions    |E1: Mandatory fields missing → incident not created and user is warned.|
+
+##### Scenario 10.1
+steps
+|     Actor's action                                          |  System action                                                     | FR needed |
+| :------------:                                              | :------------------------------:                                   |:---:      |
+|Employee opens “Support / Maintenance” page                                |Shows incident list and “New incident” button         |FR-MNT-1|
+|Employee clicks “New incident” and fills description, priority, component  |                                                      |        |     
+|Employee submits form                                                      |Validates fields, creates incident with status “open” |FR-MNT-2|
+|                                                                           |Notifies maintenance service (via email)              |FR-MNT-3|     
+|Manager/maintenance later marks incident as “resolved”                     |System updates status and logs resolution date        |FR-MNT-4|     
+
 
 
 
