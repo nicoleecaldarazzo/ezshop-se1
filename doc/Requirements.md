@@ -402,7 +402,11 @@ Application layer (Backend services)
 
 Integration layer (external services: payment, fiscal authority, email)
 
-Data layer (relational database + logs)
+Data layer (relational database + logs).
+
+The Client layer includes both the Back-office GUI (PC interface) and the POS interface used at the cash register. 
+The POS interface interacts with hardware peripherals such as the barcode scanner, receipt printer, card/NFC terminal, and the Telematic recorder (TR)) through the Hardware Abstraction Layer in the Application layer.
+
 
 # Hardware Software architecture
 
