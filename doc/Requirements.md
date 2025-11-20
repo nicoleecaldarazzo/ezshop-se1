@@ -385,6 +385,35 @@ steps
 |                                               |System displays a clear message: “Refund not allowed: [Reason]”                                        |FR-RET-13|
 |Cashier informs customer                       |System cancels the return flow and does not update inventory or sales records                          |FR-RET-14|
 
+### Use case 7, UC7
+| Actors Involved  |                                                                      |
+| :--------------: | :------------------------------------------------------------------: |
+|   Precondition   |Sales, returns, payments data exist in the database|
+|  Post condition  |Requested report (daily/weekly/monthly) is generated and available for download/view|
+| Nominal Scenario |User selects a period and type of report; system aggregates data and produces accounting report.|
+|     Variants     |V1: Export report to CSV/Excel.|
+|    Exceptions    |E1: No data for selected period → system generates empty report with warning.|
+
+##### Scenario 7.1
+steps
+|     Actor's action                                                                                         |  System action                                                                                                              | FR needed |
+| :------------:                                                                                             | :------------------------------:                                                                                            |:---:      |
+|Manager chooses “Reports”                                                                                   |Shows report options (Daily / Weekly / Monthly) and date pickers                                                             |FR-REP-1|
+|Manager selects report type (Daily, Weekly or Monthly) and the corresponding period (date / week / month)   |                                                                                                                             |        |
+|Manager clicks “Generate”                                                                                   |System checks store return rules (e.g., expired return period, non-returnable item, missing packaging)                       |FR-REP-2|
+|                                                                                                            |Displays the report summary (totals, taxes, number of transactions, etc.) and offers a download/export button (PDF/CSV/Excel)|FR-REP-3|
+|(Variant V1) Manager clicks “Export”                                                                        |System exports the report in the chosen format (CSV/Excel)                                                                   |FR-REP-4|
+
+##### Scenario 7.2
+steps
+|     Actor's action                                                                                                  |  System action                                                                                          | FR needed |
+| :------------:                                                                                                      | :------------------------------:                                                                        |:---:      |
+|Manager chooses “Analytics / Graphs” in the Reports section                                                          |System shows available metrics (e.g., Revenue, Number of sales) and time range options (Monthly / Yearly)|FR-REP-5|
+|Manager selects “Revenue” as metric and chooses “Monthly” or “Yearly” view plus the desired period (e.g., year 2025) |                                                                                                         |        |
+|Manager clicks “Generate graph”                                                                                      |System aggregates revenue data per month (for yearly view) or per day/week (for monthly view)            |FR-REP-6|
+|                                                                                                                     |System displays a graph showing revenues over time for the selected period                               |FR-REP-7|
+|clicks “Export graph”                                                                                                |System exports graph as an image or PDF, or includes it in an exported report                            |FR-REP-8|
+
 
 
 # Glossary
