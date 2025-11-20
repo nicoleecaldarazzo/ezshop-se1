@@ -405,9 +405,14 @@ Integration layer (external services: payment, fiscal authority, email)
 Data layer (relational database + logs).
 
 The Client layer includes both the Back-office GUI (PC interface) and the POS interface used at the cash register. 
-The POS interface interacts with hardware peripherals such as the barcode scanner, receipt printer, card/NFC terminal, and the Telematic recorder (TR)) through the Hardware Abstraction Layer in the Application layer.
+The POS interface interacts with hardware peripherals such as the barcode scanner, receipt printer, card/NFC terminal, and the telematic recorder (RT) through the Hardware Abstraction Layer in the Application layer.
 
 
 # Hardware Software architecture
 
 ![](doc/images/hwandsw.png)
+
+The POS terminal includes hardware peripherals such as a barcode scanner, receipt printer, cash drawer, card/NFC terminal and the Fiscal Device (RT). 
+These peripherals communicate with the POS software through standard interfaces (USB, Bluetooth, LAN) and are managed by the application through dedicated drivers or provider SDKs.
+The backend communicates with external services such as the Payment Service Provider and the Fiscal Authority.
+
