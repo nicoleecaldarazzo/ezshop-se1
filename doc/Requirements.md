@@ -414,6 +414,53 @@ steps
 |                                                                                                                     |System displays a graph showing revenues over time for the selected period                               |FR-REP-7|
 |clicks “Export graph”                                                                                                |System exports graph as an image or PDF, or includes it in an exported report                            |FR-REP-8|
 
+### Use case 8, UC8
+| Actors Involved  |                                                                      |
+| :--------------: | :------------------------------------------------------------------: |
+|   Precondition   |Manager is authenticated; product list exists|
+|  Post condition  |New discount is stored and will be automatically applied during sales in its validity period|
+| Nominal Scenario |Manager defines promotion (type, percentage, affected products, dates) and system saves and activates it.|
+|     Variants     |V1: Discount limited to specific category/brand.|
+|    Exceptions    |E1: No products or categories selected → system prevents saving and highlights missing fields|
+
+##### Scenario 8.1
+steps
+|     Actor's action                                                          |  System action                              | FR needed |
+| :------------:                                                              | :------------------------------:            |:---:      |
+|Manager opens “discount”                                                     |Shows current and past discounts             |FR-PROM-1|
+|Manager clicks “New discount” and fills data (10%, start/end dates, products)|                                             |        |
+|Manager saves discount                                                       |Validates dates and products                 |FR-PROM-2|
+|                                                                             |Stores discount and schedules its activation |FR-PROM-3|
+
+##### Scenario 8.2
+steps
+|     Actor's action                                                                    |  System action                                                                       | FR needed |
+| :------------:                                                                        | :------------------------------:                                                     |:---:      |
+|Manager opens “Discounts” and selects an existing discount                             |System displays current discount details (percentage, dates, products)                |FR-PROM-4|
+|Manager updates one or more fields (e.g., percentage, validity dates, list of products)|                                                                                      |        |
+|Manager clicks “Save changes”                                                          |System validates updated fields (dates, percentage, overlapping rules)                |FR-PROM-5|
+|                                                                                       |If valid, system updates the discount record and adjusts activation schedule if needed|FR-PROM-6|
+|                                                                                       |System shows confirmation message: “Discount updated successfully”                    |FR-PROM-7|
+
+### Use case 9, UC9
+| Actors Involved  |                                                                      |
+| :--------------: | :------------------------------------------------------------------: |
+|   Precondition   |Customer loyalty account exists; sale is in progress or just finished|
+|  Post condition  |Customer points updated; free item redeemed if threshold reached|
+| Nominal Scenario |Cashier identifies customer, system adds points based on purchase amount and allows redemption if customer has enough points.|
+|     Variants     |V1: Customer creates loyalty account during sale.|
+|    Exceptions    |E1: Customer not found → system offers to create new loyalty account.|
+
+##### Scenario 9.1
+steps
+|     Actor's action                      |  System action                              | FR needed |
+| :------------:                          | :------------------------------:            |:---:      |
+|Cashier identifies customer (card/phone) |Retrieves loyalty profile and current points |FR-LOY-1|
+|After sale, cashier confirms “Add points”|Calculates points from sale amount           |FR-LOY-2|     
+|Manager clicks “Save changes”            |Updates points balance                       |FR-LOY-3|
+
+
+
 
 
 # Glossary
