@@ -112,12 +112,7 @@ Consider that the document should be delivered to another team (unknown to you)
 | FR8: Manage Returns and Exchanges| -Update stock -Refound customer            |
 | FR9: Manage Discounts|-The manager defines discount percentage and dates for selected products -The manager can edit the discount             |
 | FR10: Manage Loyalty Points| -Give one point for every 1 euro spent -Give a 10 euros product for free at the customer when he arrives at 100 points            |
-| FR11: Manage Hardware Integration |
-- Initialize and detect connected peripherals (scanner, POS printer, card terminal, electronic cash register)
-- Receive barcodes from the scanner and add them to the cart during a sale
-- Communicate with the card terminal to initiate and verify electronic payments
-- Send sale data to the electronic cash register for receipt issuance
-- Manage connection errors or peripheral malfunctions |
+| FR11: Manage Hardware Integration |- Initialize and detect connected peripherals (scanner, POS printer, card terminal, electronic cash register) - Receive barcodes from the scanner and add them to the cart during a sale - Communicate with the card terminal to initiate and verify electronic payments - Send sale data to the electronic cash register for receipt issuance - Manage connection errors or peripheral malfunctions |
 
 ## Non Functional Requirements
 
