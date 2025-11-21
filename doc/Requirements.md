@@ -104,7 +104,7 @@ Consider that the document should be delivered to another team (unknown to you)
 | :---: | :---------: |
 |  FR1: Manage Payments| - Manage payment of certain amount given credit card number - Manage payment of certain amount given Apple Pay ID - Manage payment of certain amount given cash            |
 |  FR2: Manage User| -Different interfaces for each user type - Authenticate User            |
-| FR3: Support Maintenance| -Perform diagnostic ?           |
+| FR3: Support Maintenance|  -Report technical issues done by users  -Perform diagnostic done by maintenance service     |
 | FR4: Manage Inventory| - Check the availability of items - Update the availability of items -Update the list of items needed if we are running out of an item          |
 | FR5: Manage Order| Prepare the order in which the type and amount of items we need from the supplier is specified            |
 | FR6: Support Accounting| Create daily, weekly, monthly report of sales            |
@@ -133,13 +133,13 @@ Consider that the document should be delivered to another team (unknown to you)
 
 | Actor              | FR1 | FR2 | FR3 | FR4 | FR5 | FR6 | FR7 | FR8 | FR9 | FR10 | FR11 |
 |--------------------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:----:|:----:|
-| Manager            |  *  |  *  |  *  |  *  |  *  |  *  |  *  |  *  |  *  |  *   |    |
-| Cashier            |  *  |     |     |     |     |     |     |  *  |     |      |    |
-| Accountant         |     |     |     |     |     |  *  |     |     |     |      |      |
-| Supplier           |     |     |     |  *  |     |     |     |     |     |      |      |
-| Shop Assistant     |     |     |     |  *  |     |     |     |  *  |     |      |   |
-| Maintenance Service|     |     |  *  |     |     |     |     |     |     |      |  *   |
-| Payment Service    |  *  |     |     |     |     |     |     |     |     |      |      |
+| Manager            |  y  |  y  |  y  |  y  |  y  |  y  |  y  |  y  |  y  |  y   |  n  |
+| Cashier            |  y  |  n   |  y   |  n   | n    |   n  |  n   |  y  |  n   |    n  | n   |
+| Accountant         |   n  |   n  |  y   |   n  |  n   |  y  |   n  |   n  |  n   |   n   |   n   |
+| Supplier           |   n  |  n   |  y   |  y  |   n  |  n   | n    |  n   |  n   |  n    |  n    |
+| Shop Assistant     |   n  | n    | y    |  y  |  n   |  n   |  n   |  y  |  n   | n     |n   |
+| Maintenance Service|  n   |  n   |  y  |   n  |  n   | n    |  n   |  n   | n    |    n  |  y   |
+| Payment Service    |  y  |   n  |   n  |   n  |   n  |   n  |   n  |  n   |   n  |  n    |   n   |
 
 
 # Use case diagram and use cases
