@@ -79,7 +79,6 @@ Consider that the document should be delivered to another team (unknown to you)
 
 ## Interfaces
 
-\<describe here each interface in the context diagram>
 
 
 |   Actor          | Logical Interface | Physical Interface |
@@ -90,7 +89,7 @@ Consider that the document should be delivered to another team (unknown to you)
 | Supplier         | GUI for PC        |  PC                |
 | Payment Service  | Credit Card Circuit API, Apple Pay API, Cash             |    Internet network (HTTPS) + card terminals provided by the provider                |
 | Accountant         | GUI for PC        |  PC              |
-| Maintenance Service         | GUI for PC - Hardware        |  PC/remote access               |
+| Maintenance Service         | GUI for PC       |  PC/remote access               |
 | Fiscal Authority| Communication protocol with the Telematic Recorder        | Telematic Recorder connected to the network|
 
 
@@ -100,15 +99,12 @@ Consider that the document should be delivered to another team (unknown to you)
 
 ## Functional Requirements
 
-\<In the form DO SOMETHING, or VERB NOUN, describe high level capabilities of the system>
-
-\<they match to high level use cases>
 
 |  ID   | Description |
 | :---: | :---------: |
 |  FR1: Manage Payments| - Manage payment of certain amount given credit card number - Manage payment of certain amount given Apple Pay ID - Manage payment of certain amount given cash            |
 |  FR2: Manage User| -Different interfaces for each user type - Authenticate User            |
-| FR3: Support Maintenance| ?-Update firmware -Perform diagnostic            |
+| FR3: Support Maintenance| -Perform diagnostic ?           |
 | FR4: Manage Inventory| - Check the availability of items - Update the availability of items -Update the list of items needed if we are running out of an item          |
 | FR5: Manage Order| Prepare the order in which the type and amount of items we need from the supplier is specified            |
 | FR6: Support Accounting| Create daily, weekly, monthly report of sales            |
@@ -125,15 +121,13 @@ Consider that the document should be delivered to another team (unknown to you)
 
 ## Non Functional Requirements
 
-\<Describe constraints on functional requirements>
-
 |   ID    | Type (efficiency, reliability, ..) | Description | Refers to |
 | :-----: | :--------------------------------: | :---------: | :-------: |
 |  NFR1   | Efficiency                                   |   - Opening the software has to take less than 3 seconds - Time to login has to take less than 3 seconds - Processing transactions and propagate changes to the inventory has to take less than 5 seconds          | FR1- FR2- FR4- FR8          |
 |  NFR2   | Security                                   | Role based access            |      FR2     |
 |  NFR3   | Reliability                                   | - On the front end maximum of 1 defect per 2-3 months - Databases should be available 99% of the times           |  All Functions         |
 |  NFR4   | Portability                                   | The software has to work even if the shop changes the computer            | All Functions          |
-|  NFR5   | Usability                                   | Users should learn the system in less than 2 days            |   ?        |
+|  NFR5   | Usability                                   | Users should learn the system in less than 2 days            |   All functions        |
 
 # Table of rights
 
@@ -180,13 +174,7 @@ Consider that the document should be delivered to another team (unknown to you)
 
 ##### Scenario 1.1
 
-\<describe here scenarios instances of UC1>
 
-\<a scenario is a sequence of steps that corresponds to a particular execution of one use case>
-
-\<a scenario is a more formal description of a story>
-
-\<only relevant scenarios should be described>
 
 |  Scenario 1.1  |                                                                            |
 | :------------: | :------------------------------------------------------------------------: |
