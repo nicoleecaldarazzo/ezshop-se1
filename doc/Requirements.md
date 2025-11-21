@@ -175,13 +175,6 @@ Consider that the document should be delivered to another team (unknown to you)
 ##### Scenario 1.1
 
 
-
-|  Scenario 1.1  |                                                                            |
-| :------------: | :------------------------------------------------------------------------: |
-|  Precondition  | \<Boolean expression, must evaluate to true before the scenario can start> |
-| Post condition |  \<Boolean expression, must evaluate to true after scenario is finished>   |
-
-Steps
 |     Actor's action                                        |  System action                                                            | FR needed |
 | :------------:                                            | :------------------------------:                                          |:---:|
 |Manager chooses “Create account”                           |Displays account creation form                                             | FR-ACC-1 |
@@ -192,14 +185,14 @@ Steps
 
 
 ##### Scenario 1.2
-steps
+
 |     Actor's action                                                                   |  System action                                                                                   | FR needed |
 | :------------:                                                                       | :------------------------------:                                                                 |:---:      |
 |Manager opens “Manage accounts” and selects an existing employee                      |System displays the employee’s current information (name, role, salary, status, etc.)             | FR-ACC-5  |
 |Manager edits one or more fields (e.g., salary, role, personal data, account status)  |                                                                                                  |           |
 |Manager clicks “Save changes”                                                         |System validates updated fields (format, allowed values, role constraints)                        |FR-ACC-6   |
 
-##### Scenario 1.x
+
 
 ### Use case 2, UC2
 
@@ -213,7 +206,6 @@ steps
 
 ##### Scenario 2.1
 
-steps
 |     Actor's action                            |  System action                                          | FR needed |
 | :------------:                                | :------------------------------:                        |:---:      |
 |User opens login page                          |Shows login form                                         |FR-AUTH-1 |
@@ -234,7 +226,6 @@ steps
 
 ##### Scenario 3.1
 
-steps
 |     Actor's action                                      |  System action                                          | FR needed |
 | :------------:                                          | :------------------------------:                        |:---:      |
 |Manager chooses “Inventory” and selects a product        |Shows current stock for the product                      |FR-INV-1 |
@@ -243,7 +234,7 @@ steps
 |                                                         |Updates inventory and logs the change for both correction and after delivery     |FR-INV-3 |
 |                                                         |Shows updated stock to the user                          |FR-INV-4 |
 ##### Scenario 3.2
-steps
+
 |     Actor's action                                             |  System action                                                            | FR needed |
 | :------------:                                                 | :------------------------------:                                          |:---:      |
 |(Cashier completes a sale using the “Process transaction” UC)   |System receives final list of sold products and quantities                 |FR-INV-5|
@@ -273,7 +264,7 @@ steps
 
 
 ##### Scenario 4.2
-steps
+
 |     Actor's action                       |  System action                                                    | FR needed |
 | :------------:                           | :------------------------------:                                  |:---:      |
 |Cashier presses “Checkout”                |Shows payment options and order summary                            |FR-SALE-1  |
@@ -283,7 +274,7 @@ steps
 |                                          |Prints receipt and shows “Payment successful”                      |FR-SALE-5  |
 
 ##### Scenario 4.3
-steps
+
 |     Actor's action                                  |  System action                                                    | FR needed |
 | :------------:                                      | :------------------------------:                                  |:---:      |
 |Cashier selects “Cash payment”                       |System shows amount to collect and opens “cash received” field     |FR-SALE-6  |
@@ -293,7 +284,7 @@ steps
 |                                                     |Prints receipt and shows “Payment completed”                       |FR-SALE-5  |
 
 ##### Scenario 4.4
-steps
+
 |     Actor's action                                  |  System action                                                     | FR needed |
 | :------------:                                      | :------------------------------:                                   |:---:      |
 |Cashier selects “Card payment”                       |System sends amount & transaction details to payment service        |FR-SALE-2  |
@@ -312,7 +303,7 @@ steps
 |    Exceptions    |E1 – Network/email/export failure→ System shows error: “Order could not be sent. Saved as pending.” E2 - Manager closes the order window before confirming →System discards the draft and no order is saved.|
 
 ##### Scenario 5.1
-steps
+
 |     Actor's action                                                                  |  System action                                                                                             | FR needed |
 | :------------:                                                                      | :------------------------------:                                                                           |:---:      |
 |Manager opens “Supplier orders”                                                      |System automatically generates a low-stock order list based on inventory thresholds and displays past orders|FR-ORD-1|
@@ -332,7 +323,7 @@ steps
 |    Exceptions    |E1: Sale not found → show error and cancel operation. E2: Return period expired → system informs cashier.|
 
 ##### Scenario 6.1
-steps
+
 |     Actor's action                                  |  System action                                                      | FR needed |
 | :------------:                                      | :------------------------------:                                    |:---:      |
 |Cashier opens “Returns” and enters receipt ID        |Retrieves and shows sale detail                                      |FR-RET-1  |
@@ -342,7 +333,7 @@ steps
 |                                                     |Prints return receipt and shows confirmation                         |FR-RET-4|
 
 ##### Scenario 6.2
-steps
+
 |     Actor's action                                  |  System action                                                      | FR needed |
 | :------------:                                      | :------------------------------:                                    |:---:      |
 |Cashier opens “Returns” and enters receipt ID        |Retrieves and shows sale detail                                      |FR-RET-1  |
@@ -352,7 +343,7 @@ steps
 |                                                     |System prints return receipt, logs cash refund and shows confirmation|FR-RET-4|
 
 ##### Scenario 6.3
-steps
+
 |     Actor's action                                                                   |  System action                                                                                                                          | FR needed |
 | :------------:                                                                       | :------------------------------:                                                                                                        |:---:      |
 |Cashier opens “Returns” and enters receipt ID                                         |Retrieves and shows sale detail                                                                                                          |FR-RET-1  |
@@ -363,7 +354,7 @@ steps
 |If difference to pay or refund exists, cashier completes payment/refund (cash or card)|System handles difference (via payment service or cash), prints exchange receipt and shows confirmation                                  |FR-RET-10|
 
 ##### Scenario 6.4
-steps
+
 |     Actor's action                            |  System action                                                                                        | FR needed |
 | :------------:                                | :------------------------------:                                                                      |:---:      |
 |Cashier opens “Returns” and enters receipt ID  |Retrieves and shows sale detail                                                                        |FR-RET-1  |
@@ -383,7 +374,7 @@ steps
 |    Exceptions    |E1: No data for selected period → system generates empty report with warning.|
 
 ##### Scenario 7.1
-steps
+
 |     Actor's action                                                                                         |  System action                                                                                                              | FR needed |
 | :------------:                                                                                             | :------------------------------:                                                                                            |:---:      |
 |Manager chooses “Reports”                                                                                   |Shows report options (Daily / Weekly / Monthly) and date pickers                                                             |FR-REP-1|
@@ -393,7 +384,7 @@ steps
 |(Variant V1) Manager clicks “Export”                                                                        |System exports the report in the chosen format (CSV/Excel)                                                                   |FR-REP-4|
 
 ##### Scenario 7.2
-steps
+
 |     Actor's action                                                                                                  |  System action                                                                                          | FR needed |
 | :------------:                                                                                                      | :------------------------------:                                                                        |:---:      |
 |Manager chooses “Analytics / Graphs” in the Reports section                                                          |System shows available metrics (e.g., Revenue, Number of sales) and time range options (Monthly / Yearly)|FR-REP-5|
@@ -412,7 +403,7 @@ steps
 |    Exceptions    |E1: No products or categories selected → system prevents saving and highlights missing fields|
 
 ##### Scenario 8.1
-steps
+
 |     Actor's action                                                          |  System action                              | FR needed |
 | :------------:                                                              | :------------------------------:            |:---:      |
 |Manager opens “discount”                                                     |Shows current and past discounts             |FR-PROM-1|
@@ -421,7 +412,7 @@ steps
 |                                                                             |Stores discount and schedules its activation |FR-PROM-3|
 
 ##### Scenario 8.2
-steps
+
 |     Actor's action                                                                    |  System action                                                                       | FR needed |
 | :------------:                                                                        | :------------------------------:                                                     |:---:      |
 |Manager opens “Discounts” and selects an existing discount                             |System displays current discount details (percentage, dates, products)                |FR-PROM-4|
@@ -440,7 +431,7 @@ steps
 |    Exceptions    |E1: Customer not found → system offers to create new loyalty account.|
 
 ##### Scenario 9.1
-steps
+
 |     Actor's action                      |  System action                              | FR needed |
 | :------------:                          | :------------------------------:            |:---:      |
 |Cashier identifies customer (card/phone) |Retrieves loyalty profile and current points |FR-LOY-1|
@@ -448,7 +439,7 @@ steps
 |Manager clicks “Save changes”            |Updates points balance                       |FR-LOY-3|
 
 ##### Scenario 9.2
-steps
+
 |     Actor's action                                          |  System action                                                                         | FR needed |
 | :------------:                                              | :------------------------------:                                                       |:---:      |
 |Cashier identifies customer (phone number)                   |System retrieves loyalty profile and shows current points                               |FR-LOY-1|
@@ -478,7 +469,7 @@ steps
     
 
 ##### Scenario 10.1
-steps
+
 | Actor's action | System action | FR needed |
 | :------------: | :------------------------------: |:---: |
 | Employee/Manager opens “Maintenance” section | Shows a list/dashboard with the real-time status (Connected/Disconnected/Malfunctioning) of all connected hardware devices (Scanner, Printer, Card Terminal, RT, etc.) and software components. | FR-MNT-1 |
@@ -501,7 +492,7 @@ steps
 
 ##### Scenario 11.1 – Automatic daily transmission
 
-steps  
+ 
 | Actor's action                                                   | System action                                                                 | FR needed   |
 | :--------------------------------------------------------------: | :----------------------------------------------------------------------------:|:-----------:|
 | (Time reaches the configured end-of-day closing time)           | Schedules the daily fiscal transmission                                      | FR-FISC-1   |
@@ -513,7 +504,7 @@ steps
 
 ##### Scenario 11.2 – Manual retry after failed transmission
 
-steps  
+  
 | Actor's action                                                   | System action                                                                 | FR needed   |
 | :--------------------------------------------------------------: | :----------------------------------------------------------------------------:|:-----------:|
 | Store Manager opens the “Fiscal report status” section           | Shows the list of recent fiscal transmissions with their status (OK/Failed)  | FR-FISC-7   |
