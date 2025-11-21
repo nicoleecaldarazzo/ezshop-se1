@@ -164,7 +164,7 @@ Consider that the document should be delivered to another team (unknown to you)
 
 ### Use case 1, UC1
 
-| Actors Involved  |                                                                      |
+| Actors Involved  | Store manager (primary)                                                                     |
 | :--------------: | :------------------------------------------------------------------: |
 |   Precondition   |Manager is authenticated in the system = true|
 |  Post condition  |New employee account exists in the system and is active; credentials have been generated and stored  |
@@ -196,7 +196,7 @@ Consider that the document should be delivered to another team (unknown to you)
 
 ### Use case 2, UC2
 
-| Actors Involved  |                                                                      |
+| Actors Involved  | Store manager, Employee                                                                     |
 | :--------------: | :------------------------------------------------------------------: |
 |   Precondition   |User is not authenticated; user account exists and is active|
 |  Post condition  |User is authenticated, session is started, user role is known  |
@@ -216,7 +216,7 @@ Consider that the document should be delivered to another team (unknown to you)
 
 
 ### Use case 3, UC3
-| Actors Involved  |                                                                      |
+| Actors Involved  | Store manager, Employee, System                                                                     |
 | :--------------: | :------------------------------------------------------------------: |
 |   Precondition   |User is authenticated; product list exists|
 |  Post condition  |Inventory quantities are updated (after sale, delivery, manual correction) |
@@ -246,7 +246,7 @@ Consider that the document should be delivered to another team (unknown to you)
 
 
 ### Use case 4, UC4 
-| Actors Involved  |                                                                      |
+| Actors Involved  | Employee (cashier), Payment service, System                                                                     |
 | :--------------: | :------------------------------------------------------------------: |
 |   Precondition   |Cashier is authenticated; customer’s items are selected; cart total > 0|
 |  Post condition  |Sale is registered, payment status stored, inventory updated, receipt generated|
@@ -294,7 +294,7 @@ Consider that the document should be delivered to another team (unknown to you)
 |                                                     |No sales are stored, no inventory updated until successful payment  |FR-SALE-10 |
 
 ### Use case 5, UC5 
-| Actors Involved  |                                                                      |
+| Actors Involved  | Store manager, System, Supplier (external)                                                                     |
 | :--------------: | :------------------------------------------------------------------: |
 |   Precondition   |Manager is authenticated; inventory levels are available|
 |  Post condition  |Supplier orders are created and stored; optional export/email sent to supplier|
@@ -314,7 +314,7 @@ Consider that the document should be delivered to another team (unknown to you)
 |Manager selects “Send to supplier”                                                   |Manager sends the order to the supplier (email/export); marks order as “sent”                               |FR-ORD-4  |
 
 ### Use case 6, UC6 
-| Actors Involved  |                                                                      |
+| Actors Involved  | Employee, Payment service                                                                     |
 | :--------------: | :------------------------------------------------------------------: |
 |   Precondition   |Sale exists in the system; returned products are within store return policy|
 |  Post condition  |Return or exchange registered, inventory updated, refund or difference managed|
@@ -365,7 +365,7 @@ Consider that the document should be delivered to another team (unknown to you)
 |Cashier informs customer                       |System cancels the return flow and does not update inventory or sales records                          |FR-RET-14|
 
 ### Use case 7, UC7
-| Actors Involved  |                                                                      |
+| Actors Involved  |  System, Store manager                                                                    |
 | :--------------: | :------------------------------------------------------------------: |
 |   Precondition   |Sales, returns, payments data exist in the database|
 |  Post condition  |Requested report (daily/weekly/monthly) is generated and available for download/view|
@@ -394,7 +394,7 @@ Consider that the document should be delivered to another team (unknown to you)
 |clicks “Export graph”                                                                                                |System exports graph as an image or PDF, or includes it in an exported report                            |FR-REP-8|
 
 ### Use case 8, UC8
-| Actors Involved  |                                                                      |
+| Actors Involved  | Store manager                                                                     |
 | :--------------: | :------------------------------------------------------------------: |
 |   Precondition   |Manager is authenticated; product list exists|
 |  Post condition  |New discount is stored and will be automatically applied during sales in its validity period|
@@ -422,7 +422,7 @@ Consider that the document should be delivered to another team (unknown to you)
 |                                                                                       |System shows confirmation message: “Discount updated successfully”                    |FR-PROM-7|
 
 ### Use case 9, UC9
-| Actors Involved  |                                                                      |
+| Actors Involved  | System, Employee                                                                     |
 | :--------------: | :------------------------------------------------------------------: |
 |   Precondition   |Customer loyalty account exists; sale is in progress or just finished|
 |  Post condition  |Customer points updated; free item redeemed if threshold reached|
@@ -450,7 +450,7 @@ Consider that the document should be delivered to another team (unknown to you)
 |                                                             |System updates loyalty points and shows confirmation: “Free item redeemed successfully” |FR-LOY-7|     
 
 ### Use case 10, UC10
-| Actors Involved  |                                                                      |
+| Actors Involved  |  System, Store manager, Employees, Maintenance service (external)                                                                     |
 | :--------------: | :------------------------------------------------------------------: |
 |   Precondition   |User is authenticated; system is running but some component may have problems|
 |  Post condition  |Incident is logged with status; optional notification sent to maintenance; status can be updated to resolved|
@@ -458,15 +458,6 @@ Consider that the document should be delivered to another team (unknown to you)
 |     Variants     |V1: Manager adds extra notes or attachments (screenshots).|
 |    Exceptions    |E1: Mandatory fields missing → incident not created and user is warned.|
 
-### Use case 10, UC10 
-| Actors Involved | Store Manager, Employees, Maintenance Service, System |
-| :--------------: | :------------------------------------------------------------------: |
-| Precondition | The system is running; hardware devices (scanner, receipt printer, card terminal, RT) may be malfunctioning or disconnected. |
-| Post condition | A maintenance request is recorded and the system provides diagnostic information to the Maintenance Service. The issue is marked as resolved once fixed. |
-| Nominal Scenario | The employee or manager opens the "Maintenance" section; the system shows the status of connected hardware devices and software components; the user selects the device or component that is not working; the system records the issue and notifies the Maintenance Service; when the Maintenance Service resolves the issue, the system updates the status to “resolved”. |
-| Variants | V1: The system automatically detects a disconnected or malfunctioning device and prompts the user to report it. |
-| Exceptions | E1: The system cannot collect diagnostic data → it informs the user and logs a basic error record. |
-    
 
 ##### Scenario 10.1
 
