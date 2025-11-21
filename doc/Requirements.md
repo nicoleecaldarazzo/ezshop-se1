@@ -89,7 +89,7 @@ Consider that the document should be delivered to another team (unknown to you)
 | Supplier         | GUI for PC        |  PC                |
 | Payment Service  | Credit Card Circuit API, Apple Pay API, Cash             |    Internet network (HTTPS) + card terminals provided by the provider                |
 | Accountant         | GUI for PC        |  PC              |
-| Maintenance Service         | GUI for PC       |  PC/remote access               |
+| Maintenance Service         | GUI for PC, Development Interface (Code & Deployment Access)      |  PC/remote access               |
 | Fiscal Authority| Communication protocol with the Telematic Recorder        | Telematic Recorder connected to the network|
 
 
