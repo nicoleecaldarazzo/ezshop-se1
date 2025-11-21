@@ -479,17 +479,61 @@ steps
 |     Variants     |V1: Manager adds extra notes or attachments (screenshots).|
 |    Exceptions    |E1: Mandatory fields missing → incident not created and user is warned.|
 
+### Use case 10, UC10 
+| Actors Involved | Store Manager, Employees, Maintenance Service, System |
+| :--------------: | :------------------------------------------------------------------: |
+| Precondition | The system is running; hardware devices (scanner, receipt printer, card terminal, RT) may be malfunctioning or disconnected. |
+| Post condition | A maintenance request is recorded and the system provides diagnostic information to the Maintenance Service. The issue is marked as resolved once fixed. |
+| Nominal Scenario | The employee or manager opens the "Maintenance" section; the system shows the status of connected hardware devices and software components; the user selects the device or component that is not working; the system records the issue and notifies the Maintenance Service; when the Maintenance Service resolves the issue, the system updates the status to “resolved”. |
+| Variants | V1: The system automatically detects a disconnected or malfunctioning device and prompts the user to report it. |
+| Exceptions | E1: The system cannot collect diagnostic data → it informs the user and logs a basic error record. |
+    
+
 ##### Scenario 10.1
 steps
-|     Actor's action                                          |  System action                                                     | FR needed |
-| :------------:                                              | :------------------------------:                                   |:---:      |
-|Employee opens “Support / Maintenance” page                                |Shows incident list and “New incident” button         |FR-MNT-1|
-|Employee clicks “New incident” and fills description, priority, component  |                                                      |        |     
-|Employee submits form                                                      |Validates fields, creates incident with status “open” |FR-MNT-2|
-|                                                                           |Notifies maintenance service (via email)              |FR-MNT-3|     
-|Manager/maintenance later marks incident as “resolved”                     |System updates status and logs resolution date        |FR-MNT-4|     
+| Actor's action | System action | FR needed |
+| :------------: | :------------------------------: |:---: |
+| Employee/Manager opens “Maintenance” section | Shows a list/dashboard with the real-time status (Connected/Disconnected/Malfunctioning) of all connected hardware devices (Scanner, Printer, Card Terminal, RT, etc.) and software components. | FR-MNT-1 |
+| Employee/Manager selects the malfunctioning device/component from the list | Opens a details view for the selected component, often showing basic diagnostic data. | |
+| Employee/Manager confirms the issue (e.g., clicks "Report Issue") | Records the incident with status "open"; automatically attaches diagnostic data collected from the selected component. | FR-MNT-2 |
+| | Notifies the Maintenance Service (via email/system notification) and includes diagnostic information. | FR-MNT-3 |
+| Maintenance Service resolves the issue (out of system) | | |
+| Maintenance Service (or Manager) later marks the incident as “resolved” in the system | System updates status to “resolved” and logs resolution date. | FR-MNT-4 |
 
 
+### Use case 11, UC11 – Fiscal Transmission (Z-Report)
+
+| Actors Involved  |                                                                      |
+| :--------------: | :------------------------------------------------------------------: |
+|   Precondition   | Daily sales exist; Fiscal Device (RT) is configured, connected and operational. |
+|  Post condition  | The daily fiscal report (Z-Report) is generated and its transmission result (success/failure) is stored in the system. |
+| Nominal Scenario | At the end of the day, the system collects all sales, prepares the fiscal data and sends it to the Fiscal Device (RT), which transmits the Z-Report to the Fiscal Authority. |
+|     Variants     | V1: Manual transmission triggered by the Store Manager. |
+|    Exceptions    | E1: RT not reachable → system logs failed attempt and notifies the manager. E2: Transmission rejected by Fiscal Authority → system records the error and marks the report as “not transmitted”. |
+
+##### Scenario 11.1 – Automatic daily transmission
+
+steps  
+| Actor's action                                                   | System action                                                                 | FR needed   |
+| :--------------------------------------------------------------: | :----------------------------------------------------------------------------:|:-----------:|
+| (Time reaches the configured end-of-day closing time)           | Schedules the daily fiscal transmission                                      | FR-FISC-1   |
+|                                                                  | Collects all sales of the day                                                | FR-FISC-2   |
+|                                                                  | Prepares the fiscal payload according to RT protocol (e.g., XML/JSON)        | FR-FISC-3   |
+|                                                                  | Sends the fiscal data to the Fiscal Device (RT)                              | FR-FISC-4   |
+|                                                                  | Receives confirmation from RT that the Z-Report has been transmitted         | FR-FISC-5   |
+|                                                                  | Stores the transmission result (success) and marks the day as “closed”       | FR-FISC-6   |
+
+##### Scenario 11.2 – Manual retry after failed transmission
+
+steps  
+| Actor's action                                                   | System action                                                                 | FR needed   |
+| :--------------------------------------------------------------: | :----------------------------------------------------------------------------:|:-----------:|
+| Store Manager opens the “Fiscal report status” section           | Shows the list of recent fiscal transmissions with their status (OK/Failed)  | FR-FISC-7   |
+| Store Manager selects a failed transmission and clicks “Retry”   | Reloads the stored fiscal payload for the selected day                        | FR-FISC-8   |
+|                                                                  | Sends again the fiscal data to the Fiscal Device (RT)                         | FR-FISC-4   |
+|                                                                  | Receives the new result (success or failure) from RT                          | FR-FISC-5   |
+|                                                                  | Updates the status of the transmission (e.g., “Success” or “Failed again”)    | FR-FISC-6   |
+|                                                                  | Logs the retry attempt with timestamp and result                              | FR-FISC-9   |
 
 
 
