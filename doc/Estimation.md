@@ -6,7 +6,6 @@ Version:
 
 # Estimation approach
 
-Consider the EZShop project as described in your requirements document, assume that you are going to develop the project INDEPENDENT of the deadlines of the course, and from scratch
 
 # Estimate by size
 
@@ -40,7 +39,7 @@ Estimated duration: **≈ 3 weeks** (team of 5 people, 8h/day, 5 days/week)
 # Estimate by activity decomposition + Gantt chart
 
 ###
-step 1: activities (WBS), step 2 Gantt chart
+
 
 | Activity name                          | Estimated effort (person hours) |
 |----------------------------------------|---------------------------------|
@@ -64,13 +63,13 @@ step 1: activities (WBS), step 2 Gantt chart
 ###
 
 ## Gantt chart
-Insert here Gantt chart
 
-Estimated duration: (calendar time)
+![](doc/images/gantt1.png)
 
+Estimated duration: **≈ 3 weeks** (team of 5 people, 8h/day, 5 days/week)
 # Summary
 
-Report here the results of the three estimation approaches. The estimates may differ. Discuss here the possible reasons for the difference
+
 
 
 | Estimation method                         | Estimated effort (ph) | Estimated duration (calendar time, relative) |
