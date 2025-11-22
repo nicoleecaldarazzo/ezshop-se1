@@ -14,12 +14,12 @@ Consider the EZShop project as described in your requirements document, assume t
 
 |                                                                                                         | Estimate |
 | ------------------------------------------------------------------------------------------------------- | -------- |
-| NC = Estimated number of classes to be developed                                                        |   45       |
+| NC = Estimated number of classes to be developed                                                        |   60       |
 | A = Estimated average size per class, in LOC                                                            |     100 LOC     |
-| S = Estimated size of project, in LOC (= NC \* A)                                                       |     4500 LOC     |
-| E = Estimated effort, in person hours (here use productivity 10 LOC per person hour)                    |   450 Person hour       |
-| C = Estimated cost, in euro (here use 1 person hour cost = 30 euro)                                     |    13500€       |
-| Estimated calendar time, in calendar weeks (Assume team of 5 people, 8 hours per day, 5 days per week ) |    2.25 weeks (~11 working days)      |
+| S = Estimated size of project, in LOC (= NC \* A)                                                       |     6000 LOC     |
+| E = Estimated effort, in person hours (here use productivity 10 LOC per person hour)                    |   600 Person hour       |
+| C = Estimated cost, in euro (here use 1 person hour cost = 30 euro)                                     |    18000€       |
+| Estimated calendar time, in calendar weeks (Assume team of 5 people, 8 hours per day, 5 days per week ) |   3 weeks     |
 
 # Estimate by product decomposition
 
@@ -28,13 +28,13 @@ Consider the EZShop project as described in your requirements document, assume t
 | component name                      | Estimated effort (person hours) |
 | ----------------------------------- | ------------------------------- |
 | Requirements document               | 70 ph                           |
-| System & detailed design document   | 90 ph                           |
-| Source code (backend + UI + DB)     | 200 ph                          |
-| Test cases & test reports           | 70 ph                           |
-| User & operations documentation     | 20 ph                           |
-| **Total**                           | **450 ph**                      |
+| System & detailed design document   | 100 ph                           |
+| Source code (backend + UI + DB)     | 310 ph                          |
+| Test cases & test reports           | 90 ph                           |
+| User & operations documentation     | 30 ph                           |
+| **Total**                           | **600 ph**                      |
 
-Estimated duration: **≈ 2.25 weeks** (team of 5 people, 8h/day, 5 days/week)
+Estimated duration: **≈ 3 weeks** (team of 5 people, 8h/day, 5 days/week)
 
 
 # Estimate by activity decomposition + Gantt chart
@@ -46,17 +46,17 @@ step 1: activities (WBS), step 2 Gantt chart
 |----------------------------------------|---------------------------------|
 | Requirements elicitation & analysis    | 40 ph                           |
 | Requirements document writing          | 30 ph                           |
-| System architecture definition         | 30 ph                           |
-| Detailed design (class & sequence)     | 60 ph                           |
+| System architecture definition         | 35 ph                           |
+| Detailed design (class & sequence)     | 65 ph                           |
 | Database schema & repository design    | 20 ph                           |
-| Implementation of domain classes       | 60 ph                           |
-| Implementation of services/controllers | 80 ph                           |
-| Integration with external services     | 30 ph                           |
-| UI development (POS + manager UI)      | 30 ph                           |
-| Testing (test cases + execution)       | 60 ph                           |
-| Bug fixing & refactoring               | 40 ph                           |
+| Implementation of domain classes       | 50 ph                           |
+| Implementation of services/controllers | 90 ph                           |
+| Integration with external services     | 70 ph                           |
+| UI development (POS + manager UI)      | 80 ph                           |
+| Testing (test cases + execution)       | 70 ph                           |
+| Bug fixing & refactoring               | 30 ph                           |
 | Deployment preparation & documentation | 20 ph                           |
-| **TOTAL**                              | **450 ph**                      |
+| **TOTAL**                              | **600 ph**                      |
 
 
 
@@ -75,7 +75,7 @@ Report here the results of the three estimation approaches. The estimates may di
 
 | Estimation method                         | Estimated effort (ph) | Estimated duration (calendar time, relative) |
 |-------------------------------------------|------------------------|-------------------------------------|
-| Estimate by size                          | 450 ph                 | 2.25 weeks                          |
-| Estimate by product decomposition         | 450 ph                 | 2.25 weeks                          |
-| Estimate by activity decomposition (Gantt)| 450 ph                 | 2.25 weeks                          |
+| Estimate by size                          | 600 ph                 | 3 weeks                          |
+| Estimate by product decomposition         | 600 ph                 | 3 weeks                          |
+| Estimate by activity decomposition (Gantt)| 600 ph                 | 3 weeks                          |
 
