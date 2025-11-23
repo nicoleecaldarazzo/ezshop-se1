@@ -2,7 +2,7 @@
 
 # Requirements Document - EZShop
 
-Date: 24/10/2025
+Date: 23/11/2025
 
 Version: 1.0.0
 
