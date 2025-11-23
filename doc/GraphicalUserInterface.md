@@ -36,5 +36,28 @@ Update_Orders
 Update_Orders_1
 ![](doc/images/Update_Orders-1.png)
 
+Add_Employee
+![](doc/images/Add_Employee.png)
+
+Device_Status
+![](doc/images/Device_Status.png)
+
+Employees
+![](doc/images/Employees.png)
+
+Fiscal_report
+![](doc/images/Fiscal_report.png)
+
+Login
+![](doc/images/Login.png)
+
+Maintenance
+![](doc/images/Maintenance.png)
+
+Manage_account
+![](doc/images/Manage_account.png)
+
+Manager_dashboard
+![](doc/images/Manager_dashboard.png)
 
 
