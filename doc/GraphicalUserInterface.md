@@ -65,6 +65,9 @@ Exchange Flow
 POS Sale
 ![](doc/images/POS_sale.png)
 
+Checkout Panel
+![](doc/images/Checkout_Panel.png)
+
 Card Payment Processing Approved
 ![](doc/images/Card_Payment__Processing___Approved_.png)
 
@@ -77,9 +80,6 @@ Cash Payment View
 POS Loyalty Panel
 ![](doc/images/POS_Loyalty_Panel.png)
 
-Checkout Panel
-![](doc/images/Checkout_Panel.png)
-
 Fiscal Report
 ![](doc/images/Fiscal_Report.png)
 
@@ -90,7 +90,7 @@ Accounting Analytics
 ![](doc/images/Accounting_analytics.png)
 
 Maintenance
-![](doc/images/Maintenence.png)
+![](doc/images/Maintanence.png)
 
 
 
