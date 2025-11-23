@@ -5,7 +5,7 @@ Date:
 
 Version:
 
-![](doc/images/accounting.png)
+![](doc/images/Catalogue.png)
 
 
 
