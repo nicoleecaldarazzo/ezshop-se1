@@ -60,4 +60,37 @@ Manage_account
 Manager_dashboard
 ![](doc/images/Manager_dashboard.png)
 
+Accounting_analytics
+![](doc/images/Accounting_analytics.png)
+
+Card_Payment_Processing_Approved
+![](doc/images/Card_Payment_Processing_Approved.png)
+
+Card_Payment_Processing_Refused
+![](doc/images/Card_Payment_Processing_Refused.png)
+
+Cash_Payment_View
+![](doc/images/Cash_Payment_View.png)
+
+Create_Accounting_Report
+![](doc/images/Create_Accounting_Report.png)
+
+EXCHANGE_FLOW
+![](doc/images/EXCHANGE_FLOW.png)
+
+POS_Devices_Status_small_panel_
+![](doc/images/POS_Devices_Status_small_panel_.png)
+
+POS_Loyalty_Panel
+![](doc/images/POS_Loyalty_Panel.png)
+
+Returns_Page
+![](doc/images/Return_Page.png)
+
+
+Checkout_Panel
+![](doc/images/Checkout_Panel.png)
+
+POS_sale
+![](doc/images/POS_sale.png)
 
