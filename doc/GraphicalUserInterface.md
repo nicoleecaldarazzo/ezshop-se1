@@ -54,10 +54,10 @@ Device Status
 ![](doc/images/Device_Status.png)
 
 POS Devices Status (small panel)
-![](doc/images/POS_Devices_Status_small_panel_.png)
+![](doc/images/POS_Devices_Status__small_panel_.png)
 
 Returns Page
-![](doc/images/Return_Page.png)
+![](doc/images/Returns_Page.png)
 
 Exchange Flow
 ![](doc/images/EXCHANGE_FLOW.png)
@@ -66,10 +66,10 @@ POS Sale
 ![](doc/images/POS_sale.png)
 
 Card Payment Processing Approved
-![](doc/images/Card_Payment_Processing_Approved.png)
+![](doc/images/Card_Payment__Processing___Approved_.png)
 
 Card Payment Processing Refused
-![](doc/images/Card_Payment_Processing_Refused.png)
+![](doc/images/Card_Payment__Processing___Refused_.png)
 
 Cash Payment View
 ![](doc/images/Cash_Payment_View.png)
@@ -81,7 +81,7 @@ Checkout Panel
 ![](doc/images/Checkout_Panel.png)
 
 Fiscal Report
-![](doc/images/Fiscal_report.png)
+![](doc/images/Fiscal_Report.png)
 
 Create Accounting Report
 ![](doc/images/Create_Accounting_Report.png)
@@ -90,7 +90,7 @@ Accounting Analytics
 ![](doc/images/Accounting_analytics.png)
 
 Maintenance
-![](doc/images/Maintenance.png)
+![](doc/images/Maintenence.png)
 
 
 
