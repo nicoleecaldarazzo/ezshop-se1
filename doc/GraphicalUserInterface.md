@@ -38,16 +38,16 @@ Discounts
 Update Discount
 ![](doc/images/Update_Discount.png)
 
-Supplier Orders
+Supplier Orders (Low Stock)
 ![](doc/images/Supplier_Orders.png)
 
-Supplier Orders 1
-![](doc/images/Supplier_Orders-1.png)
-
-Update Orders
+Update Orders (Low Stock)
 ![](doc/images/Update_Orders.png)
 
-Update Orders 1
+Supplier Orders (Past Orders)
+![](doc/images/Supplier_Orders-1.png)
+
+Update Orders (Past Orders)
 ![](doc/images/Update_Orders-1.png)
 
 Device Status
