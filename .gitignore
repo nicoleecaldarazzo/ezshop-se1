@@ -7,4 +7,9 @@ app/data/database.sqlite
 .codelens
 */.vscode/
 .coverage
+.v/
+.venv/.v/
 .venv/
+__pycache__/
+*.pyc
+.env
