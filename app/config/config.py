@@ -23,13 +23,25 @@ ALGORITHM = "HS256"
 APP_V1_BASE_URL = "/api/v1"
 URL_AUTH = "/auth"
 URL_USERS = "/users"
+URL_PRODUCTS = "/products"
+URL_ORDERS = "/orders"
+URL_SALES = "/sales"
+URL_CUSTOMERS = "/customers"
+URL_RETURNS = "/returns"
+URL_BALANCE = "/balance"
 
+# Complete map of routes for all member of the team
 ROUTES = {
     "V1_AUTH": APP_V1_BASE_URL + URL_AUTH,
     "V1_USERS": APP_V1_BASE_URL + URL_USERS,
-    
+    "V1_PRODUCTS": APP_V1_BASE_URL + URL_PRODUCTS,  # For Member 2
+    "V1_ORDERS": APP_V1_BASE_URL + URL_ORDERS,      # For Member 2
+    "V1_SALES": APP_V1_BASE_URL + URL_SALES,        # For Member 3
+    "V1_CUSTOMERS": APP_V1_BASE_URL + URL_CUSTOMERS,# For Member 4
+    "V1_RETURNS": APP_V1_BASE_URL + URL_RETURNS,    # For Member 5
+    "V1_BALANCE": APP_V1_BASE_URL + URL_BALANCE,    # For Member 5
     "V1_GENERAL": APP_V1_BASE_URL,
 }
 
-# App configuration
-APP_PORT = int(os.getenv("PORT", 5000))
+# App configuration (Aligned with the Swagger that uses port = 8000)
+APP_PORT = int(os.getenv("PORT", 8000))
