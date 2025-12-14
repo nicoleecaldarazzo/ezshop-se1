@@ -53,7 +53,6 @@ class ReturnRepository:
 
     async def remove_item(self, return_id: int, barcode: str, quantity: int) -> bool:
         async with await self._get_session() as session:
-            # 1. Find the line item
             res = await session.execute(select(ReturnLineDAO).where(
                 ReturnLineDAO.return_id == return_id,
                 ReturnLineDAO.product_barcode == barcode
@@ -63,12 +62,9 @@ class ReturnRepository:
             if not line:
                 return False
 
-            # 2. Logic: Decrease quantity or Delete line
             if line.quantity > quantity:
-                # Case A: Remove partial amount (e.g., have 5, remove 3 -> left 2)
                 line.quantity -= quantity
             else:
-                # Case B: Remove all (e.g., have 5, remove 5) OR user asks to remove more than we have
                 await session.delete(line)
             
             await session.commit()
