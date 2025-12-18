@@ -11,6 +11,7 @@ from app.routes import user_route, auth_route, customer_route, accounting_route,
 from contextlib import asynccontextmanager
 from app.database.database import engine, Base
 from logging import getLogger
+from app.controllers.sale_controller import router as sale_router
 
 logger = getLogger(__name__)
 
@@ -37,6 +38,7 @@ app.include_router(user_route.router)
 app.include_router(customer_route.router)
 app.include_router(accounting_route.router)
 app.include_router(return_route.router)
+app.include_router(sale_router)
 
 app.add_exception_handler(AppError, error_handler)
 app.add_exception_handler(Exception, error_handler)
