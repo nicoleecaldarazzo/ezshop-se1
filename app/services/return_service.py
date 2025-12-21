@@ -4,8 +4,8 @@ from app.repositories.system_repository import SystemRepository
 
 # ---------------------------------------------------------------------
 # TODO: Uncomment these imports when you create these files
-# from app.repositories.product_repository import ProductRepository
-# from app.repositories.sale_repository import SaleRepository
+from app.repositories.product_repository import ProductRepository
+from app.repositories.sale_repository import SaleRepository
 # ---------------------------------------------------------------------
 
 from app.models.DTO.return_dto import ReturnDTO, ReturnLineDTO
@@ -20,8 +20,8 @@ class ReturnService:
         
         # -----------------------------------------------------------------
         # TODO: Uncomment these when the classes exist
-        # self.product_repo = ProductRepository() 
-        # self.sale_repo = SaleRepository()       
+        self.product_repo = ProductRepository() 
+        self.sale_repo = SaleRepository()       
         # -----------------------------------------------------------------
 
     def _to_dto(self, dao) -> ReturnDTO:
@@ -36,9 +36,9 @@ class ReturnService:
     async def create_return(self, sale_id: int) -> ReturnDTO:
         # -------------------------------------------------------------
         # TODO: Uncomment this validation when SaleRepository is ready
-        # sale = await self.sale_repo.get_sale(sale_id)
-        # if not sale or getattr(sale, 'status', None) != "PAID":
-        #     raise ConflictError("Return allowed only on paid sales")
+        sale = await self.sale_repo.get_sale(sale_id)
+        if not sale or getattr(sale, 'status', None) != "PAID":
+            raise ConflictError("Return allowed only on paid sales")
         # -------------------------------------------------------------
         
         dao = await self.repo.create_return(sale_id)
@@ -97,8 +97,8 @@ class ReturnService:
 
         # -----------------------------------------------------------------
         # TODO: Uncomment to restore inventory when ProductRepo is ready
-        # for line in dao.lines:
-        #     await self.product_repo.update_quantity(line.product_barcode, line.quantity)
+        for line in dao.lines:
+            await self.product_repo.update_quantity(line.product_barcode, line.quantity)
         # -----------------------------------------------------------------
 
         await self.repo.close_return(return_id)

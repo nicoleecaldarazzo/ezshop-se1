@@ -8,6 +8,9 @@ from app.database.database import reset_db, init_db as init_database
 from app.repositories.customer_repository import CustomerRepository
 from app.models.DTO.customer_dto import CustomerCreateDTO, LoyaltyCardCreateDTO
 
+from app.repositories.product_repository import ProductRepository
+from app.models.DTO.product_dto import ProductCreateDTO
+
 import asyncio
 
 async def init_db():
@@ -15,6 +18,7 @@ async def init_db():
 
     user_repo = UserRepository()
     customer_repo = CustomerRepository()
+    product_repo = ProductRepository()
 
     # Check if admin already exists
     try: 
@@ -39,6 +43,20 @@ async def init_db():
         print("✅ Customer created successfully")
     else:
         print("ℹ️ Customer already exists")
+
+    # Check if Product already exists
+    existing_product = await product_repo.get_product_by_barcode("456789012345")
+    if existing_product is None:
+        product_dto = ProductCreateDTO(description="Mascara 30mL", 
+            barcode="456789012345",
+            price_per_unit=1.80,
+            note="Black Mascara",
+            quantity=60,
+            position="3-A-3")
+        await product_repo.create_product(product_dto)
+        print("✅ Product created successfully")
+    else:
+        print("ℹ️ Product already exists")
 
 async def reset():
     await reset_db()
