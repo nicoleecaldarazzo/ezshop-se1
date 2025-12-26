@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 from main import app
 from init_db import reset, init_db
 from app.database.database import engine
+from app.controllers.auth_controller import pwd_context
 
 @pytest.fixture(scope="session")
 def event_loop():
