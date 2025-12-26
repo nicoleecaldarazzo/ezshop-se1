@@ -1,9 +1,13 @@
 # tests/test_user_api.py
 import asyncio
 import pytest
+from sqlalchemy import text
 from fastapi.testclient import TestClient
 from main import app
 from init_db import reset, init_db
+from app.database.database import engine
+from app.controllers.auth_controller import pwd_context
+
 
 @pytest.fixture(scope="session")
 def event_loop():
@@ -49,7 +53,7 @@ def auth_tokens(event_loop, client):
                 query = text("UPDATE users SET password = :pwd WHERE username = :usr")
                 await conn.execute(query, {"pwd": hashed_pw, "usr": creds["username"]})
 
-    loop.run_until_complete(fix_passwords())
+    event_loop.run_until_complete(fix_passwords())
 
     tokens = {}
     for role, creds in users.items():
