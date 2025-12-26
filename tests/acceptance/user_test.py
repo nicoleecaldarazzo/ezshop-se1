@@ -17,6 +17,13 @@ def auth_tokens():
     """Authenticate users once and return their JWT tokens."""
 
     import asyncio
+    
+    from sqlalchemy import text
+    from app.controllers.auth_controller import pwd_context
+    
+    from app.database.database import engine 
+    from init_db import reset, init_db 
+
     loop = asyncio.new_event_loop()
     loop.run_until_complete(reset())
     loop.run_until_complete(init_db())
@@ -27,14 +34,26 @@ def auth_tokens():
         "cashier": {"username": "Cashier", "password": "Cashier"},
     }
 
+    async def fix_passwords():
+        
+        async with engine.begin() as conn:
+            for role, creds in users.items():
+                hashed_pw = pwd_context.hash(creds["password"])
+                
+                
+                query = text("UPDATE users SET password = :pwd WHERE username = :usr")
+                await conn.execute(query, {"pwd": hashed_pw, "usr": creds["username"]})
+
+    loop.run_until_complete(fix_passwords())
+
     tokens = {}
     for role, creds in users.items():
         response = client.post(BASE_URL + "/auth", json=creds)
-        assert response.status_code == 200, f"Login failed for {role}"
+        
+        assert response.status_code == 200, f"Login failed for {role}. Response: {response.text}"
         tokens[role] = f"Bearer {response.json()['token']}"
 
     return tokens
-
 
 def auth_header(tokens, role: str):
     return {"Authorization": tokens[role]}
