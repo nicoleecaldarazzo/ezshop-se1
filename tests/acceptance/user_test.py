@@ -49,7 +49,7 @@ def auth_tokens(event_loop, client):
                 query = text("UPDATE users SET password = :pwd WHERE username = :usr")
                 await conn.execute(query, {"pwd": hashed_pw, "usr": creds["username"]})
 
-    loop.run_until_complete(fix_passwords())
+    event_loop.run_until_complete(fix_passwords())
 
     tokens = {}
     for role, creds in users.items():
