@@ -12,6 +12,8 @@ from app.models.user_type import UserType
 from app.models.errors.notfound_error import NotFoundError
 from app.models.errors.bad_request import BadRequestError
 from app.models.errors.conflict_error import ConflictError
+from app.models.errors.customer_card_error import CustomerCardError
+
 from app.config.config import ROUTES
 
 app = FastAPI()
@@ -30,6 +32,10 @@ async def bad_request_handler(request: Request, exc: BadRequestError):
 @app.exception_handler(ConflictError)
 async def conflict_handler(request: Request, exc: ConflictError):
     return JSONResponse(status_code=409, content={"detail": str(exc)})
+
+@app.exception_handler(CustomerCardError)
+async def customer_card_handler(request: Request, exc: CustomerCardError):
+    return JSONResponse(status_code=400, content={"detail": str(exc)})
 
 
 async def mock_auth_admin():
@@ -335,7 +341,7 @@ def test_patch_attach_card_409_already_attached():
 
 # PATCH /customers/cards/{card_id}?points=
 
-def test_patch_cards_add_points_success(client):
+def test_patch_cards_add_points_success():
     fake_card = LoyaltyCardDTO(card_id="0000000123", points=150)
 
     with patch("app.routes.customer_route.controller") as mock_controller:
@@ -353,7 +359,7 @@ def test_patch_cards_add_points_success(client):
         assert data["points"] == 150
 
 
-def test_patch_cards_subtract_points_success(client):
+def test_patch_cards_subtract_points_success():
     fake_card = LoyaltyCardDTO(card_id="0000000123", points=80)
 
     with patch("app.routes.customer_route.controller") as mock_controller:
@@ -369,7 +375,7 @@ def test_patch_cards_subtract_points_success(client):
         assert response.json()["points"] == 80
 
 
-def test_patch_cards_insufficient_points(client):
+def test_patch_cards_insufficient_points():
     with patch("app.routes.customer_route.controller") as mock_controller:
         mock_controller.update_card_points = AsyncMock(
             side_effect=CustomerCardError("Insufficient points on the card")
@@ -385,7 +391,7 @@ def test_patch_cards_insufficient_points(client):
         assert "Insufficient" in response.json()["detail"]
 
 
-def test_patch_cards_card_id_404_not_found(client):
+def test_patch_cards_card_id_404_not_found():
     with patch("app.routes.customer_route.controller") as mock_controller:
         mock_controller.update_card_points = AsyncMock(
             side_effect=NotFoundError("Customer Card not found")
