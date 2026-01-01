@@ -15,6 +15,7 @@ from app.models.DTO.customer_dto import (
 from app.models.errors.notfound_error import NotFoundError
 from app.models.errors.bad_request import BadRequestError
 from app.models.errors.conflict_error import ConflictError
+from app.models.errors.customer_card_error import CustomerCardError
 
 from app.models.DAO.customer_dao import CustomerDAO
 from app.models.DAO.loyaltyCard_dao import LoyaltyCardDAO
@@ -25,10 +26,6 @@ class CustomerService:
     def __init__(self):
         self.repo = CustomerRepository()
 
-    # --------------------
-    # Validators
-    # --------------------
-
     def _validate_id(self, id: int, entity_name: str = "ID") -> None:
         if id <= 0:
             raise BadRequestError(f"{entity_name} must be greater than 0")
@@ -36,10 +33,6 @@ class CustomerService:
     def _validate_points(self, points: int) -> None:
         if points < 0:
             raise BadRequestError("Points cannot be negative")
-
-    # --------------------
-    # Internal helpers
-    # --------------------
 
     async def _get_customer(self, customer_id: int) -> CustomerDAO:
         self._validate_id(customer_id, "Customer ID")
@@ -92,41 +85,33 @@ class CustomerService:
             card=card_dto
         )
 
-    # --------------------
     # Customers (CRUD)
-    # --------------------
 
     async def create_customer(self, customer_dto: CustomerCreateDTO) -> CustomerResponseDTO:
-        # Swagger requires id > 0
         self._validate_id(customer_dto.id, "Customer ID")
 
-        # Validate nested card (if provided)
         if customer_dto.card:
             self._validate_points(customer_dto.card.points)
             existing_card = await self._get_card_by_card_id(customer_dto.card.card_id)
             if existing_card:
                 raise ConflictError(f"Card with id '{customer_dto.card.card_id}' already exists")
 
-        # Create customer (repository should enforce id uniqueness too)
         created_customer = await self.repo.create_customer(customer_dto)
         if not created_customer:
             raise Exception("Failed to create customer")
 
-        # If nested card provided: create card (unattached) then attach it
         if customer_dto.card:
             card_create = LoyaltyCardCreateDTO(
                 card_id=customer_dto.card.card_id,
                 points=customer_dto.card.points
             )
 
-            created_card = await self.repo.create_card(card_create)  # ✅ no customer_id
+            created_card = await self.repo.create_card(card_create)  
             if not created_card:
                 raise Exception("Failed to create card")
 
-            # attach by card_id
             await self.repo.attach_card(created_customer.id, card_create.card_id)
 
-        # Return the fully loaded customer with card
         customer_full = await self._get_customer_with_card(created_customer.id)
         return self._to_customer_response(customer_full)
 
@@ -162,9 +147,7 @@ class CustomerService:
             raise NotFoundError(f"Customer with id '{customer_id}' not found")
         return ok
 
-    # --------------------
-    # Loyalty cards (Swagger endpoints)
-    # --------------------
+    # Loyalty cards Endpoints
 
     # POST /customers/cards
     async def create_card(self, card_dto: LoyaltyCardCreateDTO) -> LoyaltyCardDTO:
@@ -174,7 +157,7 @@ class CustomerService:
         if existing:
             raise ConflictError(f"Card with id '{card_dto.card_id}' already exists")
 
-        created = await self.repo.create_card(card_dto)  # ✅ no customer_id
+        created = await self.repo.create_card(card_dto)  
         if not created:
             raise Exception("Failed to create card")
 
@@ -203,14 +186,21 @@ class CustomerService:
         return self._to_customer_response(customer_full)
 
     # PATCH /customers/cards/{card_id}
-    async def update_card_points(self, card_id: str, points: int) -> LoyaltyCardDTO | None:
-        updated = await self.repo.update_card_points(card_id, points)
-        if not updated:
-            return None
+    async def update_card_points(self, card_id: str, points: int) -> LoyaltyCardDTO:
+        if card_id is None or card_id == "":
+            raise BadRequestError("Card ID must be an integer string")
+
+        card = await self._get_card_by_card_id(card_id)
+        if not card:
+            raise NotFoundError(f"Customer Card not found")
+
+        new_points = card.points + points
+        if new_points < 0:
+            raise CustomerCardError("Insufficient points on the card")
+        updated = await self.repo.update_card_points(card_id, new_points)
         return LoyaltyCardDTO(card_id=updated.card_id, points=updated.points)
 
 
-    # optional helper (not required by your Swagger list)
     async def get_card(self, card_id: str) -> LoyaltyCardDTO:
         if not card_id:
             raise BadRequestError("Card ID cannot be empty")
