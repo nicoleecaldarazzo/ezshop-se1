@@ -19,11 +19,9 @@ controller = OrderController()
 
 PositiveId = Path(..., gt=0)
 
-# Auth dependency
+
 auth_admin_manager = Depends(authenticate_user([UserType.Administrator, UserType.ShopManager]))
 
-
-# ---- Orders (CRUD-like operations) ----
 
 
 @router.post(
@@ -33,8 +31,7 @@ auth_admin_manager = Depends(authenticate_user([UserType.Administrator, UserType
     dependencies=[auth_admin_manager],
 )
 async def create_order(payload: OrderCreateDTO):
-    """Issue a new order. Requires Administrator or ShopManager role. 
-    The new order is in the ISSUED state."""
+
     return await controller.create_order(payload)
 
 
@@ -44,11 +41,7 @@ async def create_order(payload: OrderCreateDTO):
     dependencies=[auth_admin_manager],
 )
 async def list_orders():
-    """List all orders. Requires Administrator or ShopManager role."""
     return await controller.list_orders()
-
-
-# ---- Order operations ----
 
 
 @router.post(
@@ -58,8 +51,7 @@ async def list_orders():
     dependencies=[auth_admin_manager],
 )
 async def create_and_pay_order(payload: OrderPayForDTO):
-    """Create and pay an order for a product. Requires Administrator or ShopManager role.
-    The new order is in the PAID state. The balance is updated accordingly."""
+
     return await controller.create_and_pay_order(payload)
 
 
@@ -69,9 +61,7 @@ async def create_and_pay_order(payload: OrderPayForDTO):
     dependencies=[auth_admin_manager],
 )
 async def pay_order(order_id: int = PositiveId):
-    """Pay for an existing ISSUED order. Requires Administrator or ShopManager role.
-    The order state is now PAID. The balance is updated accordingly."""
-    payload = OrderPaymentDTO()  # DTO vuoto, payment_method sarà None
+    payload = OrderPaymentDTO()  
     return await controller.pay_order(order_id, payload)
 
 
@@ -81,6 +71,5 @@ async def pay_order(order_id: int = PositiveId):
     dependencies=[auth_admin_manager],
 )
 async def record_order_arrival(order_id: int = PositiveId):
-    """Record the arrival of an order. Requires Administrator or ShopManager role."""
-    payload = OrderArrivalDTO()  # DTO vuoto, notes sarà None
+    payload = OrderArrivalDTO()  
     return await controller.record_order_arrival(order_id, payload)

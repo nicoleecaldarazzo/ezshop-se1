@@ -14,7 +14,6 @@ class ProductController:
     def __init__(self):
         self.service = ProductService()
 
-    # ---- Products CRUD ----
 
     async def create_product(self, product_dto: ProductCreateDTO) -> ProductResponseDTO:
         return await self.service.create_product(product_dto)
@@ -33,7 +32,7 @@ class ProductController:
     async def delete_product(self, product_id: int) -> bool:
         return await self.service.delete_product(product_id)
 
-    # ---- Product operations (additional endpoints) ----
+
 
     async def get_product_by_barcode(self, barcode: str) -> ProductResponseDTO:
         return await self.service.get_product_by_barcode(barcode)

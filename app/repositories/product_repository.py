@@ -14,14 +14,11 @@ class ProductRepository:
     async def _get_session(self) -> AsyncSession:
         return self._session or AsyncSessionLocal()
 
-    # --------------------
-    # CRUD Operations
-    # --------------------
 
     async def create_product(self, product_dto: ProductCreateDTO) -> ProductDAO:
         """Create a new product type"""
         async with await self._get_session() as session:
-            # barcode conflict check
+
             res = await session.execute(
                 select(ProductDAO).where(ProductDAO.barcode == product_dto.barcode)
             )
@@ -43,18 +40,18 @@ class ProductRepository:
             return product
 
     async def list_products(self) -> list[ProductDAO]:
-        """List all product types"""
+
         async with await self._get_session() as session:
             res = await session.execute(select(ProductDAO))
             return list(res.scalars().all())
 
     async def get_product_by_id(self, id: int) -> Optional[ProductDAO]:
-        """Get product type by ID"""
+
         async with await self._get_session() as session:
             return await session.get(ProductDAO, id)
 
     async def get_product_by_barcode(self, barcode: str) -> Optional[ProductDAO]:
-        """Get product by barcode"""
+
         async with await self._get_session() as session:
             res = await session.execute(
                 select(ProductDAO).where(ProductDAO.barcode == barcode)
@@ -62,7 +59,7 @@ class ProductRepository:
             return res.scalar_one_or_none()
 
     async def search_products_by_description(self, description: str) -> list[ProductDAO]:
-        """Search product types by description (case-insensitive partial match)"""
+
         async with await self._get_session() as session:
             res = await session.execute(
                 select(ProductDAO).where(ProductDAO.description.ilike(f"%{description}%"))
@@ -70,13 +67,13 @@ class ProductRepository:
             return list(res.scalars().all())
 
     async def update_product(self, id: int, dto: ProductUpdateDTO) -> Optional[ProductDAO]:
-        """Update product type by ID"""
+
         async with await self._get_session() as session:
             product = await session.get(ProductDAO, id)
             if not product:
                 return None
 
-            # check barcode conflict if barcode is being changed
+
             if dto.barcode is not None and dto.barcode != product.barcode:
                 res = await session.execute(
                     select(ProductDAO).where(ProductDAO.barcode == dto.barcode)
@@ -84,7 +81,7 @@ class ProductRepository:
                 if res.scalar_one_or_none():
                     raise ConflictError("Barcode already exists")
 
-            # update fields if provided
+
             if dto.description is not None:
                 product.description = dto.description
             if dto.barcode is not None:
@@ -103,7 +100,7 @@ class ProductRepository:
             return product
 
     async def delete_product(self, id: int) -> bool:
-        """Delete product type by ID"""
+
         async with await self._get_session() as session:
             product = await session.get(ProductDAO, id)
             if not product:
@@ -112,20 +109,17 @@ class ProductRepository:
             await session.commit()
             return True
 
-    # --------------------
-    # Additional Operations
-    # --------------------
 
     async def update_product_position(
         self, id: int, dto: ProductPositionUpdateDTO
     ) -> Optional[ProductDAO]:
-        """Assign or clear shelf position"""
+
         async with await self._get_session() as session:
             product = await session.get(ProductDAO, id)
             if not product:
                 return None
 
-            # None means clear position
+
             product.position = dto.position
 
             await session.commit()
@@ -133,13 +127,13 @@ class ProductRepository:
             return product
 
     async def update_product_quantity(self, id: int, quantity_delta: int) -> Optional[ProductDAO]:
-        """Increase/decrease available quantity"""
+
         async with await self._get_session() as session:
             product = await session.get(ProductDAO, id)
             if not product:
                 return None
 
-            # increase or decrease quantity
+
             new_quantity = product.quantity + quantity_delta
             if new_quantity < 0:
                 raise ValueError("Quantity cannot be negative")
@@ -150,15 +144,10 @@ class ProductRepository:
             await session.refresh(product)
             return product
 
-    # --------------------
-    # Business Logic Validators
-    # --------------------
+
 
     async def has_active_sales(self, product_barcode: str) -> bool:
-        """
-        Check if product has any sales with status OPEN, PENDING, or PAID.
-        Uses product_barcode from SaleLineDAO.
-        """
+
         async with await self._get_session() as session:
             from app.models.DAO.sale_line_dao import SaleLineDAO
             from app.models.DAO.sale_dao import SaleDAO
@@ -175,10 +164,7 @@ class ProductRepository:
             return res.scalar_one_or_none() is not None
 
     async def has_active_orders(self, product_barcode: str) -> bool:
-        """
-        Check if product has any orders with status ISSUED, PAID, or COMPLETED.
-        Uses product_barcode from OrderDAO.
-        """
+
         async with await self._get_session() as session:
             from app.models.DAO.order_dao import OrderDAO
             from app.models.order_status import OrderStatus
@@ -192,10 +178,7 @@ class ProductRepository:
             return res.scalar_one_or_none() is not None
 
     async def has_active_returns(self, product_barcode: str) -> bool:
-        """
-        Check if product has any returns with status OPEN, CLOSED, or REIMBURSED.
-        Uses product_barcode from ReturnLineDAO.
-        """
+
         async with await self._get_session() as session:
             from app.models.DAO.return_dao import ReturnLineDAO
             from app.models.DAO.return_dao import ReturnDAO
