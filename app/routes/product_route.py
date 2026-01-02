@@ -19,14 +19,11 @@ controller = ProductController()
 PositiveId = Path(..., gt=0)
 BarcodePattern = Path(..., pattern=r"^\d{12,14}$")
 
-# Auth dependencies
 auth_admin_manager = Depends(authenticate_user([UserType.Administrator, UserType.ShopManager]))
 auth_all = Depends(
     authenticate_user([UserType.Administrator, UserType.ShopManager, UserType.Cashier])
 )
 
-
-# ---- Products CRUD (Base endpoints) ----
 
 
 @router.post(
@@ -36,7 +33,6 @@ auth_all = Depends(
     dependencies=[auth_admin_manager],
 )
 async def create_product(payload: ProductCreateDTO):
-    """Create a new product type. Requires Administrator or ShopManager role."""
     return await controller.create_product(payload)
 
 
@@ -46,11 +42,7 @@ async def create_product(payload: ProductCreateDTO):
     dependencies=[auth_all],
 )
 async def list_products():
-    """List all product types. Requires Administrator, ShopManager, or Cashier role."""
     return await controller.list_products()
-
-
-# ---- Product operations (Specific paths - MUST come BEFORE /{id}) ----
 
 
 @router.get(
@@ -59,7 +51,6 @@ async def list_products():
     dependencies=[auth_admin_manager],
 )
 async def search_products(description: str = Query(..., min_length=1)):
-    """Search product types by description. Requires Administrator or ShopManager role."""
     from app.models.DTO.product_dto import ProductSearchDTO
     
     search_dto = ProductSearchDTO(description=description)
@@ -72,11 +63,9 @@ async def search_products(description: str = Query(..., min_length=1)):
     dependencies=[auth_admin_manager],
 )
 async def get_product_by_barcode(barcode: str = BarcodePattern):
-    """Get product by barcode. Requires Administrator or ShopManager role."""
     return await controller.get_product_by_barcode(barcode)
 
 
-# ---- Products CRUD (Dynamic path parameters - MUST come AFTER specific paths) ----
 
 
 @router.get(
@@ -85,7 +74,6 @@ async def get_product_by_barcode(barcode: str = BarcodePattern):
     dependencies=[auth_all],
 )
 async def get_product(id: int = PositiveId):
-    """Get product type by ID. Requires Administrator, ShopManager, or Cashier role."""
     return await controller.get_product(id)
 
 
@@ -95,7 +83,6 @@ async def get_product(id: int = PositiveId):
     dependencies=[auth_admin_manager],
 )
 async def update_product(id: int = PositiveId, payload: ProductUpdateDTO = ...):
-    """Update product type by ID. Requires Administrator or ShopManager role."""
     return await controller.update_product(id, payload)
 
 
@@ -105,7 +92,6 @@ async def update_product(id: int = PositiveId, payload: ProductUpdateDTO = ...):
     dependencies=[auth_admin_manager],
 )
 async def delete_product(id: int = PositiveId):
-    """Delete product type by ID. Requires Administrator or ShopManager role."""
     await controller.delete_product(id)
     return
 
@@ -116,8 +102,7 @@ async def delete_product(id: int = PositiveId):
     dependencies=[auth_admin_manager],
 )
 async def update_product_position(id: int = PositiveId, position: str = Query(...)):
-    """Assign or clear shelf position. Requires Administrator or ShopManager role."""
-    payload = ProductPositionUpdateDTO(position=position)  # Crea il DTO
+    payload = ProductPositionUpdateDTO(position=position)  
     return await controller.update_product_position(id, payload)
 
 
@@ -127,5 +112,4 @@ async def update_product_position(id: int = PositiveId, position: str = Query(..
     dependencies=[auth_admin_manager],
 )
 async def update_product_quantity(id: int = PositiveId, quantity: int = Query(...)):
-    """Increase/decrease available quantity. Requires Administrator or ShopManager role."""
     return await controller.update_product_quantity(id, quantity)

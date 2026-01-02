@@ -26,7 +26,7 @@ class CustomerController:
     async def delete_customer(self, customer_id: int) -> bool:
         return await self.service.delete_customer(customer_id)
 
-    # ---- loyalty endpoints (Swagger) ----
+    # ---- loyalty endpoints ----
 
     # POST /customers/cards
     async def create_card(self, card_dto: LoyaltyCardCreateDTO) -> LoyaltyCardDTO:
@@ -40,8 +40,5 @@ class CustomerController:
     async def update_card_points(self, card_id: str, points: int) -> LoyaltyCardDTO | None:
         return await self.service.update_card_points(card_id, points)
 
-
-
-    # (Optional helper, not in your Swagger list but you had it)
     async def get_card(self, card_id: str) -> LoyaltyCardDTO:
         return await self.service.get_card(card_id)

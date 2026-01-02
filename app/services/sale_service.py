@@ -3,6 +3,9 @@ from app.models.sale_status import SaleStatus
 from app.models.DTO.boolean_response_dto import BooleanResponseDTO
 from app.models.errors.notfound_error import NotFoundError
 from app.models.errors.conflict_error import ConflictError
+from app.models.errors.bad_request import BadRequestError
+from app.models.errors.invalid_state_error import InvalidStateError
+from app.repositories.system_repository import SystemRepository
 
 class SaleService:
     def __init__(self):
@@ -39,9 +42,68 @@ class SaleService:
         if not ok:
             raise NotFoundError("Sale not found")
         return BooleanResponseDTO(success=True)
+    
+    async def pay_sale(self, sale_id: int, cash_amount: float):
+        sale = await self.repo.get_sale(sale_id)
+        if not sale:
+            raise NotFoundError("Sale not found")
+
+        if sale.status != SaleStatus.PENDING:
+            raise InvalidStateError("Sale must be PENDING to be paid")
+
+       
+        subtotal = 0.0
+        for line in (sale.lines or []):
+            line_total = (line.quantity * line.price_per_unit) * (1.0 - (line.discount_rate or 0.0))
+            subtotal += line_total
+
+        total = subtotal * (1.0 - (sale.discount_rate or 0.0))
+
+        if total < 0:
+            total = 0.0
+
+        if cash_amount < total:
+            raise BadRequestError("Cash amount is not enough to pay the sale")
+
+        change = float(cash_amount - total)
+
+       
+        await self.repo.set_status(sale_id, SaleStatus.PAID)
+
+       
+        sys_repo = SystemRepository()
+        await sys_repo.update_balance(total)
+
+        return {"change": change}
+
 
     async def close_sale(self, sale_id: int):
         ok = await self.repo.set_status(sale_id, SaleStatus.PENDING)
         if not ok:
             raise NotFoundError("Sale not found")
         return BooleanResponseDTO(success=True)
+    
+    async def compute_points(self, sale_id: int):
+        sale = await self.repo.get_sale(sale_id)
+        if not sale:
+            raise NotFoundError("Sale not found")
+
+        if sale.status != SaleStatus.PAID:
+            raise InvalidStateError("Sale must be paid before computing points")
+
+    
+        subtotal = 0.0
+        for line in (sale.lines or []):
+            line_total = (line.quantity * line.price_per_unit) * (1.0 - (line.discount_rate or 0.0))
+            subtotal += line_total
+
+        total = subtotal * (1.0 - (sale.discount_rate or 0.0))
+        if total < 0:
+            total = 0.0
+
+        
+        points = int(total // 10)
+
+        return {"points": points}
+
+    
