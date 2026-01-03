@@ -1,4 +1,4 @@
-"""import pytest
+import pytest
 from unittest.mock import AsyncMock, MagicMock
 from types import SimpleNamespace
 
@@ -622,4 +622,4 @@ async def test_update_product_quantity_negative_result_raises(service):
     with pytest.raises(BadRequestError):
         await service.update_product_quantity(1, -200)
 
-    service.repo.update_product_quantity.assert_awaited_once_with(1, -200)"""
+    service.repo.update_product_quantity.assert_awaited_once_with(1, -200)
