@@ -1,4 +1,4 @@
-"""import pytest
+import pytest
 from unittest.mock import AsyncMock
 
 from app.controllers.product_controller import ProductController
@@ -102,4 +102,4 @@ async def test_update_product_quantity_calls_service(controller):
     result = await controller.update_product_quantity(1, 10)
 
     controller.service.update_product_quantity.assert_awaited_once_with(1, 10)
-    assert result == "UPDATED_QUANTITY"""
+    assert result == "UPDATED_QUANTITY"
