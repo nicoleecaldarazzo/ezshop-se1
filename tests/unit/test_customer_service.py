@@ -39,7 +39,7 @@ def service():
 
 @pytest.mark.asyncio
 async def test_create_customer_ok_without_card(service):
-    # DTO-like object: only attributes we need
+    # DTO-like object
     dto = SimpleNamespace(id=1, name="Alice", card=None)
 
     created_customer = SimpleNamespace(id=1, name="Alice", loyalty_card=None)

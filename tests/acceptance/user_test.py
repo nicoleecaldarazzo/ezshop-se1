@@ -24,12 +24,7 @@ def client():
 
 BASE_URL = "http://127.0.0.1:8000/api/v1"
 
-
-# ---------------------------
-# GLOBAL FIXTURE FOR TOKENS
-# ---------------------------
-
-
+#  global fixture for tokens
 
 @pytest.fixture(scope="session", autouse=True)
 def auth_tokens(event_loop, client):
@@ -68,9 +63,7 @@ def auth_header(tokens, role: str):
     return {"Authorization": tokens[role]}
 
 
-# ---------------------------
-# SAMPLE PAYLOADS
-# ---------------------------
+# sample payloads
 
 USER_SAMPLE = {
     "username": "new_user",
@@ -85,9 +78,7 @@ USER_ADMIN = {
 }
 
 
-# ---------------------------
-# CREATE USER TESTS
-# ---------------------------
+# create user tests
 
 def test_create_user_success_as_admin(client, auth_tokens):
     resp = client.post(BASE_URL + "/users", json=USER_SAMPLE, headers=auth_header(auth_tokens, "admin"))
@@ -118,9 +109,7 @@ def test_create_user_forbidden_as_cashier(client, auth_tokens):
     assert resp.status_code == 403
 
 
-# ---------------------------
-# LIST USERS TESTS
-# ---------------------------
+# list user tests
 
 def test_list_users_success_as_admin(client, auth_tokens):
     resp = client.get(BASE_URL + "/users", headers=auth_header(auth_tokens, "admin"))
@@ -138,9 +127,7 @@ def test_list_users_forbidden_as_cashier(client, auth_tokens):
     assert resp.status_code == 403
 
 
-# ---------------------------
-# GET USER BY ID TESTS
-# ---------------------------
+# get user by ID tests
 
 def test_get_user_success(client, auth_tokens):
     resp = client.get(BASE_URL + "/users/1", headers=auth_header(auth_tokens, "admin"))
@@ -164,9 +151,7 @@ def test_get_user_forbidden_as_cashier(client, auth_tokens):
     assert resp.status_code == 403
 
 
-# ---------------------------
-# UPDATE USER TESTS
-# ---------------------------
+# update user test
 
 def test_update_user_success(client, auth_tokens):
     payload = USER_SAMPLE.copy()
@@ -199,9 +184,7 @@ def test_update_user_forbidden_as_cashier(client, auth_tokens):
     assert resp.status_code == 403
 
 
-# ---------------------------
-# DELETE USER TESTS
-# ---------------------------
+# delete user test
 
 def test_delete_user_success(client, auth_tokens):
     resp = client.delete(BASE_URL + "/users/1", headers=auth_header(auth_tokens, "admin"))
