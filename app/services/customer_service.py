@@ -147,7 +147,6 @@ class CustomerService:
             raise NotFoundError(f"Customer with id '{customer_id}' not found")
         return ok
 
-    # Loyalty cards Endpoints
 
     # POST /customers/cards
     async def create_card(self, card_dto: LoyaltyCardCreateDTO) -> LoyaltyCardDTO:
