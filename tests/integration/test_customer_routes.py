@@ -1,5 +1,3 @@
-# tests/integration/test_customer_route.py
-
 import pytest
 from unittest.mock import AsyncMock, patch
 from fastapi import FastAPI, Request
