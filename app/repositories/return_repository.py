@@ -4,7 +4,7 @@ from sqlalchemy import select
 from app.database.database import AsyncSessionLocal
 from app.models.DAO.return_dao import ReturnDAO, ReturnLineDAO
 from app.models.return_status import ReturnStatus
-from datetime import datetime
+from datetime import datetime, timezone
 
 class ReturnRepository:
     def __init__(self, session: Optional[AsyncSession] = None):
@@ -75,7 +75,7 @@ class ReturnRepository:
             ret = await session.get(ReturnDAO, return_id)
             if not ret: return None
             ret.status = ReturnStatus.CLOSED
-            ret.closed_at = datetime.utcnow()
+            ret.closed_at = datetime.now(timezone.utc)
             await session.commit()
             await session.refresh(ret)
             return ret
