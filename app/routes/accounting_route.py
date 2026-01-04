@@ -7,10 +7,6 @@ from app.config.config import ROUTES
 router = APIRouter(prefix=ROUTES["V1_BALANCE"], tags=["accounting"])
 controller = AccountingController()
 
-# -------------------------------------------------------------------------
-# UPDATE: Added UserType.ShopManager to the list of allowed roles
-# -------------------------------------------------------------------------
-
 @router.get(
     "", 
     response_model=dict, 

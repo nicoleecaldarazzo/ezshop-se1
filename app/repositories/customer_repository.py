@@ -75,21 +75,15 @@ class CustomerRepository:
                         await session.delete(old_card)
 
                 else:
-                    # OPTIONAL: if you also want to allow updating points when card exists
                     if dto.card.points is not None:
                         if customer.loyalty_card is None:
-                            # up to you: raise / ignore / create
-                            # I'd raise in service layer; here just ignore or create logic.
                             pass
                         else:
                             customer.loyalty_card.points = dto.card.points
 
-                    # OPTIONAL: if you want to change/attach card_id here, you need extra rules
-                    # (find card by card_id, ensure not attached, detach old, attach new)
 
             await session.commit()
 
-            # refresh with relationship again if you want response to contain card
             await session.refresh(customer)
             return customer
 
