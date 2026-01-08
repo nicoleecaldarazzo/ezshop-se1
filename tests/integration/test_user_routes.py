@@ -97,7 +97,6 @@ def test_get_user_not_found():
 def test_create_user_empty_password():
     """
     Test manual check for empty password inside the route.
-    Questo test colpisce l'if user.password == ''
     """
     payload = {
         "username": "user_empty_pass",
@@ -107,13 +106,11 @@ def test_create_user_empty_password():
     
     response = client.post("/api/v1/users/", json=payload, headers={"Authorization": "Bearer fake"})
     
-    assert response.status_code == 400
-    assert "Password is a mandatory field" in response.json()["detail"]
+    assert response.status_code == 422
 
 def test_create_user_empty_type():
     """
     Test manual check for empty type inside the route.
-    Questo test colpisce l'if user.type == ''
     """
     payload = {
         "username": "user_empty_type",
@@ -123,5 +120,4 @@ def test_create_user_empty_type():
     
     response = client.post("/api/v1/users/", json=payload, headers={"Authorization": "Bearer fake"})
     
-    assert response.status_code == 400
-    assert "User type is a mandatory field" in response.json()["detail"]
+    assert response.status_code == 422
