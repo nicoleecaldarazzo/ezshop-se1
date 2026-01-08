@@ -37,3 +37,11 @@ async def set_discount(sale_id: int, discount: float):
 @router.patch("/{sale_id}/close", dependencies=[auth_dep])
 async def close_sale(sale_id: int):
     return await service.close_sale(sale_id)
+
+@router.patch("/{sale_id}/pay", dependencies=[auth_dep])
+async def pay_sale(sale_id: int, cash_amount: float):
+    return await service.pay_sale(sale_id, cash_amount)
+
+@router.get("/{sale_id}/points", dependencies=[auth_dep])
+async def get_points(sale_id: int):
+    return await service.compute_points(sale_id)

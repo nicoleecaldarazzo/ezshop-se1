@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 
-BARCODE_REGEX = r"^\d{12,14}$"  # Modifica se il tuo barcode ha formato diverso
+BARCODE_REGEX = r"^\d{12,14}$"  
 
 class ProductCreateDTO(BaseModel):
     description: str = Field(..., min_length=1, max_length=255)
@@ -29,9 +29,9 @@ class ProductResponseDTO(BaseModel):
     position: Optional[str] = None
 
 class ProductPositionUpdateDTO(BaseModel):
-    """DTO per PATCH /products/{id}/position"""
-    position: Optional[str] = Field(default=None, max_length=50)  # None = clear position
+
+    position: Optional[str] = Field(default=None, max_length=50)  
 
 class ProductSearchDTO(BaseModel):
-    """DTO per GET /products/search - query params"""
+
     description: str = Field(..., min_length=1)
