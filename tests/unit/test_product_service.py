@@ -1,4 +1,4 @@
-"""import pytest
+import pytest
 from unittest.mock import AsyncMock, MagicMock
 from types import SimpleNamespace
 
@@ -711,4 +711,3 @@ async def test_get_product_internal_method_invalid_id():
     
     with pytest.raises(BadRequestError, match="Product ID must be greater than 0"):
         await service._get_product(0)
-"""
