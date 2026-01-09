@@ -1,4 +1,4 @@
-"""import pytest
+import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 from types import SimpleNamespace
 
@@ -761,4 +761,4 @@ async def test_update_product_quantity_field(repo, mock_session):
 
     await repo.update_product(1, dto)
 
-    assert product.quantity == 50"""
+    assert product.quantity == 50
