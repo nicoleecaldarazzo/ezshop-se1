@@ -202,3 +202,4 @@ class ProductService:
             return self._to_product_response(updated)
         except ValueError as e:
             raise BadRequestError(str(e))
+        

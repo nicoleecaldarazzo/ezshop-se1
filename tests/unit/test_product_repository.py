@@ -742,3 +742,23 @@ async def test_get_session_creates_new_session_if_none():
         
         mock_session_local.assert_called_once()
         assert result == mock_new_session
+
+@pytest.mark.asyncio
+async def test_update_product_quantity_field(repo, mock_session):
+    product = SimpleNamespace(id=1, quantity=10, barcode="124567890123")
+    mock_session.get = AsyncMock(return_value=product)
+    
+    repo._get_session = AsyncMock(return_value=mock_session)
+
+    dto = SimpleNamespace(
+        description=None,
+        barcode=None,
+        price_per_unit=None,
+        note=None,
+        quantity=50, 
+        position=None
+    )
+
+    await repo.update_product(1, dto)
+
+    assert product.quantity == 50
