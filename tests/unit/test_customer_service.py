@@ -14,8 +14,6 @@ from app.models.DTO.customer_dto import LoyaltyCardDTO
 @pytest.fixture
 def service():
     s = CustomerService()
-
-    # mock repository methods (async)
     s.repo = MagicMock()
     s.repo.create_customer = AsyncMock()
     s.repo.create_card = AsyncMock()
@@ -24,7 +22,6 @@ def service():
     s.repo.delete_customer = AsyncMock()
     s.repo.update_card_points = AsyncMock()
 
-    # mock internal async helpers that hit DB directly
     s._get_customer = AsyncMock()
     s._get_customer_with_card = AsyncMock()
     s._get_card_by_card_id = AsyncMock()
@@ -34,12 +31,9 @@ def service():
     return s
 
 
-
-# create_customer
-
 @pytest.mark.asyncio
 async def test_create_customer_ok_without_card(service):
-    # DTO-like object: only attributes we need
+
     dto = SimpleNamespace(id=1, name="Alice", card=None)
 
     created_customer = SimpleNamespace(id=1, name="Alice", loyalty_card=None)
@@ -53,23 +47,29 @@ async def test_create_customer_ok_without_card(service):
     assert result.name == "Alice"
     assert result.card is None
 
-
 @pytest.mark.asyncio
 async def test_create_customer_invalid_id_raises_bad_request(service):
-    dto = SimpleNamespace(id=0, name="Zero", card=None)  # id <= 0 not allowed
+    dto = SimpleNamespace(id=0, name="Zero", card=None)  
 
     with pytest.raises(BadRequestError):
         await service.create_customer(dto)
 
     service.repo.create_customer.assert_not_called()
 
+@pytest.mark.asyncio
+async def test_create_customer_repo_returns_none_raises(service):
+    dto = SimpleNamespace(id=1, name="Alice", card=None)
+
+    service.repo.create_customer.return_value = None
+
+    with pytest.raises(Exception):
+        await service.create_customer(dto)
 
 @pytest.mark.asyncio
 async def test_create_customer_with_existing_card_raises_conflict(service):
     nested_card = SimpleNamespace(card_id="1234567890", points=10)
     dto = SimpleNamespace(id=1, name="Alice", card=nested_card)
 
-    # card already exists
     service._get_card_by_card_id.return_value = SimpleNamespace(
         card_id="1234567890", points=10
     )
@@ -85,7 +85,6 @@ async def test_create_customer_with_nested_card_success(service):
     nested_card = SimpleNamespace(card_id="1234567890", points=10)
     dto = SimpleNamespace(id=1, name="Alice", card=nested_card)
 
-    # no existing card in DB
     service._get_card_by_card_id.return_value = None
 
     created_customer = SimpleNamespace(id=1, name="Alice", loyalty_card=None)
@@ -110,8 +109,17 @@ async def test_create_customer_with_nested_card_success(service):
     assert result.card.card_id == "1234567890"
     assert result.card.points == 10
 
+@pytest.mark.asyncio
+async def test_create_customer_card_creation_fails(service):
+    nested = SimpleNamespace(card_id="1234567890", points=10)
+    dto = SimpleNamespace(id=1, name="Alice", card=nested)
 
-# get_customer
+    service._get_card_by_card_id.return_value = None
+    service.repo.create_customer.return_value = SimpleNamespace(id=1, name="Alice")
+    service.repo.create_card.return_value = None  
+
+    with pytest.raises(Exception):
+        await service.create_customer(dto)
 
 @pytest.mark.asyncio
 async def test_get_customer_not_found_raises(service):
@@ -119,7 +127,6 @@ async def test_get_customer_not_found_raises(service):
 
     with pytest.raises(NotFoundError):
         await service.get_customer(999)
-
 
 @pytest.mark.asyncio
 async def test_get_customer_ok(service):
@@ -137,8 +144,36 @@ async def test_get_customer_ok(service):
     assert result.card.card_id == "1234567890"
     assert result.card.points == 5
 
+@pytest.mark.asyncio
+async def test__get_customer_ok_uses_repo():
+    s = CustomerService()
+    s.repo = MagicMock()
+    s.repo.get_customer_by_id = AsyncMock(
+        return_value=SimpleNamespace(id=1, name="Alice")
+    )
 
-# update_customer
+    result = await s._get_customer(1)
+
+    s.repo.get_customer_by_id.assert_awaited_once_with(1)
+    assert result.id == 1
+    assert result.name == "Alice"
+
+
+@pytest.mark.asyncio
+async def test__get_customer_invalid_id_raises_bad_request():
+    s = CustomerService()
+    with pytest.raises(BadRequestError):
+        await s._get_customer(0)
+
+
+@pytest.mark.asyncio
+async def test__get_customer_not_found_raises_not_found():
+    s = CustomerService()
+    s.repo = MagicMock()
+    s.repo.get_customer_by_id = AsyncMock(return_value=None)
+
+    with pytest.raises(NotFoundError):
+        await s._get_customer(999)
 
 @pytest.mark.asyncio
 async def test_update_customer_invalid_id_raises(service):
@@ -146,7 +181,6 @@ async def test_update_customer_invalid_id_raises(service):
 
     with pytest.raises(BadRequestError):
         await service.update_customer(0, dto)
-
 
 @pytest.mark.asyncio
 async def test_update_customer_not_found_raises(service):
@@ -156,6 +190,15 @@ async def test_update_customer_not_found_raises(service):
     with pytest.raises(NotFoundError):
         await service.update_customer(10, dto)
 
+@pytest.mark.asyncio
+async def test_update_customer_repo_returns_none_raises(service):
+    dto = SimpleNamespace(name="New name", card=None)
+
+    service._get_customer.return_value = SimpleNamespace(id=1)
+    service.repo.update_customer.return_value = None
+
+    with pytest.raises(NotFoundError):
+        await service.update_customer(1, dto)
 
 @pytest.mark.asyncio
 async def test_update_customer_ok(service):
@@ -172,8 +215,6 @@ async def test_update_customer_ok(service):
     assert result.name == "New name"
 
 
-# delete_customer
-
 @pytest.mark.asyncio
 async def test_delete_customer_ok(service):
     service._get_customer.return_value = SimpleNamespace(id=1)
@@ -184,7 +225,6 @@ async def test_delete_customer_ok(service):
     service.repo.delete_customer.assert_awaited_once_with(1)
     assert result is True
 
-
 @pytest.mark.asyncio
 async def test_delete_customer_non_existing_raises(service):
     service._get_customer.return_value = SimpleNamespace(id=1)
@@ -194,15 +234,12 @@ async def test_delete_customer_non_existing_raises(service):
         await service.delete_customer(1)
 
 
-# create_card
-
 @pytest.mark.asyncio
 async def test_create_card_negative_points_raises(service):
     dto = SimpleNamespace(card_id="1234567890", points=-1)
 
     with pytest.raises(BadRequestError):
         await service.create_card(dto)
-
 
 @pytest.mark.asyncio
 async def test_create_card_conflict(service):
@@ -211,7 +248,6 @@ async def test_create_card_conflict(service):
 
     with pytest.raises(ConflictError):
         await service.create_card(dto)
-
 
 @pytest.mark.asyncio
 async def test_create_card_ok(service):
@@ -226,8 +262,58 @@ async def test_create_card_ok(service):
     assert result.card_id == "1234567890"
     assert result.points == 5
 
+@pytest.mark.asyncio
+async def test_get_card_not_found_raises(service):
+    service._get_card_by_card_id.return_value = None
 
-# attach_card & update_card_points
+    with pytest.raises(NotFoundError):
+        await service.get_card("1234567890")
+
+@pytest.mark.asyncio
+async def test_create_card_repo_returns_none_raises(service):
+    dto = SimpleNamespace(card_id="1234567890", points=5)
+    service._get_card_by_card_id.return_value = None
+    service.repo.create_card.return_value = None  
+
+    with pytest.raises(Exception):
+        await service.create_card(dto)
+
+@pytest.mark.asyncio
+async def test_get_card_ok(service):
+    card = SimpleNamespace(card_id="1234567890", points=40)
+    service._get_card_by_card_id.return_value = card
+
+    result = await service.get_card("1234567890")
+
+    assert result.card_id == "1234567890"
+    assert result.points == 40
+
+@pytest.mark.asyncio
+async def test_attach_card_empty_card_id_raises(service):
+    with pytest.raises(BadRequestError):
+        await service.attach_card(1, "")
+
+@pytest.mark.asyncio
+async def test_attach_card_card_not_found_raises(service):
+    service._get_customer.return_value = SimpleNamespace(id=1)
+    service._check_customer_has_card.return_value = None
+    service._get_card_by_card_id.return_value = None
+
+    with pytest.raises(NotFoundError):
+        await service.attach_card(1, "1234567890")
+
+@pytest.mark.asyncio
+async def test_attach_card_repo_returns_none_raises(service):
+    service._get_customer.return_value = SimpleNamespace(id=1)
+    service._check_customer_has_card.return_value = None
+    service._get_card_by_card_id.return_value = SimpleNamespace(
+        card_id="1234567890", points=5, customer_id=None
+    )
+    service._check_card_attached.return_value = None
+    service.repo.attach_card.return_value = None 
+
+    with pytest.raises(Exception):
+        await service.attach_card(1, "1234567890")
 
 @pytest.mark.asyncio
 async def test_attach_card_customer_already_has_card_raises(service):
@@ -236,6 +322,91 @@ async def test_attach_card_customer_already_has_card_raises(service):
 
     with pytest.raises(ConflictError):
         await service.attach_card(1, "1234567890")
+
+@pytest.mark.asyncio
+async def test_attach_card_success(service):
+    service._get_customer.return_value = SimpleNamespace(id=1)
+    service._check_customer_has_card.return_value = None
+    service._get_card_by_card_id.return_value = SimpleNamespace(
+        card_id="1234567890", points=5, customer_id=None
+    )
+    service._check_card_attached.return_value = None
+
+    updated_customer = SimpleNamespace(
+        id=1,
+        name="Alice",
+        loyalty_card=SimpleNamespace(card_id="1234567890", points=5),
+    )
+    service.repo.attach_card.return_value = updated_customer
+    service._get_customer_with_card.return_value = updated_customer
+
+    result = await service.attach_card(1, "1234567890")
+
+    service.repo.attach_card.assert_awaited_once_with(1, "1234567890")
+    assert result.id == 1
+    assert result.card.card_id == "1234567890"
+
+@pytest.mark.asyncio
+async def test__check_customer_has_card_ok():
+    s = CustomerService()
+    s._get_customer_with_card = AsyncMock(
+        return_value=SimpleNamespace(id=1, loyalty_card=None)
+    )
+    await s._check_customer_has_card(1)
+
+@pytest.mark.asyncio
+async def test__check_customer_has_card_raises_conflict():
+    s = CustomerService()
+    s._get_customer_with_card = AsyncMock(
+        return_value=SimpleNamespace(
+            id=1,
+            loyalty_card=SimpleNamespace(card_id="1234567890", points=10),
+        )
+    )
+
+    with pytest.raises(ConflictError):
+        await s._check_customer_has_card(1)
+
+
+@pytest.mark.asyncio
+async def test__check_card_attached_ok():
+    s = CustomerService()
+    card = SimpleNamespace(card_id="1234567890", customer_id=None)
+    await s._check_card_attached(card)
+
+@pytest.mark.asyncio
+async def test__check_card_attached_raises_conflict():
+    s = CustomerService()
+    card = SimpleNamespace(card_id="1234567890", customer_id=1)
+    with pytest.raises(ConflictError):
+        await s._check_card_attached(card)
+
+def test__to_customer_response_without_card():
+    s = CustomerService()
+    customer = SimpleNamespace(id=1, name="Alice", loyalty_card=None)
+
+    result = s._to_customer_response(customer)
+
+    assert result.id == 1
+    assert result.name == "Alice"
+    assert result.card is None
+
+
+def test__to_customer_response_with_card():
+    s = CustomerService()
+    customer = SimpleNamespace(
+        id=1,
+        name="Alice",
+        loyalty_card=SimpleNamespace(card_id="1234567890", points=15),
+    )
+
+    result = s._to_customer_response(customer)
+
+    assert result.id == 1
+    assert result.card is not None
+    assert isinstance(result.card, LoyaltyCardDTO)
+    assert result.card.card_id == "1234567890"
+    assert result.card.points == 15
 
 
 @pytest.mark.asyncio
@@ -266,7 +437,6 @@ async def test_update_card_points_adds_points(service):
     assert result.card_id == "1234567890"
     assert result.points == 130
 
-
 @pytest.mark.asyncio
 async def test_update_card_points_subtracts_points(service):
 
@@ -284,7 +454,6 @@ async def test_update_card_points_subtracts_points(service):
     assert result.card_id == "1234567890"
     assert result.points == 50
 
-
 @pytest.mark.asyncio
 async def test_update_card_points_insufficient_points_raises(service):
 
@@ -297,3 +466,18 @@ async def test_update_card_points_insufficient_points_raises(service):
     service._get_card_by_card_id.assert_awaited_once_with("1234567890")
     service.repo.update_card_points.assert_not_called()
 
+@pytest.mark.asyncio
+async def test_update_card_points_invalid_card_id_raises(service):
+    with pytest.raises(BadRequestError):
+        await service.update_card_points("", 10)
+
+@pytest.mark.asyncio
+async def test_get_card_empty_id_raises(service):
+    with pytest.raises(BadRequestError):
+        await service.get_card("")
+
+@pytest.mark.asyncio
+async def test__get_card_by_card_id_empty_returns_none():
+    s = CustomerService()
+    result = await s._get_card_by_card_id("")
+    assert result is None

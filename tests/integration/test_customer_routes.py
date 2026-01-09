@@ -1,5 +1,3 @@
-# tests/integration/test_customer_route.py
-
 import pytest
 from unittest.mock import AsyncMock, patch
 from fastapi import FastAPI, Request
@@ -306,7 +304,6 @@ def test_patch_attach_card_201_attached():
 
 def test_patch_attach_card_400_invalid_ids():
     """ Invalid or empty IDs """
-    # invalid card_id that does not match regex ^\\d{10}$
     response = client.patch(f"{BASE}/51/attach-card/abc", headers={"Authorization": "Bearer fake"})
     assert response.status_code in (400, 422)
 

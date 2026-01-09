@@ -1,8 +1,6 @@
 from typing import List
 from app.repositories.return_repository import ReturnRepository
 from app.repositories.system_repository import SystemRepository
-
-# 1. UNCOMMENTED IMPORTS
 from app.repositories.product_repository import ProductRepository
 from app.repositories.sale_repository import SaleRepository
 
@@ -15,8 +13,6 @@ class ReturnService:
     def __init__(self):
         self.repo = ReturnRepository()
         self.accounting_repo = SystemRepository()
-        
-        # 2. UNCOMMENTED REPO INITIALIZATION
         self.product_repo = ProductRepository() 
         self.sale_repo = SaleRepository()       
 
@@ -30,7 +26,7 @@ class ReturnService:
         )
 
     async def create_return(self, sale_id: int) -> ReturnDTO:
-        # 3. UNCOMMENTED VALIDATION (Checks if sale is PAID)
+        # Checks if sale is PAID
         sale = await self.sale_repo.get_sale(sale_id)
         if not sale or getattr(sale, 'status', None) != "PAID":
             raise ConflictError("Return allowed only on paid sales")
@@ -66,8 +62,7 @@ class ReturnService:
 
         if dao.status != ReturnStatus.OPEN:
             raise ConflictError("Cannot modify a closed return")
-        
-        # Note: We use 0.0 price for now as discussed
+
         price = 0.0 
         return await self.repo.add_item(return_id, barcode, amount, price)
 
@@ -81,19 +76,22 @@ class ReturnService:
         return await self.repo.remove_item(return_id, barcode, amount)
 
     async def close_return(self, return_id: int) -> bool:
-        dao = await self.repo.get_return(return_id)
-        if not dao: raise NotFoundError("Return not found")
+        # Get the return transaction
+        return_tx = await self.repo.get_return(return_id)
+        if not return_tx:
+            raise NotFoundError(f"Return with id {return_id} not found")
 
-        if dao.status != ReturnStatus.OPEN:
-            raise ConflictError("Invalid Return state to be closed")
+        # Check status (Must be OPEN to close)
+        if return_tx.status != ReturnStatus.OPEN:
+            raise ConflictError("Return is not in OPEN state")
 
-        # 4. FIXED RESTOCK LOGIC (Find Product ID from Barcode -> Update Quantity)
-        for line in dao.lines:
+        # Restock items (Loop through lines and update product quantity)
+        for line in return_tx.lines:
             product = await self.product_repo.get_product_by_barcode(line.product_barcode)
             if product:
-                # Add the returned quantity back to inventory
                 await self.product_repo.update_product_quantity(product.id, line.quantity)
 
+        # Close the return in DB
         await self.repo.close_return(return_id)
         return True
 

@@ -23,7 +23,6 @@ class CustomerRepository:
 
     async def create_customer(self, customer_dto: CustomerCreateDTO) -> CustomerDAO:
         async with await self._get_session() as session:
-            # id conflict check
             existing = await session.get(CustomerDAO, customer_dto.id)
             if existing:
                 raise ConflictError("Customer ID already exists") 
@@ -45,7 +44,6 @@ class CustomerRepository:
 
     async def update_customer(self, id: int, dto: CustomerUpdateDTO) -> Optional[CustomerDAO]:
         async with await self._get_session() as session:
-            # load with relationship (IMPORTANT for async)
             res = await session.execute(
                 select(CustomerDAO)
                 .options(selectinload(CustomerDAO.loyalty_card))
@@ -55,41 +53,29 @@ class CustomerRepository:
             if not customer:
                 return None
 
-            # update name if provided
             if dto.name is not None:
                 customer.name = dto.name
 
-            # handle card rules
-            # dto.card is:
-            # - None  -> do nothing
-            # - LoyaltyCardUpdateDTO(all None) -> treat as empty object {} -> detach+delete
             if dto.card is not None:
                 is_empty_obj = (dto.card.card_id is None and dto.card.points is None)
                 if is_empty_obj:
-                    # detach + delete old card
                     if customer.loyalty_card is not None:
                         old_card = customer.loyalty_card
                         customer.loyalty_card = None
-                        old_card.customer_id = None  # optional (safe)
-                        await session.flush()        # ensures FK updates before delete
+                        old_card.customer_id = None  
+                        await session.flush()        
                         await session.delete(old_card)
 
                 else:
-                    # OPTIONAL: if you also want to allow updating points when card exists
                     if dto.card.points is not None:
                         if customer.loyalty_card is None:
-                            # up to you: raise / ignore / create
-                            # I'd raise in service layer; here just ignore or create logic.
                             pass
                         else:
                             customer.loyalty_card.points = dto.card.points
 
-                    # OPTIONAL: if you want to change/attach card_id here, you need extra rules
-                    # (find card by card_id, ensure not attached, detach old, attach new)
 
             await session.commit()
 
-            # refresh with relationship again if you want response to contain card
             await session.refresh(customer)
             return customer
 
@@ -102,7 +88,6 @@ class CustomerRepository:
             await session.commit()
             return True
 
-    #  Swagger: POST /customers/cards (no customer_id)
     async def create_card(self, dto: LoyaltyCardCreateDTO) -> LoyaltyCardDAO:
         async with await self._get_session() as session:
             res = await session.execute(select(LoyaltyCardDAO).where(LoyaltyCardDAO.card_id == dto.card_id))
@@ -115,7 +100,6 @@ class CustomerRepository:
             await session.refresh(card)
             return card
 
-    #  Swagger: PATCH /customers/{customer_id}/attach-card/{card_id}
     async def attach_card(self, customer_id: int, card_id: str) -> Optional[CustomerDAO]:
         async with await self._get_session() as session:
             customer = await session.get(CustomerDAO, customer_id)
@@ -127,13 +111,11 @@ class CustomerRepository:
             if not card:
                 return None
 
-            # conflict checks
             if customer.loyalty_card is not None:
                 raise ConflictError("Customer already has a card")  
             if card.customer_id is not None:
                 raise ConflictError("Card already attached")        
 
-            # attach
             card.customer_id = customer_id
             customer.loyalty_card = card   
             await session.commit()
@@ -141,7 +123,6 @@ class CustomerRepository:
             await session.refresh(customer)
             return customer
 
-    # Swagger: PATCH /customers/cards/{card_id}
     async def update_card_points(self, card_id: str, points: int) -> Optional[LoyaltyCardDAO]:
         async with await self._get_session() as session:
             res = await session.execute(select(LoyaltyCardDAO).where(LoyaltyCardDAO.card_id == card_id))

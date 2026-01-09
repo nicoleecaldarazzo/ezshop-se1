@@ -7,6 +7,7 @@ from app.routes.user_route import router
 from app.models.DTO.user_dto import UserResponseDTO
 from app.models.user_type import UserType
 from app.models.errors.notfound_error import NotFoundError 
+from app.models.errors.bad_request import BadRequestError
 
 
 app = FastAPI()
@@ -16,6 +17,10 @@ app.include_router(router)
 @app.exception_handler(NotFoundError)
 async def not_found_handler(request: Request, exc: NotFoundError):
     return JSONResponse(status_code=404, content={"detail": str(exc)})
+
+@app.exception_handler(BadRequestError)
+async def bad_request_handler(request: Request, exc: BadRequestError):
+    return JSONResponse(status_code=400, content={"detail": str(exc)})
 
 
 async def mock_auth_admin():
@@ -88,3 +93,31 @@ def test_get_user_not_found():
         assert response.status_code == 404
         
         assert "User not found" in response.json()["detail"]
+
+def test_create_user_empty_password():
+    """
+    Test manual check for empty password inside the route.
+    """
+    payload = {
+        "username": "user_empty_pass",
+        "password": "", 
+        "type": "Cashier"
+    }
+    
+    response = client.post("/api/v1/users/", json=payload, headers={"Authorization": "Bearer fake"})
+    
+    assert response.status_code == 422
+
+def test_create_user_empty_type():
+    """
+    Test manual check for empty type inside the route.
+    """
+    payload = {
+        "username": "user_empty_type",
+        "password": "valid_password",
+        "type": ""  
+    }
+    
+    response = client.post("/api/v1/users/", json=payload, headers={"Authorization": "Bearer fake"})
+    
+    assert response.status_code == 422

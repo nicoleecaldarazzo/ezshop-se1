@@ -67,7 +67,6 @@ async def delete_customer(customer_id: int = PositiveId):
     return
 
 
-# POST /customers/cards
 @router.post(
     "/cards",
     response_model=LoyaltyCardDTO,
@@ -78,7 +77,6 @@ async def create_card(payload: LoyaltyCardCreateDTO):
     return await controller.create_card(payload)
 
 
-# PATCH /customers/{customer_id}/attach-card/{card_id}
 @router.patch(
     "/{customer_id}/attach-card/{card_id}",
     response_model=CustomerResponseDTO,
@@ -86,9 +84,8 @@ async def create_card(payload: LoyaltyCardCreateDTO):
 )
 async def attach_card(customer_id: int = PositiveId, card_id: str = CardId):
     return await controller.attach_card(customer_id, card_id)
+    
 
-
-# PATCH /customers/cards/{card_id}
 @router.patch("/cards/{card_id}", response_model=LoyaltyCardDTO, dependencies=[auth_dep])
 async def update_card_points(card_id: str, points: int = Query(...)):
     return await controller.update_card_points(card_id, points)
