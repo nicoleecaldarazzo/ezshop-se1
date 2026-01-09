@@ -623,3 +623,91 @@ async def test_update_product_quantity_negative_result_raises(service):
         await service.update_product_quantity(1, -200)
 
     service.repo.update_product_quantity.assert_awaited_once_with(1, -200)
+
+@pytest.mark.asyncio
+async def test_create_product_repo_failure_raises(service):
+    dto = SimpleNamespace(description="T", barcode="123456789012", price_per_unit=10, quantity=1, position=None)
+    service.repo.create_product.return_value = None # Simula errore repo
+    with pytest.raises(Exception, match="Failed to create product"):
+        await service.create_product(dto)
+
+@pytest.mark.asyncio
+async def test_update_product_repo_not_found_raises(service):
+    dto = SimpleNamespace(description="New", barcode=None, price_per_unit=None, note=None, quantity=None, position=None)
+    service._get_product.return_value = SimpleNamespace(id=1, barcode="123456789012")
+    service.repo.update_product.return_value = None 
+    with pytest.raises(NotFoundError):
+        await service.update_product(1, dto)
+
+@pytest.mark.asyncio
+async def test_delete_product_repo_not_found_raises(service):
+    service._get_product.return_value = SimpleNamespace(id=1, barcode="123456789012")
+    service.repo.has_active_sales.return_value = False
+    service.repo.has_active_orders.return_value = False
+    service.repo.has_active_returns.return_value = False
+    service.repo.delete_product.return_value = False 
+    with pytest.raises(NotFoundError):
+        await service.delete_product(1)
+
+@pytest.mark.asyncio
+async def test_update_position_repo_not_found_raises(service):
+    dto = SimpleNamespace(position="1-A-1")
+    service.repo.update_product_position.return_value = None
+    with pytest.raises(NotFoundError):
+        await service.update_product_position(1, dto)
+
+@pytest.mark.asyncio
+async def test_update_quantity_repo_not_found_raises(service):
+    service.repo.update_product_quantity.return_value = None
+    with pytest.raises(NotFoundError):
+        await service.update_product_quantity(1, 10)
+
+@pytest.mark.asyncio
+async def test_validate_position_empty_string_does_not_raise(service):
+    dto = SimpleNamespace(description="T", barcode="123456789012", price_per_unit=10, quantity=1, position="")
+    service.repo.create_product.return_value = SimpleNamespace(id=1, description="T", barcode="123456789012", price_per_unit=10, quantity=1, position="", note=None)
+    await service.create_product(dto) 
+
+@pytest.mark.asyncio
+async def test_update_product_triggers_quantity_validation(service):
+    dto = SimpleNamespace(description=None, barcode=None, price_per_unit=None, note=None, quantity=-10, position=None)
+    service._get_product.return_value = SimpleNamespace(id=1, barcode="123456789012")
+    with pytest.raises(BadRequestError, match="Quantity cannot be negative"):
+        await service.update_product(1, dto)
+
+@pytest.mark.asyncio
+async def test_update_product_triggers_position_validation(service):
+    dto = SimpleNamespace(description=None, barcode=None, price_per_unit=None, note=None, quantity=None, position="invalid")
+    service._get_product.return_value = SimpleNamespace(id=1, barcode="123456789012")
+    with pytest.raises(BadRequestError, match="Position must match pattern"):
+        await service.update_product(1, dto)
+
+@pytest.mark.asyncio
+async def test_get_product_internal_method_found():
+    service = ProductService()  
+    
+    dao = SimpleNamespace(id=1, description="Test", barcode="123456789012",
+                         price_per_unit=10.0, note=None, quantity=100, position=None)
+    service.repo.get_product_by_id = AsyncMock(return_value=dao)
+    
+    result = await service._get_product(1)
+    
+    assert result.id == 1
+    service.repo.get_product_by_id.assert_awaited_once_with(1)
+
+
+@pytest.mark.asyncio
+async def test_get_product_internal_method_not_found():
+    service = ProductService()
+    service.repo.get_product_by_id = AsyncMock(return_value=None)
+    
+    with pytest.raises(NotFoundError, match="Product with id '999' not found"):
+        await service._get_product(999)
+
+
+@pytest.mark.asyncio
+async def test_get_product_internal_method_invalid_id():
+    service = ProductService()
+    
+    with pytest.raises(BadRequestError, match="Product ID must be greater than 0"):
+        await service._get_product(0)
