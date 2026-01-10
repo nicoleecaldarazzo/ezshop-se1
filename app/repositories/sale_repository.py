@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.database.database import AsyncSessionLocal
 from app.models.DAO.sale_dao import SaleDAO
@@ -81,6 +81,6 @@ class SaleRepository:
                 return False
             sale.status = status
             if status == SaleStatus.PENDING and sale.closed_at is None:
-                sale.closed_at = datetime.utcnow()
+                sale.closed_at = datetime.now(timezone.utc)
             await session.commit()
             return True

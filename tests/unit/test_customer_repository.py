@@ -1,5 +1,7 @@
 import pytest
 import pytest_asyncio
+import warnings
+from sqlalchemy.exc import SAWarning
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
@@ -98,9 +100,12 @@ async def test_update_customer_detach_card(repo: CustomerRepository):
 
     empty_card = LoyaltyCardUpdateDTO(card_id=None, points=None)
 
-    updated = await repo.update_customer(
-        1, CustomerUpdateDTO(name=None, card=empty_card)
-    )
+    # FIX: Suppress the false-positive SAWarning
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=SAWarning)
+        updated = await repo.update_customer(
+            1, CustomerUpdateDTO(name=None, card=empty_card)
+        )
 
     assert updated is not None
     assert updated.loyalty_card is None
