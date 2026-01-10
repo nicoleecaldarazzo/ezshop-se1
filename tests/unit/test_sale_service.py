@@ -1,85 +1,175 @@
 import pytest
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, patch, MagicMock
 from types import SimpleNamespace
 
 from app.services.sale_service import SaleService
 from app.models.sale_status import SaleStatus
-from app.models.errors.invalid_state_error import InvalidStateError
+from app.models.DTO.boolean_response_dto import BooleanResponseDTO
+from app.models.errors.notfound_error import NotFoundError
+from app.models.errors.conflict_error import ConflictError
 from app.models.errors.bad_request import BadRequestError
+from app.models.errors.invalid_state_error import InvalidStateError
 
+
+@pytest.fixture
+def service():
+    s = SaleService()
+    s.repo = AsyncMock()
+    return s
 
 @pytest.mark.asyncio
-async def test_close_sale_sets_pending_ok():
-    service = SaleService()
-    service.repo = AsyncMock()
+async def test_create_sale(service):
+    service.repo.create_sale.return_value = SimpleNamespace(id=1)
+    result = await service.create_sale()
+    assert result.id == 1
+    service.repo.create_sale.assert_awaited_once()
 
-    service.repo.set_status = AsyncMock(return_value=True)
+@pytest.mark.asyncio
+async def test_get_sale_success(service):
+    service.repo.get_sale.return_value = SimpleNamespace(id=1)
+    result = await service.get_sale(1)
+    assert result.id == 1
 
-    result = await service.close_sale(10)
+@pytest.mark.asyncio
+async def test_get_sale_not_found(service):
+    service.repo.get_sale.return_value = None
+    with pytest.raises(NotFoundError):
+        await service.get_sale(999)
 
-    service.repo.set_status.assert_awaited_once_with(10, SaleStatus.PENDING)
+@pytest.mark.asyncio
+async def test_add_item_success(service):
+    # Sale must be OPEN
+    sale = SimpleNamespace(id=1, status=SaleStatus.OPEN)
+    service.repo.get_sale.return_value = sale
+    service.repo.add_line.return_value = True
+
+    result = await service.add_item(1, "ABC", 2)
+    
+    assert isinstance(result, BooleanResponseDTO)
+    assert result.success is True
+    service.repo.add_line.assert_awaited_once_with(1, "ABC", 2)
+
+@pytest.mark.asyncio
+async def test_add_item_sale_not_found(service):
+    service.repo.get_sale.return_value = None
+    with pytest.raises(NotFoundError):
+        await service.add_item(1, "ABC", 1)
+
+@pytest.mark.asyncio
+async def test_add_item_sale_closed_conflict(service):
+    sale = SimpleNamespace(id=1, status=SaleStatus.PAID)
+    service.repo.get_sale.return_value = sale
+    
+    with pytest.raises(ConflictError):
+        await service.add_item(1, "ABC", 1)
+
+@pytest.mark.asyncio
+async def test_remove_item_success(service):
+    service.repo.remove_line.return_value = True
+    result = await service.remove_item(1, "ABC", 1)
     assert result.success is True
 
+@pytest.mark.asyncio
+async def test_remove_item_not_found(service):
+    service.repo.remove_line.return_value = False
+    with pytest.raises(NotFoundError):
+        await service.remove_item(1, "ABC", 1)
 
 @pytest.mark.asyncio
-async def test_pay_sale_requires_pending():
-    service = SaleService()
-    service.repo = AsyncMock()
+async def test_set_discount_success(service):
+    service.repo.set_discount.return_value = True
+    result = await service.set_discount(1, 0.5)
+    assert result.success is True
 
-    sale = SimpleNamespace(
-        status=SaleStatus.OPEN,
-        lines=[],
-        discount_rate=0.0,
-    )
-    service.repo.get_sale = AsyncMock(return_value=sale)
+@pytest.mark.asyncio
+async def test_set_discount_invalid_range(service):
+    with pytest.raises(ConflictError):
+        await service.set_discount(1, 1.5) # > 1
+    with pytest.raises(ConflictError):
+        await service.set_discount(1, -0.1) # < 0
 
+@pytest.mark.asyncio
+async def test_set_discount_sale_not_found(service):
+    service.repo.set_discount.return_value = False
+    with pytest.raises(NotFoundError):
+        await service.set_discount(1, 0.5)
+
+@pytest.mark.asyncio
+async def test_close_sale_success(service):
+    service.repo.set_status.return_value = True
+    result = await service.close_sale(1)
+    assert result.success is True
+    service.repo.set_status.assert_awaited_once_with(1, SaleStatus.PENDING)
+
+@pytest.mark.asyncio
+async def test_close_sale_not_found(service):
+    service.repo.set_status.return_value = False
+    with pytest.raises(NotFoundError):
+        await service.close_sale(999)
+
+# --- Pay Sale Tests ---
+
+@pytest.mark.asyncio
+async def test_pay_sale_not_found(service):
+    service.repo.get_sale.return_value = None
+    with pytest.raises(NotFoundError):
+        await service.pay_sale(1, 100.0)
+
+@pytest.mark.asyncio
+async def test_pay_sale_invalid_state(service):
+    sale = SimpleNamespace(status=SaleStatus.OPEN)
+    service.repo.get_sale.return_value = sale
     with pytest.raises(InvalidStateError):
-        await service.pay_sale(10, cash_amount=20.0)
-
+        await service.pay_sale(1, 100.0)
 
 @pytest.mark.asyncio
-async def test_pay_sale_insufficient_cash_raises():
-    service = SaleService()
-    service.repo = AsyncMock()
-
-    sale = SimpleNamespace(
-        status=SaleStatus.PENDING,
-        discount_rate=0.0,
-        lines=[
-            SimpleNamespace(quantity=2, price_per_unit=25.0, discount_rate=0.0),  # total = 50
-        ],
-    )
-    service.repo.get_sale = AsyncMock(return_value=sale)
-
+async def test_pay_sale_insufficient_cash(service):
+    # Total = 100.0
+    line = SimpleNamespace(quantity=1, price_per_unit=100.0, discount_rate=0.0)
+    sale = SimpleNamespace(status=SaleStatus.PENDING, lines=[line], discount_rate=0.0)
+    service.repo.get_sale.return_value = sale
+    
     with pytest.raises(BadRequestError):
-        await service.pay_sale(10, cash_amount=10.0)
-
+        await service.pay_sale(1, 50.0)
 
 @pytest.mark.asyncio
-async def test_pay_sale_returns_change_and_sets_paid():
-    service = SaleService()
-    service.repo = AsyncMock()
+async def test_pay_sale_success(service):
+    # Total = 100.0, Cash = 120.0, Change = 20.0
+    line = SimpleNamespace(quantity=1, price_per_unit=100.0, discount_rate=0.0)
+    sale = SimpleNamespace(status=SaleStatus.PENDING, lines=[line], discount_rate=0.0)
+    service.repo.get_sale.return_value = sale
+    
+    with patch("app.services.sale_service.SystemRepository") as MockSys:
+        mock_sys_instance = AsyncMock()
+        MockSys.return_value = mock_sys_instance
+        
+        result = await service.pay_sale(1, 120.0)
+        
+        assert result["change"] == 20.0
+        service.repo.set_status.assert_awaited_once_with(1, SaleStatus.PAID)
+        mock_sys_instance.update_balance.assert_awaited_once_with(100.0)
 
-    # subtotal = (2 * 5) * (1 - 0.0) = 10
-    # sale discount = 10% => total = 10 * (1 - 0.1) = 9
-    sale = SimpleNamespace(
-        status=SaleStatus.PENDING,
-        discount_rate=0.1,
-        lines=[
-            SimpleNamespace(quantity=2, price_per_unit=5.0, discount_rate=0.0),
-        ],
-    )
+# --- Compute Points Tests ---
 
-    service.repo.get_sale = AsyncMock(return_value=sale)
-    service.repo.set_status = AsyncMock(return_value=True)
+@pytest.mark.asyncio
+async def test_compute_points_not_found(service):
+    service.repo.get_sale.return_value = None
+    with pytest.raises(NotFoundError):
+        await service.compute_points(1)
 
-    # pay_sale creates SystemRepository() inside, so patch it in THIS module path:
-    with patch("app.services.sale_service.SystemRepository") as SysRepoMock:
-        sys_repo_instance = AsyncMock()
-        SysRepoMock.return_value = sys_repo_instance
+@pytest.mark.asyncio
+async def test_compute_points_invalid_state(service):
+    sale = SimpleNamespace(status=SaleStatus.PENDING)
+    service.repo.get_sale.return_value = sale
+    with pytest.raises(InvalidStateError):
+        await service.compute_points(1)
 
-        result = await service.pay_sale(10, cash_amount=21.0)
-
-    service.repo.set_status.assert_awaited_once_with(10, SaleStatus.PAID)
-    sys_repo_instance.update_balance.assert_awaited_once_with(9.0)
-    assert result["change"] == 12.0
+@pytest.mark.asyncio
+async def test_compute_points_success(service):
+    # Total = 55.0 => Points = 5
+    line = SimpleNamespace(quantity=1, price_per_unit=55.0, discount_rate=0.0)
+    sale = SimpleNamespace(status=SaleStatus.PAID, lines=[line], discount_rate=0.0)
+    service.repo.get_sale.return_value = sale
+    
+    result = await service.compute_points(1)
+    assert result["points"] == 5
