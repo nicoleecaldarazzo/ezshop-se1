@@ -1,9 +1,13 @@
 # tests/test_user_api.py
 import asyncio
 import pytest
+from sqlalchemy import text
 from fastapi.testclient import TestClient
 from main import app
 from init_db import reset, init_db
+from app.database.database import engine
+from app.controllers.auth_controller import pwd_context
+
 
 @pytest.fixture(scope="session")
 def event_loop():
@@ -20,12 +24,7 @@ def client():
 
 BASE_URL = "http://127.0.0.1:8000/api/v1"
 
-
-# ---------------------------
-# GLOBAL FIXTURE FOR TOKENS
-# ---------------------------
-
-
+#  global fixture for tokens
 
 @pytest.fixture(scope="session", autouse=True)
 def auth_tokens(event_loop, client):
@@ -39,22 +38,32 @@ def auth_tokens(event_loop, client):
         "cashier": {"username": "Cashier", "password": "Cashier"},
     }
 
+    async def fix_passwords():
+        
+        async with engine.begin() as conn:
+            for role, creds in users.items():
+                hashed_pw = pwd_context.hash(creds["password"])
+                
+                
+                query = text("UPDATE users SET password = :pwd WHERE username = :usr")
+                await conn.execute(query, {"pwd": hashed_pw, "usr": creds["username"]})
+
+    event_loop.run_until_complete(fix_passwords())
+
     tokens = {}
     for role, creds in users.items():
         response = client.post(BASE_URL + "/auth", json=creds)
-        assert response.status_code == 200, f"Login failed for {role}"
+        
+        assert response.status_code == 200, f"Login failed for {role}. Response: {response.text}"
         tokens[role] = f"Bearer {response.json()['token']}"
 
     return tokens
-
 
 def auth_header(tokens, role: str):
     return {"Authorization": tokens[role]}
 
 
-# ---------------------------
-# SAMPLE PAYLOADS
-# ---------------------------
+# sample payloads
 
 USER_SAMPLE = {
     "username": "new_user",
@@ -69,9 +78,7 @@ USER_ADMIN = {
 }
 
 
-# ---------------------------
-# CREATE USER TESTS
-# ---------------------------
+# create user tests
 
 def test_create_user_success_as_admin(client, auth_tokens):
     resp = client.post(BASE_URL + "/users", json=USER_SAMPLE, headers=auth_header(auth_tokens, "admin"))
@@ -102,9 +109,7 @@ def test_create_user_forbidden_as_cashier(client, auth_tokens):
     assert resp.status_code == 403
 
 
-# ---------------------------
-# LIST USERS TESTS
-# ---------------------------
+# list user tests
 
 def test_list_users_success_as_admin(client, auth_tokens):
     resp = client.get(BASE_URL + "/users", headers=auth_header(auth_tokens, "admin"))
@@ -122,9 +127,7 @@ def test_list_users_forbidden_as_cashier(client, auth_tokens):
     assert resp.status_code == 403
 
 
-# ---------------------------
-# GET USER BY ID TESTS
-# ---------------------------
+# get user by ID tests
 
 def test_get_user_success(client, auth_tokens):
     resp = client.get(BASE_URL + "/users/1", headers=auth_header(auth_tokens, "admin"))
@@ -148,9 +151,7 @@ def test_get_user_forbidden_as_cashier(client, auth_tokens):
     assert resp.status_code == 403
 
 
-# ---------------------------
-# UPDATE USER TESTS
-# ---------------------------
+# update user test
 
 def test_update_user_success(client, auth_tokens):
     payload = USER_SAMPLE.copy()
@@ -183,9 +184,7 @@ def test_update_user_forbidden_as_cashier(client, auth_tokens):
     assert resp.status_code == 403
 
 
-# ---------------------------
-# DELETE USER TESTS
-# ---------------------------
+# delete user test
 
 def test_delete_user_success(client, auth_tokens):
     resp = client.delete(BASE_URL + "/users/1", headers=auth_header(auth_tokens, "admin"))

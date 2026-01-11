@@ -9,14 +9,14 @@ from fastapi import Response
 from app.models.errors.notfound_error import NotFoundError
 from app.models.errors.bad_request import BadRequestError
 
-
 router = APIRouter(prefix=ROUTES['V1_USERS'], tags=["Users"])
 controller = UserController()
 
 @router.post("/", 
     response_model=UserResponseDTO, 
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(authenticate_user([UserType.Administrator]))])
+    dependencies=[Depends(authenticate_user([UserType.Administrator]))]
+    )
 async def create_user(user: UserCreateDTO):
     """
     Create a new user.
@@ -28,10 +28,6 @@ async def create_user(user: UserCreateDTO):
       - BadRequestError: when mandatory fields (password, type) are missing or invalid
     - Status code: 201 Created
     """
-    if user.password is None or user.password == '':
-        raise BadRequestError('Password is a mandatory field')
-    if user.type is None or user.type == '':
-        raise BadRequestError('User type is a mandatory field')
     return await controller.create_user(user)
     
 @router.get("/", response_model=List[UserResponseDTO],
@@ -45,7 +41,6 @@ async def list_users():
     - Status code: 200 OK
     """
     return await controller.list_users()
-
 
 @router.get("/{user_id}", response_model=UserResponseDTO,
             dependencies=[Depends(authenticate_user([UserType.Administrator]))])
@@ -65,11 +60,10 @@ async def get_user(user_id: int):
         raise NotFoundError("User not found")
     return user
 
-
 @router.put("/{user_id}", response_model=UserResponseDTO, 
     status_code=status.HTTP_201_CREATED,
     dependencies=[Depends(authenticate_user([UserType.Administrator]))])
-async def update_user(user_id: int, user: UserDTO):
+async def update_user(user_id: int, user: UserCreateDTO): # <--- MODIFICA QUI: UserCreateDTO invece di UserDTO
     """
     Update an existing user.
 
@@ -80,12 +74,13 @@ async def update_user(user_id: int, user: UserDTO):
     - Raises:
       - NotFoundError: when the user to update does not exist
     - Status code: 201 Created
+
+    Use UserCreateDTO to allow password updates.
     """
     updated = await controller.update_user(user_id, user)
     if not updated:
         raise NotFoundError("User not found")
     return updated
-
 
 @router.delete("/{user_id}", 
                status_code=status.HTTP_204_NO_CONTENT, 

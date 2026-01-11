@@ -1,4 +1,5 @@
 from fastapi import HTTPException, status
+from passlib.context import CryptContext  
 from app.models.DTO.user_dto import UserDTO
 from app.models.DTO.token_dto import TokenDTO
 from app.repositories.user_repository import UserRepository
@@ -7,6 +8,7 @@ from app.services.mapper_service import create_token_dto, userdao_to_dto
 from app.models.errors.unauthorized_error import UnauthorizedError
 from app.models.errors.notfound_error import NotFoundError
 
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 async def get_token(user_dto: UserDTO) -> TokenDTO:
     user_repo = UserRepository()
@@ -16,7 +18,10 @@ async def get_token(user_dto: UserDTO) -> TokenDTO:
     #if not user_dao:
         raise NotFoundError("Entity not found")
 
-    if user_dto.password != user_dao.password:
+    # VERIFICA SICURA DELLA PASSWORD
+    # pwd_context.verify controlla se la password in chiaro (user_dto) 
+    # corrisponde all'hash salvato nel database (user_dao)
+    if not pwd_context.verify(user_dto.password, user_dao.password):
         raise UnauthorizedError("Invalid password")
 
     token_str = generate_token(userdao_to_dto(user_dao))
