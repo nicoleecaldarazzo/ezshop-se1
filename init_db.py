@@ -1,9 +1,8 @@
-#from app.controllers.auth_controller import get_password_hash
-
 from app.repositories.user_repository import UserRepository
 from app.models.DTO.user_dto import UserDTO
 from app.models.user_type import UserType
 from app.database.database import reset_db, init_db as init_database
+from passlib.context import CryptContext  # <--- NUOVO IMPORT
 
 from app.repositories.customer_repository import CustomerRepository
 from app.models.DTO.customer_dto import CustomerCreateDTO, LoyaltyCardCreateDTO
@@ -12,6 +11,8 @@ from app.repositories.product_repository import ProductRepository
 from app.models.DTO.product_dto import ProductCreateDTO
 
 import asyncio
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 async def init_db():
     await init_database()
@@ -29,9 +30,11 @@ async def init_db():
         admin_dto = UserDTO(username="admin", password="admin", type=UserType.Administrator)
         manager_dto = UserDTO(username="ShopManager", password="ShManager", type=UserType.ShopManager)
         cashier_dto = UserDTO(username="Cashier", password="Cashier", type=UserType.Cashier)
-        await user_repo.create_user(admin_dto.username, admin_dto.password, admin_dto.type)
-        await user_repo.create_user(manager_dto.username, manager_dto.password, manager_dto.type)
-        await user_repo.create_user(cashier_dto.username, cashier_dto.password, cashier_dto.type)
+        
+        await user_repo.create_user(admin_dto.username, pwd_context.hash(admin_dto.password), admin_dto.type)
+        await user_repo.create_user(manager_dto.username, pwd_context.hash(manager_dto.password), manager_dto.type)
+        await user_repo.create_user(cashier_dto.username, pwd_context.hash(cashier_dto.password), cashier_dto.type)
+        
         print("✅ Admin user created successfully")
 
 
@@ -64,5 +67,5 @@ async def reset():
     
 if __name__ == "__main__":
     loop = asyncio.new_event_loop()
+    #loop.run_until_complete(reset()) 
     loop.run_until_complete(init_db())
-    #loop.run_until_complete(reset())
