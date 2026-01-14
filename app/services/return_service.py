@@ -26,9 +26,13 @@ class ReturnService:
         )
 
     async def create_return(self, sale_id: int) -> ReturnDTO:
-        # Checks if sale is PAID
+        # Step 1: Check if sale exists FIRST (Raises 404 if missing)
         sale = await self.sale_repo.get_sale(sale_id)
-        if not sale or getattr(sale, 'status', None) != "PAID":
+        if not sale:
+            raise NotFoundError(f"Sale {sale_id} not found")
+
+        # Step 2: Then check status (Raises 409 if not PAID)
+        if getattr(sale, 'status', None) != "PAID":
             raise ConflictError("Return allowed only on paid sales")
         
         dao = await self.repo.create_return(sale_id)
