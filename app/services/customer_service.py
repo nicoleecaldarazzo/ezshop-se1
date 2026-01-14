@@ -20,11 +20,14 @@ from app.models.errors.customer_card_error import CustomerCardError
 from app.models.DAO.customer_dao import CustomerDAO
 from app.models.DAO.loyaltyCard_dao import LoyaltyCardDAO
 from app.database.database import AsyncSessionLocal
-
+import random
 
 class CustomerService:
     def __init__(self):
         self.repo = CustomerRepository()
+
+    def _generate_card_id(self) -> str:
+        return "".join(str(random.randint(0, 9)) for _ in range(10))
 
     def _validate_id(self, id: int, entity_name: str = "ID") -> None:
         if id <= 0:
@@ -40,6 +43,15 @@ class CustomerService:
         if not customer:
             raise NotFoundError(f"Customer with id '{customer_id}' not found")
         return customer
+
+    async def create_customer_card(self) -> LoyaltyCardDTO:
+        for _ in range(50):
+            card_id = self._generate_card_id()
+            existing = await self.repo.get_card_by_card_id(card_id)  
+            if existing is None:
+                created = await self.repo.create_card(LoyaltyCardCreateDTO(card_id=card_id, points=0))
+                return LoyaltyCardDTO(card_id=created.card_id, points=created.points)
+        raise Exception("Failed to generate unique card id")
 
     async def _get_customer_with_card(self, customer_id: int) -> CustomerDAO:
         self._validate_id(customer_id, "Customer ID")
@@ -88,32 +100,28 @@ class CustomerService:
     # Customers (CRUD)
 
     async def create_customer(self, customer_dto: CustomerCreateDTO) -> CustomerResponseDTO:
-        self._validate_id(customer_dto.id, "Customer ID")
+        existing_customer = await self.repo.get_customer_by_name(customer_dto.name)
+        if existing_customer is not None:
+            raise ConflictError(f"Customer with name '{customer_dto.name}' already exists")
 
-        if customer_dto.card:
-            self._validate_points(customer_dto.card.points)
-            existing_card = await self._get_card_by_card_id(customer_dto.card.card_id)
-            if existing_card:
-                raise ConflictError(f"Card with id '{customer_dto.card.card_id}' already exists")
-
+        # create customer first
         created_customer = await self.repo.create_customer(customer_dto)
         if not created_customer:
             raise Exception("Failed to create customer")
 
         if customer_dto.card:
-            card_create = LoyaltyCardCreateDTO(
-                card_id=customer_dto.card.card_id,
-                points=customer_dto.card.points
-            )
+            existing_card = await self._get_card_by_card_id(customer_dto.card.card_id)
+            if existing_card is None:
+                raise ConflictError(f"Card with id '{customer_dto.card.card_id}' not found")
 
-            created_card = await self.repo.create_card(card_create)  
-            if not created_card:
-                raise Exception("Failed to create card")
+            if existing_card.customer_id is not None:
+                raise ConflictError("Card already attached")
 
-            await self.repo.attach_card(created_customer.id, card_create.card_id)
+            await self.repo.attach_card(created_customer.id, existing_card.card_id)
 
         customer_full = await self._get_customer_with_card(created_customer.id)
         return self._to_customer_response(customer_full)
+
 
     async def get_customer(self, customer_id: int) -> CustomerResponseDTO:
         customer = await self._get_customer_with_card(customer_id)
@@ -149,18 +157,16 @@ class CustomerService:
 
 
     # POST /customers/cards
-    async def create_card(self, card_dto: LoyaltyCardCreateDTO) -> LoyaltyCardDTO:
-        self._validate_points(card_dto.points)
+    async def create_card(self) -> LoyaltyCardDTO:
+        for _ in range(50):
+            card_id = self._generate_card_id()
 
-        existing = await self._get_card_by_card_id(card_dto.card_id)
-        if existing:
-            raise ConflictError(f"Card with id '{card_dto.card_id}' already exists")
+            existing = await self._get_card_by_card_id(card_id)
+            if existing is None:
+                created = await self.repo.create_card(LoyaltyCardCreateDTO(card_id=card_id, points=0))
+                return LoyaltyCardDTO(card_id=created.card_id, points=created.points)
 
-        created = await self.repo.create_card(card_dto)  
-        if not created:
-            raise Exception("Failed to create card")
-
-        return LoyaltyCardDTO(card_id=created.card_id, points=created.points)
+        raise Exception("Failed to generate unique card id")
 
     # PATCH /customers/{customer_id}/attach-card/{card_id}
     async def attach_card(self, customer_id: int, card_id: str) -> CustomerResponseDTO:

@@ -29,8 +29,8 @@ class CustomerController:
     # ---- loyalty endpoints ----
 
     # POST /customers/cards
-    async def create_card(self, card_dto: LoyaltyCardCreateDTO) -> LoyaltyCardDTO:
-        return await self.service.create_card(card_dto)
+    async def create_card(self) -> LoyaltyCardDTO:
+        return await self.service.create_card()
 
     # PATCH /customers/{customer_id}/attach-card/{card_id}
     async def attach_card(self, customer_id: int, card_id: str) -> CustomerResponseDTO:

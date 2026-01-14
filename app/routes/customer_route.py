@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, Path, Query
+from fastapi import APIRouter, Depends, status, Path, Query, Body, HTTPException
 from typing import List
 
 from app.config.config import ROUTES
@@ -51,6 +51,7 @@ async def get_customer(customer_id: int = PositiveId):
 @router.put(
     "/{customer_id}",
     response_model=CustomerResponseDTO,
+    status_code=status.HTTP_201_CREATED,
     dependencies=[auth_dep],
 )
 async def update_customer(customer_id: int = PositiveId, payload: CustomerUpdateDTO = ...):
@@ -73,20 +74,31 @@ async def delete_customer(customer_id: int = PositiveId):
     status_code=status.HTTP_201_CREATED,
     dependencies=[auth_dep],
 )
-async def create_card(payload: LoyaltyCardCreateDTO):
-    return await controller.create_card(payload)
 
+async def create_card():
+    return await controller.create_card()
 
 @router.patch(
     "/{customer_id}/attach-card/{card_id}",
     response_model=CustomerResponseDTO,
+    status_code=status.HTTP_201_CREATED,
     dependencies=[auth_dep],
 )
 async def attach_card(customer_id: int = PositiveId, card_id: str = CardId):
     return await controller.attach_card(customer_id, card_id)
     
 
-@router.patch("/cards/{card_id}", response_model=LoyaltyCardDTO, dependencies=[auth_dep])
-async def update_card_points(card_id: str, points: int = Query(...)):
+@router.patch(
+    "/cards/{card_id}", 
+    response_model=LoyaltyCardDTO, 
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[auth_dep]
+)
+async def update_card_points(card_id: str = CardId, points: int | None = Query(default=None), body: LoyaltyCardPointsUpdateDTO | None = Body(default=None)):
+    if points is None:
+        if body is None:
+            raise ValueError("points is required")
+        points = body.points
+
     return await controller.update_card_points(card_id, points)
 
