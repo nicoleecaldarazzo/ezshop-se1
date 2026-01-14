@@ -63,7 +63,7 @@ async def get_user(user_id: int):
 @router.put("/{user_id}", response_model=UserResponseDTO, 
     status_code=status.HTTP_201_CREATED,
     dependencies=[Depends(authenticate_user([UserType.Administrator]))])
-async def update_user(user_id: int, user: UserCreateDTO): # <--- MODIFICA QUI: UserCreateDTO invece di UserDTO
+async def update_user(user_id: int, user: UserCreateDTO): 
     """
     Update an existing user.
 
