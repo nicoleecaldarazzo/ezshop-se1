@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status, Response
 from app.services.sale_service import SaleService
 from app.middleware.auth_middleware import authenticate_user
 from app.models.user_type import UserType
@@ -14,9 +14,10 @@ auth_dep = Depends(
     ])
 )
 
-@router.post("", dependencies=[auth_dep])
-async def create_sale():
-    return await service.create_sale()
+@router.post("/", response_model=SaleDTO, status_code=status.HTTP_201_CREATED, dependencies=[auth_dep])
+async def create_sale(response: Response): 
+    response.status_code = status.HTTP_201_CREATED
+    return await controller.create_sale()
 
 @router.get("/{sale_id}", dependencies=[auth_dep])
 async def get_sale(sale_id: int):

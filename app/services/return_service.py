@@ -7,6 +7,7 @@ from app.repositories.sale_repository import SaleRepository
 from app.models.DTO.return_dto import ReturnDTO, ReturnLineDTO
 from app.models.return_status import ReturnStatus
 from app.models.errors.notfound_error import NotFoundError
+from app.models.errors.bad_request import BadRequestError
 from app.models.errors.conflict_error import ConflictError 
 
 class ReturnService:
@@ -26,12 +27,15 @@ class ReturnService:
         )
 
     async def create_return(self, sale_id: int) -> ReturnDTO:
-        # Step 1: Check if sale exists FIRST (Raises 404 if missing)
+        if sale_id <= 0:
+            raise BadRequestError("Invalid sale ID")
+
+        # Step 1: Check if sale exists (404)
         sale = await self.sale_repo.get_sale(sale_id)
         if not sale:
             raise NotFoundError(f"Sale {sale_id} not found")
 
-        # Step 2: Then check status (Raises 409 if not PAID)
+        # Step 2: Check if sale is PAID (409)
         if getattr(sale, 'status', None) != "PAID":
             raise ConflictError("Return allowed only on paid sales")
         
