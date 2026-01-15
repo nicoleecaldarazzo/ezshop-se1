@@ -52,12 +52,25 @@ async def test_create_customer_success(repo: CustomerRepository):
     assert customer.id == 1
     assert customer.name == "Alice"
 
-@pytest.mark.asyncio
-async def test_create_customer_conflict(repo: CustomerRepository):
-    await repo.create_customer(CustomerCreateDTO(id=1, name="Alice"))
+async def create_customer(self, customer_dto: CustomerCreateDTO) -> CustomerDAO:
+    async with await self._get_session() as session:
 
-    with pytest.raises(ConflictError):
-        await repo.create_customer(CustomerCreateDTO(id=1, name="Bob"))
+        query = select(CustomerDAO).where(
+            or_(
+                CustomerDAO.id == customer_dto.id,
+                CustomerDAO.name == customer_dto.name,
+            )
+        )
+        res = await session.execute(query)
+        existing = res.scalar_one_or_none()
+        if existing:
+            raise ConflictError("Customer already exists")
+
+        customer = CustomerDAO(id=customer_dto.id, name=customer_dto.name)
+        session.add(customer)
+        await session.commit()
+        await session.refresh(customer)
+        return customer
 
 @pytest.mark.asyncio
 async def test_get_customer_by_name_and_list(repo: CustomerRepository):

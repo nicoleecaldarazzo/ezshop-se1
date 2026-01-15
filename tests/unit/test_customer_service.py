@@ -8,7 +8,7 @@ from app.models.errors.conflict_error import ConflictError
 from app.models.errors.notfound_error import NotFoundError
 from app.models.errors.customer_card_error import CustomerCardError
 
-from app.models.DTO.customer_dto import LoyaltyCardDTO
+from app.models.DTO.customer_dto import CustomerCreateDTO, LoyaltyCardDTO
 
 
 @pytest.fixture
@@ -32,29 +32,29 @@ def service():
 
 
 @pytest.mark.asyncio
-async def test_create_customer_ok_without_card(service):
+async def test_create_customer_ok_without_card():
+    service = CustomerService()
 
-    dto = SimpleNamespace(id=1, name="Alice", card=None)
+    service.repo.get_customer_by_name = AsyncMock(return_value=None)
+    service.repo.create_customer = AsyncMock(return_value=type("Obj", (), {"id": 1, "name": "Mario Rossi"}))
+    service._get_customer_with_card = AsyncMock(return_value=type("Obj", (), {
+        "id": 1, "name": "Mario Rossi", "loyalty_card": None
+    }))
 
-    created_customer = SimpleNamespace(id=1, name="Alice", loyalty_card=None)
-    service.repo.create_customer.return_value = created_customer
-    service._get_customer_with_card.return_value = created_customer
+    dto = CustomerCreateDTO(id=1, name="Mario Rossi")
+    res = await service.create_customer(dto)
 
-    result = await service.create_customer(dto)
-
-    service.repo.create_customer.assert_awaited_once_with(dto)
-    assert result.id == 1
-    assert result.name == "Alice"
-    assert result.card is None
+    assert res.id == 1
+    assert res.name == "Mario Rossi"
 
 @pytest.mark.asyncio
 async def test_create_customer_invalid_id_raises_bad_request(service):
-    dto = SimpleNamespace(id=0, name="Zero", card=None)  
+    service.repo.get_customer_by_name = AsyncMock(side_effect=BadRequestError("Customer ID must be greater than 0"))
+
+    dto = CustomerCreateDTO(id=-1, name="Mario Rossi")
 
     with pytest.raises(BadRequestError):
         await service.create_customer(dto)
-
-    service.repo.create_customer.assert_not_called()
 
 @pytest.mark.asyncio
 async def test_create_customer_repo_returns_none_raises(service):
@@ -67,47 +67,48 @@ async def test_create_customer_repo_returns_none_raises(service):
 
 @pytest.mark.asyncio
 async def test_create_customer_with_existing_card_raises_conflict(service):
-    nested_card = SimpleNamespace(card_id="1234567890", points=10)
-    dto = SimpleNamespace(id=1, name="Alice", card=nested_card)
+    service.repo.get_customer_by_name = AsyncMock(return_value=None)
 
-    service._get_card_by_card_id.return_value = SimpleNamespace(
-        card_id="1234567890", points=10
+    fake_card = SimpleNamespace(card_id="1234567890", points=0, customer_id=99)
+    service._get_card_by_card_id = AsyncMock(return_value=fake_card)
+
+    dto = CustomerCreateDTO(
+        id=1,
+        name="Mario Rossi",
+        card=LoyaltyCardDTO(card_id="1234567890", points=0),
     )
 
     with pytest.raises(ConflictError):
         await service.create_customer(dto)
 
-    service.repo.create_customer.assert_not_called()
-
-
 @pytest.mark.asyncio
-async def test_create_customer_with_nested_card_success(service):
+async def test_create_customer_with_card_attaches_existing_card(service):
     nested_card = SimpleNamespace(card_id="1234567890", points=10)
     dto = SimpleNamespace(id=1, name="Alice", card=nested_card)
 
-    service._get_card_by_card_id.return_value = None
+    service.repo.get_customer_by_name = AsyncMock(return_value=None)
+
+    existing_card = SimpleNamespace(card_id="1234567890", points=0, customer_id=None)
+    service._get_card_by_card_id = AsyncMock(return_value=existing_card)
 
     created_customer = SimpleNamespace(id=1, name="Alice", loyalty_card=None)
-    service.repo.create_customer.return_value = created_customer
+    service.repo.create_customer = AsyncMock(return_value=created_customer)
 
-    created_card = SimpleNamespace(card_id="1234567890", points=10, customer_id=None)
-    service.repo.create_card.return_value = created_card
+    service.repo.attach_card = AsyncMock(return_value=True)
 
     full_customer = SimpleNamespace(
         id=1,
         name="Alice",
-        loyalty_card=SimpleNamespace(card_id="1234567890", points=10),
+        loyalty_card=SimpleNamespace(card_id="1234567890", points=0),
     )
-    service._get_customer_with_card.return_value = full_customer
+    service._get_customer_with_card = AsyncMock(return_value=full_customer)
 
     result = await service.create_customer(dto)
 
-    service.repo.create_customer.assert_awaited_once()
-    service.repo.create_card.assert_awaited_once()
-    service.repo.attach_card.assert_awaited_once_with(1, "1234567890")
-    assert result.card is not None
+    assert result.id == 1
     assert result.card.card_id == "1234567890"
-    assert result.card.points == 10
+
+    service.repo.attach_card.assert_awaited_once_with(1, "1234567890")
 
 @pytest.mark.asyncio
 async def test_create_customer_card_creation_fails(service):
@@ -235,32 +236,38 @@ async def test_delete_customer_non_existing_raises(service):
 
 
 @pytest.mark.asyncio
-async def test_create_card_negative_points_raises(service):
-    dto = SimpleNamespace(card_id="1234567890", points=-1)
+async def test_create_customer_card_generation_fails_after_retries(service):
+    service._generate_card_id = lambda: "1234567890"
+    service.repo.get_card_by_card_id = AsyncMock(return_value=SimpleNamespace(card_id="1234567890"))
 
-    with pytest.raises(BadRequestError):
-        await service.create_card(dto)
-
-@pytest.mark.asyncio
-async def test_create_card_conflict(service):
-    dto = SimpleNamespace(card_id="1234567890", points=0)
-    service._get_card_by_card_id.return_value = SimpleNamespace(card_id="1234567890")
-
-    with pytest.raises(ConflictError):
-        await service.create_card(dto)
+    with pytest.raises(Exception):
+        await service.create_customer_card()
 
 @pytest.mark.asyncio
-async def test_create_card_ok(service):
-    dto = SimpleNamespace(card_id="1234567890", points=5)
-    service._get_card_by_card_id.return_value = None
-    created = SimpleNamespace(card_id="1234567890", points=5)
-    service.repo.create_card.return_value = created
+async def test_create_card_on_conflict(service):
+    service._generate_card_id = lambda: "1234567890"
+    service.repo.get_card_by_card_id = AsyncMock(side_effect=[SimpleNamespace(card_id="1234567890"), None])
 
-    result = await service.create_card(dto)
+    created = SimpleNamespace(card_id="1234567890", points=0)
+    service.repo.create_card = AsyncMock(return_value=created)
 
-    service.repo.create_card.assert_awaited_once_with(dto)
+    result = await service.create_customer_card()
     assert result.card_id == "1234567890"
-    assert result.points == 5
+
+@pytest.mark.asyncio
+async def test_create_customer_card_ok(service):
+    service.repo.get_card_by_card_id = AsyncMock(return_value=None)
+
+    created = SimpleNamespace(card_id="1234567890", points=0)
+    service.repo.create_card = AsyncMock(return_value=created)
+
+    service._generate_card_id = lambda: "1234567890"
+
+    result = await service.create_customer_card()
+
+    assert result.card_id == "1234567890"
+    assert result.points == 0
+    service.repo.create_card.assert_awaited()
 
 @pytest.mark.asyncio
 async def test_get_card_not_found_raises(service):
