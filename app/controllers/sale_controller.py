@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, status, Response
 from app.services.sale_service import SaleService
 from app.middleware.auth_middleware import authenticate_user
 from app.models.user_type import UserType
+from app.models.DTO.sale_dto import SaleDTO
 
 router = APIRouter(prefix="/api/v1/sales", tags=["Sales"])
 service = SaleService()
