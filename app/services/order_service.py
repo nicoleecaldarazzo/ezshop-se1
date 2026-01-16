@@ -83,29 +83,25 @@ class OrderService:
         except ValueError as e:
             raise NotFoundError(str(e))
 
+
     async def pay_order(self, order_id: int, payment_dto: OrderPaymentDTO) -> OrderResponseDTO:
         await self._get_order(order_id)
+        
+        updated_order = await self.repo.pay_order(order_id)
+        if not updated_order:
+            raise NotFoundError(f"Order with id '{order_id}' not found")
+        return self._to_order_response(updated_order)
 
-        try:
-            updated_order = await self.repo.pay_order(order_id)
-            if not updated_order:
-                raise NotFoundError(f"Order with id '{order_id}' not found")
-            return self._to_order_response(updated_order)
-        except ConflictError:
-            raise  
 
     async def record_order_arrival(
         self, order_id: int, arrival_dto: OrderArrivalDTO
     ) -> OrderResponseDTO:
-
         await self._get_order(order_id)
-
+        
         try:
             updated_order = await self.repo.record_order_arrival(order_id)
             if not updated_order:
                 raise NotFoundError(f"Order with id '{order_id}' not found")
             return self._to_order_response(updated_order)
-        except ConflictError:
-            raise  
         except ValueError as e:
             raise NotFoundError(str(e))

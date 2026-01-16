@@ -118,6 +118,16 @@ class ProductRepository:
             product = await session.get(ProductDAO, id)
             if not product:
                 return None
+            
+            if dto.position and dto.position.strip():
+                res = await session.execute(
+                    select(ProductDAO).where(
+                        ProductDAO.position == dto.position,
+                        ProductDAO.id != id
+                    )
+                )
+                if res.scalar_one_or_none():
+                    raise ConflictError("Position already occupied by another product")
 
 
             product.position = dto.position

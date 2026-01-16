@@ -5,10 +5,13 @@ from datetime import datetime, timezone
 from app.database.database import AsyncSessionLocal
 from app.models.DAO.order_dao import OrderDAO
 from app.models.DAO.product_dao import ProductDAO
+from app.models.DAO.system_dao import SystemInfoDAO
 from app.models.DTO.order_dto import OrderCreateDTO, OrderPayForDTO
-from app.models.errors.conflict_error import ConflictError
+from app.models.errors.customer_card_error import CustomerCardError #used here too since code 500 is needed
+from app.models.errors.invalid_state_error import InvalidStateError
 from app.models.order_status import OrderStatus
-
+from app.models.errors.misdirected_request_error import MisdirectedRequest
+                
 
 class OrderRepository:
     def __init__(self, session: Optional[AsyncSession] = None):
@@ -65,7 +68,16 @@ class OrderRepository:
             product = res.scalar_one_or_none()
             if not product:
                 raise ValueError("Product not found")
+            
+            total_cost = dto.quantity * product.price_per_unit
 
+            balance_result = await session.execute(select(SystemInfoDAO))
+            system_info = balance_result.scalar_one_or_none()
+            
+            if not system_info or system_info.balance < total_cost:
+                raise MisdirectedRequest("Insufficient balance to pay for this order")
+
+            system_info.balance -= total_cost
 
             order = OrderDAO(
                 product_barcode=dto.product_barcode,
@@ -88,7 +100,7 @@ class OrderRepository:
 
 
             if order.status != OrderStatus.ISSUED:
-                raise ConflictError(f"Order must be in ISSUED state to be paid (current: {order.status})")
+                raise InvalidStateError(f"Order must be in ISSUED state to be paid (current: {order.status})")
 
 
             order.status = OrderStatus.PAID
@@ -105,7 +117,7 @@ class OrderRepository:
                 return None
 
             if order.status != OrderStatus.PAID:
-                raise ConflictError(f"Order must be in PAID state to record arrival (current: {order.status})")
+                raise InvalidStateError(f"Order must be in PAID state to record arrival (current: {order.status})")
 
 
             res = await session.execute(
@@ -114,10 +126,11 @@ class OrderRepository:
             product = res.scalar_one_or_none()
             if not product:
                 raise ValueError("Product not found")
+            
+            if not product.position or product.position.strip() == "":
+                raise CustomerCardError("Product must have a valid position before recording arrival")  
 
             product.quantity += order.quantity
-
-
             order.status = OrderStatus.COMPLETED
 
             await session.commit()

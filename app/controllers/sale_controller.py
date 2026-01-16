@@ -22,7 +22,7 @@ async def create_sale():
 async def get_sale(sale_id: int):
     return await service.get_sale(sale_id)
 
-@router.post("/{sale_id}/items", dependencies=[auth_dep])
+@router.post("/{sale_id}/items", dependencies=[auth_dep], status_code=201)
 async def add_item(sale_id: int, barcode: str, amount: int):
     return await service.add_item(sale_id, barcode, amount)
 
