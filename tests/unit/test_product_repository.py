@@ -489,7 +489,11 @@ async def test_update_product_position_success(repo, mock_session):
         position="1-A-1"
     )
     
+    mock_position_check = MagicMock()
+    mock_position_check.scalar_one_or_none.return_value = None  
+    
     mock_session.get = AsyncMock(return_value=product)
+    mock_session.execute = AsyncMock(return_value=mock_position_check)  
     mock_session.commit = AsyncMock()
     mock_session.refresh = AsyncMock()
     
@@ -501,6 +505,7 @@ async def test_update_product_position_success(repo, mock_session):
     
     assert product.position == "2-B-3"
     mock_session.get.assert_awaited_once()
+    mock_session.execute.assert_awaited_once()  
     mock_session.commit.assert_awaited_once()
     mock_session.refresh.assert_awaited_once()
 

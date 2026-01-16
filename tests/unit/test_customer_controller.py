@@ -68,15 +68,15 @@ async def test_delete_customer_calls_service(controller):
 # loyalty card endpoints
 
 @pytest.mark.asyncio
-async def test_create_card_calls_service(controller):
-    payload = object()
-    controller.service.create_card.return_value = "CARD"
+async def test_create_card_calls_service():
+    controller = CustomerController()
+    controller.service.create_card = AsyncMock(return_value={"card_id": "1234567890", "points": 0})
 
-    result = await controller.create_card(payload)
+    resp = await controller.create_card()
 
-    controller.service.create_card.assert_awaited_once_with(payload)
-    assert result == "CARD"
-
+    controller.service.create_card.assert_awaited_once()
+    assert resp["card_id"] == "1234567890"
+    assert resp["points"] == 0
 
 @pytest.mark.asyncio
 async def test_attach_card_calls_service(controller):

@@ -42,6 +42,39 @@
 | test_get_token_user_not_found | AuthController | Unit | WB / Branch Coverage |
 | test_get_token_wrong_password | AuthController | Unit | WB / Branch Coverage |
 | test_create_user_success | UserController | Unit | WB / Statement Coverage |
+|     test_create_customer_success[admin, manager, cashier]     |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
+|       test_create_customer_bad_request[invalid payloads]      |   CustomerRoutes   |     API     |       BB / Boundary + Eq. Partitioning       |
+|              test_create_customer_unauthenticated             |   CustomerRoutes   |     API     |             BB / Boundary (auth)             |
+|     test_update_customer_success[admin, manager, cashier]     |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
+|     test_update_customer_invalid_payload[invalid payloads]    |   CustomerRoutes   |     API     |                 BB / Boundary                |
+|                 test_update_customer_not_found                |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
+|     test_delete_customer_success[admin, manager, cashier]     |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
+|                 test_delete_customer_not_found                |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
+|    test_get_customer_by_id_success[admin, manager, cashier]   |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
+|             test_get_customer_invalid_id[abc, -1]             |   CustomerRoutes   |     API     |                 BB / Boundary                |
+|      test_list_customers_success[admin, manager, cashier]     |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
+|   test_create_customer_card_success[admin, manager, cashier]  |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
+|           test_create_customer_card_unauthenticated           |   CustomerRoutes   |     API     |             BB / Boundary (auth)             |
+| test_attach_card_to_customer_success[admin, manager, cashier] |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
+|                   test_attach_card_not_found                  |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
+|               test_attach_card_already_attached               |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
+|      test_modify_card_points_add[admin, manager, cashier]     |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
+|    test_modify_card_points_remove[admin, manager, cashier]    |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
+|              test_modify_card_points_insufficient             |   CustomerRoutes   |     API     |      BB / Boundary (insufficient points)     |
+|                    test_customer_lifecycle                    |   CustomerRoutes   | Integration |       Scenario-based (End-to-End flow)       |
+|             test_create_customer_with_card_success            |   CustomerRoutes   | Integration | Scenario-based (customer + card association) |
+|           test_post_customers_201_created_with_card           |   CustomerRoutes   | Integration |             BB / Eq. Partitioning            |
+|              test_patch_cards_insufficient_points             |   CustomerRoutes   | Integration |                 BB / Boundary                |
+|               test_create_customer_calls_service              | CustomerController |     Unit    |            WB / Statement Coverage           |
+|                 test_create_card_calls_service                | CustomerController |     Unit    |            WB / Statement Coverage           |
+|                 test_attach_card_calls_service                | CustomerController |     Unit    |            WB / Statement Coverage           |
+|                 test_create_customer_conflict                 | CustomerRepository |     Unit    |             WB / Branch Coverage             |
+|                   test_create_card_conflict                   | CustomerRepository |     Unit    |             WB / Branch Coverage             |
+|                test_update_card_points_success                | CustomerRepository |     Unit    |            WB / Statement Coverage           |
+|       test_create_customer_invalid_id_raises_bad_request      |   CustomerService  |     Unit    |             WB / Branch Coverage             |
+|    test_create_customer_with_existing_card_raises_conflict    |   CustomerService  |     Unit    |             WB / Branch Coverage             |
+|       test_update_card_points_insufficient_points_raises      |   CustomerService  |     Unit    |             WB / Branch Coverage             |
+
 
 # Coverage
 
@@ -60,6 +93,13 @@
 | FR-AUTH-2 | test_get_token_success, test_get_token_user_not_found, test_get_token_wrong_password |
 | FR-AUTH-3 | test_get_token_success |
 | FR-AUTH-4 | test_get_token_user_not_found, test_get_token_wrong_password |
+|    FR5.1 Define or modify a customer    | test_create_customer_success[admin, manager, cashier], test_create_customer_bad_request[invalid payloads], test_update_customer_success[admin, manager, cashier], test_update_customer_invalid_payload[invalid payloads], test_update_customer_not_found |
+|         FR5.2 Delete a customer         |                                                                                   test_delete_customer_success[admin, manager, cashier], test_delete_customer_not_found                                                                                  |
+|         FR5.3 Search a customer         |                                                               test_get_customer_by_id_success[admin, manager, cashier], test_get_customer_invalid_id[abc, -1], test_get_customer_not_found                                                               |
+|         FR5.4 List all customers        |                                                                                test_list_customers_success[admin, manager, cashier], test_list_customers_includes_created                                                                                |
+|       FR5.5 Create a loyalty card       |                                                                           test_create_customer_card_success[admin, manager, cashier], test_create_customer_card_unauthenticated                                                                          |
+| FR5.6 Attach loyalty card to a customer |                                             test_attach_card_to_customer_success[admin, manager, cashier], test_attach_card_customer_not_found, test_attach_card_not_found, test_attach_card_already_attached                                            |
+|  FR5.7 Modify points on a loyalty card  |                                  test_modify_card_points_add[admin, manager, cashier], test_modify_card_points_remove[admin, manager, cashier], test_modify_card_points_insufficient, test_modify_card_points_not_found                                  |
 
 ## Coverage white box
 
