@@ -6,7 +6,7 @@ from app.services.product_service import ProductService
 from app.models.errors.bad_request import BadRequestError
 from app.models.errors.conflict_error import ConflictError
 from app.models.errors.notfound_error import NotFoundError
-
+from app.models.errors.invalid_state_error import InvalidStateError
 
 @pytest.fixture
 def service():
@@ -259,6 +259,10 @@ async def test_update_product_ok(service):
     existing_product = SimpleNamespace(id=1, barcode="123456789012")
     service._get_product.return_value = existing_product
 
+    service.repo.has_active_sales.return_value = False
+    service.repo.has_active_orders.return_value = False
+    service.repo.has_active_returns.return_value = False
+
     updated_product = SimpleNamespace(
         id=1,
         description="Updated Product",
@@ -312,6 +316,10 @@ async def test_update_product_invalid_new_barcode_raises(service):
     existing_product = SimpleNamespace(id=1, barcode="123456789012")
     service._get_product.return_value = existing_product
 
+    service.repo.has_active_sales.return_value = False
+    service.repo.has_active_orders.return_value = False
+    service.repo.has_active_returns.return_value = False
+
     with pytest.raises(BadRequestError):
         await service.update_product(1, dto)
 
@@ -347,7 +355,7 @@ async def test_delete_product_with_active_sales_raises(service):
     service.repo.has_active_orders.return_value = False
     service.repo.has_active_returns.return_value = False
 
-    with pytest.raises(ConflictError):
+    with pytest.raises(InvalidStateError):
         await service.delete_product(1)
 
     service.repo.delete_product.assert_not_called()
@@ -361,7 +369,7 @@ async def test_delete_product_with_active_orders_raises(service):
     service.repo.has_active_orders.return_value = True
     service.repo.has_active_returns.return_value = False
 
-    with pytest.raises(ConflictError):
+    with pytest.raises(InvalidStateError):
         await service.delete_product(1)
 
     service.repo.delete_product.assert_not_called()
@@ -375,7 +383,7 @@ async def test_delete_product_with_active_returns_raises(service):
     service.repo.has_active_orders.return_value = False
     service.repo.has_active_returns.return_value = True
 
-    with pytest.raises(ConflictError):
+    with pytest.raises(InvalidStateError):
         await service.delete_product(1)
 
     service.repo.delete_product.assert_not_called()
@@ -389,7 +397,7 @@ async def test_delete_product_with_multiple_conflicts_raises(service):
     service.repo.has_active_orders.return_value = True
     service.repo.has_active_returns.return_value = True
 
-    with pytest.raises(ConflictError) as exc_info:
+    with pytest.raises(InvalidStateError) as exc_info:
         await service.delete_product(1)
 
     assert "sales" in str(exc_info.value)
@@ -635,6 +643,11 @@ async def test_create_product_repo_failure_raises(service):
 async def test_update_product_repo_not_found_raises(service):
     dto = SimpleNamespace(description="New", barcode=None, price_per_unit=None, note=None, quantity=None, position=None)
     service._get_product.return_value = SimpleNamespace(id=1, barcode="123456789012")
+    
+    service.repo.has_active_sales.return_value = False
+    service.repo.has_active_orders.return_value = False
+    service.repo.has_active_returns.return_value = False
+    
     service.repo.update_product.return_value = None 
     with pytest.raises(NotFoundError):
         await service.update_product(1, dto)
@@ -672,6 +685,11 @@ async def test_validate_position_empty_string_does_not_raise(service):
 async def test_update_product_triggers_quantity_validation(service):
     dto = SimpleNamespace(description=None, barcode=None, price_per_unit=None, note=None, quantity=-10, position=None)
     service._get_product.return_value = SimpleNamespace(id=1, barcode="123456789012")
+    
+    service.repo.has_active_sales.return_value = False
+    service.repo.has_active_orders.return_value = False
+    service.repo.has_active_returns.return_value = False
+    
     with pytest.raises(BadRequestError, match="Quantity cannot be negative"):
         await service.update_product(1, dto)
 
@@ -679,6 +697,11 @@ async def test_update_product_triggers_quantity_validation(service):
 async def test_update_product_triggers_position_validation(service):
     dto = SimpleNamespace(description=None, barcode=None, price_per_unit=None, note=None, quantity=None, position="invalid")
     service._get_product.return_value = SimpleNamespace(id=1, barcode="123456789012")
+    
+    service.repo.has_active_sales.return_value = False
+    service.repo.has_active_orders.return_value = False
+    service.repo.has_active_returns.return_value = False
+    
     with pytest.raises(BadRequestError, match="Position must match pattern"):
         await service.update_product(1, dto)
 

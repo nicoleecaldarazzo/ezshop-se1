@@ -30,22 +30,6 @@ async def init_db():
         await user_repo.create_user("Cashier", pwd_context.hash("Cashier"), UserType.Cashier)
         print("Admin/Manager/Cashier users created successfully")
 
-    # Product
-    existing_product = await product_repo.get_product_by_barcode("456789012345")
-    if existing_product is None:
-        product_dto = ProductCreateDTO(
-            description="Mascara 30mL",
-            barcode="456789012345",
-            price_per_unit=1.80,
-            note="Black Mascara",
-            quantity=60,
-            position="3-A-3",
-        )
-        await product_repo.create_product(product_dto)
-        print("✅ Product created successfully")
-    else:
-        print("ℹ️ Product already exists")
-
 async def reset():
     await reset_db()
     print("✅ Database reset successfully")

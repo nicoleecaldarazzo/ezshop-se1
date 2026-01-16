@@ -12,6 +12,7 @@ from app.models.DTO.product_dto import (
 from app.models.errors.notfound_error import NotFoundError
 from app.models.errors.bad_request import BadRequestError
 from app.models.errors.conflict_error import ConflictError
+from app.models.errors.invalid_state_error import InvalidStateError
 from app.models.DAO.product_dao import ProductDAO
 
 
@@ -78,9 +79,9 @@ class ProductService:
             errors.append("returns (OPEN, CLOSED, or REIMBURSED)")
 
         if errors:
-            raise ConflictError(
+            raise InvalidStateError(
                 f"Product cannot be deleted because it has active {', '.join(errors)}"
-            )
+            )         
 
     async def _validate_barcode_can_be_updated(self, current_barcode: str) -> None:
 
@@ -131,10 +132,14 @@ class ProductService:
         self._validate_id(product_id, "Product ID")
         product = await self._get_product(product_id)
 
+
+        if product_dto.barcode is not None and product_dto.barcode != product.barcode:
+            await self._validate_barcode_can_be_updated(product.barcode)
+        
+        await self._validate_product_can_be_deleted(product)
+
         if product_dto.barcode is not None:
             self._validate_barcode(product_dto.barcode)
-            if product_dto.barcode != product.barcode:
-                await self._validate_barcode_can_be_updated(product.barcode)
 
         if product_dto.price_per_unit is not None:
             self._validate_price(product_dto.price_per_unit)
@@ -178,10 +183,11 @@ class ProductService:
 
     async def update_product_position(self, product_id: int, position_dto: ProductPositionUpdateDTO) -> ProductResponseDTO:
         self._validate_id(product_id, "Product ID")
-        await self._get_product(product_id)
 
         if position_dto.position:
             self._validate_position(position_dto.position)
+
+        await self._get_product(product_id)
 
         updated = await self.repo.update_product_position(product_id, position_dto)
         if not updated:

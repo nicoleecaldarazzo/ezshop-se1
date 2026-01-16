@@ -58,6 +58,7 @@ async def create_and_pay_order(payload: OrderPayForDTO):
 @router.patch(
     "/{order_id}/pay",
     response_model=OrderResponseDTO,
+    status_code=status.HTTP_201_CREATED,
     dependencies=[auth_admin_manager],
 )
 async def pay_order(order_id: int = PositiveId):
@@ -68,6 +69,7 @@ async def pay_order(order_id: int = PositiveId):
 @router.patch(
     "/{order_id}/arrival",
     response_model=OrderResponseDTO,
+    status_code=status.HTTP_201_CREATED,
     dependencies=[auth_admin_manager],
 )
 async def record_order_arrival(order_id: int = PositiveId):

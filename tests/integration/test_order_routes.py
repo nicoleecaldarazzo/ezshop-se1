@@ -282,7 +282,7 @@ def test_post_payfor_404_product_not_found():
         assert "not found" in response.json()["detail"]
 
 
-def test_patch_pay_order_200_success():
+def test_patch_pay_order_201_success():
     fake_updated = OrderResponseDTO(
         id=1,
         product_barcode="123456789012",
@@ -297,7 +297,7 @@ def test_patch_pay_order_200_success():
 
         response = client.patch(f"{BASE}/1/pay", headers={"Authorization": "Bearer fake"})
 
-        assert response.status_code == 200
+        assert response.status_code == 201
         data = response.json()
         assert data["id"] == 1
         assert data["status"] == OrderStatus.PAID
@@ -347,7 +347,7 @@ def test_patch_pay_order_409_already_completed():
         assert "ISSUED state" in response.json()["detail"]
 
 
-def test_patch_arrival_200_success():
+def test_patch_arrival_201_success():
     fake_updated = OrderResponseDTO(
         id=1,
         product_barcode="123456789012",
@@ -362,7 +362,7 @@ def test_patch_arrival_200_success():
 
         response = client.patch(f"{BASE}/1/arrival", headers={"Authorization": "Bearer fake"})
 
-        assert response.status_code == 200
+        assert response.status_code == 201
         data = response.json()
         assert data["id"] == 1
         assert data["status"] == OrderStatus.COMPLETED
