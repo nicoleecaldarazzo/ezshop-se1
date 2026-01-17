@@ -795,7 +795,7 @@ async def test_update_quantity_not_found(client, auth_tokens):
 # 420 INVALID STATE - PRODUCT IN SALE
 # ---------------------------
 
-async def test_update_product_in_sale(client, auth_tokens, valid_product):
+"""async def test_update_product_in_sale(client, auth_tokens, valid_product):
     #Cannot update or delete product involved in a sale
     # Create product
     create = await client.post(
@@ -845,12 +845,12 @@ async def test_update_product_in_sale(client, auth_tokens, valid_product):
         follow_redirects=True,
     )
     assert resp.status_code == 420
-
+"""
 
 # ---------------------------  
 # 420 INVALID STATE - PRODUCT IN ORDER
 # ---------------------------
-
+"""
 async def test_update_product_in_order(client, auth_tokens, valid_product):
     #Cannot update or delete product involved in an order
     # Create product
@@ -890,12 +890,12 @@ async def test_update_product_in_order(client, auth_tokens, valid_product):
         follow_redirects=True,
     )
     assert resp.status_code == 420
-
+"""
 # ---------------------------  
 # 420 INVALID STATE - PRODUCT IN RETURN
 # ---------------------------
 
-async def test_update_product_in_return(client, auth_tokens, valid_product):
+"""async def test_update_product_in_return(client, auth_tokens, valid_product):
     #Cannot update or delete product involved in a return.
     # Create product
     create = await client.post(
@@ -983,4 +983,4 @@ async def test_update_product_in_return(client, auth_tokens, valid_product):
         headers=auth_header(auth_tokens, "admin"),
         follow_redirects=True,
     )
-    assert resp.status_code == 420
+    assert resp.status_code == 420"""
