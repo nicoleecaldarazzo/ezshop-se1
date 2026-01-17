@@ -12,7 +12,7 @@ from app.models.errors.bad_request import BadRequestError
 router = APIRouter(prefix=ROUTES['V1_USERS'], tags=["Users"])
 controller = UserController()
 
-@router.post("/", 
+@router.post("", 
     response_model=UserResponseDTO, 
     status_code=status.HTTP_201_CREATED,
     dependencies=[Depends(authenticate_user([UserType.Administrator]))]
@@ -25,12 +25,13 @@ async def create_user(user: UserCreateDTO):
     - Request body: UserCreateDTO (contains username, password, type, ...)
     - Returns: Created user as UserResponseDTO
     - Raises:
-      - BadRequestError: when mandatory fields (password, type) are missing or invalid
+      - BadRequestError: when mandatory fields ...
+      - ConflictError: when username already exists
     - Status code: 201 Created
     """
     return await controller.create_user(user)
     
-@router.get("/", response_model=List[UserResponseDTO],
+@router.get("", response_model=List[UserResponseDTO],
             dependencies=[Depends(authenticate_user([UserType.Administrator]))])
 async def list_users():
     """
@@ -61,7 +62,7 @@ async def get_user(user_id: int):
     return user
 
 @router.put("/{user_id}", response_model=UserResponseDTO, 
-    status_code=status.HTTP_201_CREATED,
+    status_code=status.HTTP_200_OK,       
     dependencies=[Depends(authenticate_user([UserType.Administrator]))])
 async def update_user(user_id: int, user: UserCreateDTO): 
     """
@@ -73,7 +74,7 @@ async def update_user(user_id: int, user: UserCreateDTO):
     - Returns: Updated user as UserResponseDTO
     - Raises:
       - NotFoundError: when the user to update does not exist
-    - Status code: 201 Created
+    - Status code: 200 OK
 
     Use UserCreateDTO to allow password updates.
     """

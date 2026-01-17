@@ -1,8 +1,9 @@
 from typing import List, Optional
-from passlib.context import CryptContext  
+from passlib.context import CryptContext
 from app.repositories.user_repository import UserRepository
 from app.models.DTO.user_dto import UserDTO
 from app.services.mapper_service import userdao_to_responsedto
+from app.models.errors.conflict_error import ConflictError 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -12,6 +13,11 @@ class UserController:
 
     async def create_user(self, user_dto: UserDTO) -> UserDTO:
         """Create user - throws ConflictError if username exists"""
+        
+        existing_user = await self.repo.get_user_by_username(user_dto.username)
+        if existing_user:
+            raise ConflictError(f"Username '{user_dto.username}' already exists")
+
         hashed_password = pwd_context.hash(user_dto.password)
         
         created = await self.repo.create_user(user_dto.username, hashed_password, user_dto.type)
