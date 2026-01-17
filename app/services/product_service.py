@@ -148,13 +148,14 @@ class ProductService:
         product = await self._get_product(product_id)
 
 
-        if product_dto.barcode is not None and product_dto.barcode != product.barcode:
-            await self._validate_barcode_can_be_updated(product.barcode)
-        
-        await self._validate_product_can_be_deleted(product)
-
+        # MODIFICA: Aggiungere validazione del formato del nuovo barcode
         if product_dto.barcode is not None:
+            # Valida il formato del nuovo barcode
             self._validate_barcode(product_dto.barcode)
+            
+            # Se il barcode è diverso da quello esistente, controlla le transazioni
+            if product_dto.barcode != product.barcode:
+                await self._validate_barcode_can_be_updated(product.barcode)
 
         if product_dto.price_per_unit is not None:
             self._validate_price(product_dto.price_per_unit)
@@ -223,4 +224,8 @@ class ProductService:
             return self._to_product_response(updated)
         except ValueError as e:
             raise BadRequestError(str(e))
+        
+    async def get_products_needing_reorder(self) -> List[ProductResponseDTO]:
+        products = await self.repo.get_products_needing_reorder()
+        return [self._to_product_response(p) for p in products]
         

@@ -56,6 +56,13 @@ async def search_products(query: str = Query(..., min_length=1)):
     search_dto = ProductSearchDTO(description=query)  
     return await controller.search_products(search_dto)
 
+@router.get(
+    "/reorder",
+    response_model=List[ProductResponseDTO],
+    dependencies=[auth_admin_manager],
+)
+async def get_products_needing_reorder():
+    return await controller.get_products_needing_reorder()
 
 @router.get(
     "/barcode/{barcode}",

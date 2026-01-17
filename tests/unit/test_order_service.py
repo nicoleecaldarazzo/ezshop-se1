@@ -62,7 +62,7 @@ async def test_create_order_invalid_barcode_empty_raises(service):
         price_per_unit=99.99
     )
 
-    with pytest.raises(BadRequestError, match="barcode cannot be empty"):
+    with pytest.raises(BadRequestError, match="Barcode must be a string of 12-14 digits"):
         await service.create_order(dto)
 
     service.repo.create_order.assert_not_called()
@@ -76,7 +76,7 @@ async def test_create_order_invalid_barcode_whitespace_raises(service):
         price_per_unit=99.99
     )
 
-    with pytest.raises(BadRequestError, match="barcode cannot be empty"):
+    with pytest.raises(BadRequestError, match="Barcode must be a string of 12-14 digits"):
         await service.create_order(dto)
 
     service.repo.create_order.assert_not_called()
@@ -169,7 +169,7 @@ async def test_create_order_negative_price_raises(service):
 @pytest.mark.asyncio
 async def test_create_order_product_not_found_raises(service):
     dto = SimpleNamespace(
-        product_barcode="999999999999",
+        product_barcode="614141007349",
         quantity=10,
         price_per_unit=99.99
     )
@@ -268,7 +268,7 @@ async def test_create_and_pay_order_invalid_barcode_raises(service):
         quantity=20
     )
 
-    with pytest.raises(BadRequestError, match="barcode cannot be empty"):
+    with pytest.raises(BadRequestError, match="Barcode must be a string of 12-14 digits"):
         await service.create_and_pay_order(dto)
 
     service.repo.create_and_pay_order.assert_not_called()
@@ -290,7 +290,7 @@ async def test_create_and_pay_order_invalid_quantity_raises(service):
 @pytest.mark.asyncio
 async def test_create_and_pay_order_product_not_found_raises(service):
     dto = SimpleNamespace(
-        product_barcode="999999999999",
+        product_barcode="614141007349",
         quantity=20
     )
 

@@ -686,3 +686,13 @@ def test_patch_product_quantity_404_not_found():
 
         assert response.status_code == 404
         assert "not found" in response.json()["detail"]
+
+def test_get_products_reorder_200_empty_list():
+    with patch("app.routes.product_route.controller") as mock_controller:
+        mock_controller.get_products_needing_reorder = AsyncMock(return_value=[])
+
+        response = client.get(f"{BASE}/reorder", headers={"Authorization": "Bearer fake"})
+
+        assert response.status_code == 200
+        assert response.json() == []
+        mock_controller.get_products_needing_reorder.assert_awaited_once()

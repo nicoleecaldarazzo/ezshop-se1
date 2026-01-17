@@ -285,7 +285,7 @@ async def test_update_product_ok(service):
 async def test_update_product_barcode_with_active_sales_raises(service):
     dto = SimpleNamespace(
         description=None,
-        barcode="999999999999",
+        barcode="987654321098",
         price_per_unit=None,
         note=None,
         quantity=None,
@@ -306,7 +306,7 @@ async def test_update_product_barcode_with_active_sales_raises(service):
 async def test_update_product_invalid_new_barcode_raises(service):
     dto = SimpleNamespace(
         description=None,
-        barcode="123",
+        barcode="123", 
         price_per_unit=None,
         note=None,
         quantity=None,
@@ -319,6 +319,8 @@ async def test_update_product_invalid_new_barcode_raises(service):
     service.repo.has_active_sales.return_value = False
     service.repo.has_active_orders.return_value = False
     service.repo.has_active_returns.return_value = False
+    
+    service.repo.update_product.return_value = None
 
     with pytest.raises(BadRequestError):
         await service.update_product(1, dto)
@@ -734,3 +736,44 @@ async def test_get_product_internal_method_invalid_id():
     
     with pytest.raises(BadRequestError, match="Product ID must be greater than 0"):
         await service._get_product(0)
+
+@pytest.mark.asyncio
+async def test_get_products_needing_reorder_empty(service):
+    service.repo.get_products_needing_reorder = AsyncMock(return_value=[])
+
+    result = await service.get_products_needing_reorder()
+
+    service.repo.get_products_needing_reorder.assert_awaited_once()
+    assert result == []
+
+@pytest.mark.asyncio
+async def test_get_products_needing_reorder_ok(service):
+    from types import SimpleNamespace
+    
+    products = [
+        SimpleNamespace(
+            id=1,
+            description="Low Stock Product 1",
+            barcode="111111111111",
+            price_per_unit=10.0,
+            note=None,
+            quantity=5,
+            position="1-A-1"
+        )
+    ]
+    service.repo.get_products_needing_reorder = AsyncMock(return_value=products)
+
+    result = await service.get_products_needing_reorder()
+
+    service.repo.get_products_needing_reorder.assert_awaited_once()
+    assert len(result) == 1
+    assert result[0].id == 1
+    assert result[0].quantity == 5
+
+
+@pytest.mark.asyncio
+async def test_get_product_by_barcode_invalid_check_digit_raises(service):
+    with pytest.raises(BadRequestError, match="Invalid barcode: check digit mismatch"):
+        await service.get_product_by_barcode("123456789013")
+
+    service.repo.get_product_by_barcode.assert_not_called()
