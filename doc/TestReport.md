@@ -300,6 +300,44 @@
 | test_get_session_creates_new_session_if_none | ProductRepository | Unit | WB / Branch Coverage |
 | test_get_session_returns_existing_session | OrderRepository | Unit | WB / Statement Coverage |
 | test_get_session_creates_new_session_if_none | OrderRepository | Unit | WB / Branch Coverage |
+| test_create_return_201 | ReturnRoutes | API | BB / Eq. Partitioning |
+| test_add_item_201 | ReturnRoutes | API | BB / Eq. Partitioning |
+| test_remove_item_201 | ReturnRoutes | API | BB / Eq. Partitioning |
+| test_close_return_201 | ReturnRoutes | API | BB / Eq. Partitioning |
+| test_reimburse_return_201 | ReturnRoutes | API | BB / Eq. Partitioning |
+| test_delete_return_201 | ReturnRoutes | API | BB / Eq. Partitioning |
+| test_get_return_404_not_found | ReturnRoutes | API | BB / Boundary |
+| test_create_return_calls_service | ReturnController | Unit | WB / Statement Coverage |
+| test_reimburse_return_calls_service | ReturnController | Unit | WB / Statement Coverage |
+| test_close_return_calls_service | ReturnController | Unit | WB / Statement Coverage |
+| test_add_item_calls_service | ReturnController | Unit | WB / Statement Coverage |
+| test_create_return_success | ReturnService | Unit | WB / Statement Coverage |
+| test_create_return_fails_if_unpaid | ReturnService | Unit | WB / Branch Coverage |
+| test_get_return_not_found | ReturnService | Unit | WB / Branch Coverage |
+| test_delete_return_reimbursed_conflict | ReturnService | Unit | WB / Branch Coverage |
+| test_delete_return_success | ReturnService | Unit | WB / Statement Coverage |
+| test_add_item_closed_conflict | ReturnService | Unit | WB / Branch Coverage |
+| test_remove_item_closed_conflict | ReturnService | Unit | WB / Branch Coverage |
+| test_close_return_restocks_items | ReturnService | Unit | WB / Statement Coverage |
+| test_reimburse_return_success | ReturnService | Unit | WB / Statement Coverage |
+| test_reimburse_return_not_closed_conflict | ReturnService | Unit | WB / Branch Coverage |
+| test_create_return | ReturnRepository | Unit | WB / Statement Coverage |
+| test_get_return_found | ReturnRepository | Unit | WB / Statement Coverage |
+| test_list_returns | ReturnRepository | Unit | WB / Statement Coverage |
+| test_delete_return_success | ReturnRepository | Unit | WB / Statement Coverage |
+| test_delete_return_not_found | ReturnRepository | Unit | WB / Branch Coverage |
+| test_add_item | ReturnRepository | Unit | WB / Statement Coverage |
+| test_remove_item_decrements_quantity | ReturnRepository | Unit | WB / Statement Coverage |
+| test_remove_item_deletes_line_if_quantity_zero | ReturnRepository | Unit | WB / Boundary |
+| test_close_return | ReturnRepository | Unit | WB / Statement Coverage |
+| test_reimburse_return | ReturnRepository | Unit | WB / Statement Coverage |
+| test_get_balance_route_200 | AccountingRoutes | API | BB / Eq. Partitioning |
+| test_set_balance_route_201 | AccountingRoutes | API | BB / Eq. Partitioning |
+| test_reset_balance_route_205 | AccountingRoutes | API | BB / Eq. Partitioning |
+| test_get_balance_success | AccountingController | Unit | WB / Statement Coverage |
+| test_set_balance_success | AccountingController | Unit | WB / Statement Coverage |
+| test_set_balance_negative_fails | AccountingController | Unit | WB / Branch Coverage |
+| test_reset_balance | AccountingController | Unit | WB / Statement Coverage |
 
 # Coverage
 
@@ -336,6 +374,15 @@
 |       FR5.5 Create a loyalty card       |                                                                           test_create_customer_card_success[admin, manager, cashier], test_create_customer_card_unauthenticated                                                                          |
 | FR5.6 Attach loyalty card to a customer |                                             test_attach_card_to_customer_success[admin, manager, cashier], test_attach_card_customer_not_found, test_attach_card_not_found, test_attach_card_already_attached                                            |
 |  FR5.7 Modify points on a loyalty card  |                                  test_modify_card_points_add[admin, manager, cashier], test_modify_card_points_remove[admin, manager, cashier], test_modify_card_points_insufficient, test_modify_card_points_not_found                                  |
+| Scenario 8.1 | test_create_return_201, test_add_item_201, test_close_return_201, test_reimburse_return_201, test_create_return_success, test_add_item_calls_service, test_close_return_restocks_items |
+| Scenario 8.2 | test_create_return_201, test_add_item_201, test_close_return_201, test_reimburse_return_201, test_create_return_success, test_add_item_calls_service, test_close_return_restocks_items |
+| Scenario 10.1 | test_reimburse_return_201, test_reimburse_return_success, test_reimburse_return_calls_service, test_reimburse_return |
+| Scenario 10.2 | test_reimburse_return_201, test_reimburse_return_success, test_reimburse_return_calls_service, test_reimburse_return |
+| FR6.12 Start a return transaction | test_create_return_201, test_create_return_calls_service, test_create_return_success, test_create_return_fails_if_unpaid, test_create_return |
+| FR6.13 Return a product listed in a sale transaction | test_add_item_201, test_remove_item_201, test_add_item_calls_service, test_add_item_closed_conflict, test_remove_item_closed_conflict, test_add_item, test_remove_item_decrements_quantity |
+| FR6.14 Close a return transaction | test_close_return_201, test_close_return_calls_service, test_close_return_restocks_items, test_close_return |
+| FR6.15 Rollback or commit a closed return transaction | test_reimburse_return_201, test_reimburse_return_calls_service, test_reimburse_return_success, test_reimburse_return_not_closed_conflict, test_delete_return_reimbursed_conflict, test_reimburse_return |
+| FR8.4 Compute balance | test_get_balance_route_200, test_get_balance_success, test_set_balance_route_201, test_set_balance_success, test_set_balance_negative_fails |
 
 ## Coverage white box
 
