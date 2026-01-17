@@ -24,10 +24,25 @@ class ProductService:
         if id <= 0:
             raise BadRequestError(f"{entity_name} must be greater than 0")
 
-    def _validate_barcode(self, barcode: str) -> None:
+    import re
 
-        if not re.match(r"^\d{12,14}$", barcode):
+    def _validate_barcode(self, barcode: str) -> None:
+        if not (isinstance(barcode, str) and re.match(r"^\d{12,14}$", barcode)):
             raise BadRequestError("Barcode must be a string of 12-14 digits")
+        provided_check_digit = int(barcode[-1])
+        payload_digits = list(map(int, barcode[:-1]))[::-1]
+        total_sum = 0
+        for i, digit in enumerate(payload_digits):
+            if i % 2 == 0:
+                total_sum += digit * 3
+            else:
+                total_sum += digit * 1
+        calculated_check_digit = (10 - (total_sum % 10)) % 10
+        if provided_check_digit != calculated_check_digit:
+            raise BadRequestError(
+                f"Invalid barcode: check digit mismatch. "
+                f"Expected {calculated_check_digit} based on GS1 algorithm."
+            )
 
     def _validate_price(self, price: float) -> None:
         if price <= 0:
