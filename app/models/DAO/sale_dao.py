@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, Float
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timezone
 from app.database.database import Base
 from app.models.sale_status import SaleStatus
 
@@ -10,7 +10,7 @@ class SaleDAO(Base):
     id = Column(Integer, primary_key=True, index=True)
     status = Column(String, default=SaleStatus.OPEN)
     discount_rate = Column(Float, default=0.0)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     closed_at = Column(DateTime, nullable=True)
 
     lines = relationship(

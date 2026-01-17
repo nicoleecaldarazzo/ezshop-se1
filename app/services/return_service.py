@@ -1,4 +1,5 @@
 from typing import List
+from fastapi import HTTPException
 from app.repositories.return_repository import ReturnRepository
 from app.repositories.system_repository import SystemRepository
 from app.repositories.product_repository import ProductRepository
@@ -6,9 +7,9 @@ from app.repositories.sale_repository import SaleRepository
 
 from app.models.DTO.return_dto import ReturnDTO, ReturnLineDTO
 from app.models.return_status import ReturnStatus
+from app.models.sale_status import SaleStatus 
 from app.models.errors.notfound_error import NotFoundError
 from app.models.errors.bad_request import BadRequestError
-from app.models.errors.conflict_error import ConflictError 
 
 class ReturnService:
     def __init__(self):
@@ -35,9 +36,9 @@ class ReturnService:
         if not sale:
             raise NotFoundError(f"Sale {sale_id} not found")
 
-        # Step 2: Check if sale is PAID (409)
-        if getattr(sale, 'status', None) != "PAID":
-            raise ConflictError("Return allowed only on paid sales")
+        # Step 2: Check if sale is PAID (420)
+        if getattr(sale, 'status', None) != SaleStatus.PAID:
+            raise HTTPException(status_code=420, detail="Return allowed only on paid sales")
         
         dao = await self.repo.create_return(sale_id)
         return self._to_dto(dao)
@@ -60,7 +61,7 @@ class ReturnService:
         if not dao: raise NotFoundError("Return not found")
         
         if dao.status == ReturnStatus.REIMBURSED:
-            raise ConflictError("Cannot delete a reimbursed return")
+            raise HTTPException(status_code=420, detail="Cannot delete a reimbursed return")
         
         return await self.repo.delete_return(return_id)
 
@@ -69,7 +70,25 @@ class ReturnService:
         if not dao: raise NotFoundError("Return not found")
 
         if dao.status != ReturnStatus.OPEN:
-            raise ConflictError("Cannot modify a closed return")
+            raise HTTPException(status_code=420, detail="Cannot modify a closed return")
+
+        sale = await self.sale_repo.get_sale(dao.sale_id)
+        if not sale:
+            raise NotFoundError("Associated sale not found")
+        
+        found_line = None
+        # Locate the specific line item in the original sale
+        for line in getattr(sale, 'lines', []):
+            item_barcode = getattr(line, 'product_barcode', None)
+            if item_barcode == barcode:
+                found_line = line
+                break
+        
+        if not found_line:
+            raise BadRequestError("Product not found in the original sale")
+
+        if amount > found_line.quantity:
+            raise BadRequestError(f"Cannot return {amount} items. Only {found_line.quantity} were sold.")
 
         price = 0.0 
         return await self.repo.add_item(return_id, barcode, amount, price)
@@ -79,27 +98,23 @@ class ReturnService:
         if not dao: raise NotFoundError("Return not found")
         
         if dao.status != ReturnStatus.OPEN:
-            raise ConflictError("Cannot remove items from a closed return")
+            raise HTTPException(status_code=420, detail="Cannot remove items from a closed return")
         
         return await self.repo.remove_item(return_id, barcode, amount)
 
     async def close_return(self, return_id: int) -> bool:
-        # Get the return transaction
         return_tx = await self.repo.get_return(return_id)
         if not return_tx:
             raise NotFoundError(f"Return with id {return_id} not found")
 
-        # Check status (Must be OPEN to close)
         if return_tx.status != ReturnStatus.OPEN:
-            raise ConflictError("Return is not in OPEN state")
+            raise HTTPException(status_code=420, detail="Return is not in OPEN state")
 
-        # Restock items (Loop through lines and update product quantity)
         for line in return_tx.lines:
             product = await self.product_repo.get_product_by_barcode(line.product_barcode)
             if product:
                 await self.product_repo.update_product_quantity(product.id, line.quantity)
 
-        # Close the return in DB
         await self.repo.close_return(return_id)
         return True
 
@@ -108,7 +123,7 @@ class ReturnService:
         if not dao: raise NotFoundError("Return not found")
         
         if dao.status != ReturnStatus.CLOSED:
-            raise ConflictError("Return must be closed before reimbursement")
+            raise HTTPException(status_code=420, detail="Return must be closed before reimbursement")
 
         total_refund = sum(line.quantity * line.price_per_unit for line in dao.lines)
 

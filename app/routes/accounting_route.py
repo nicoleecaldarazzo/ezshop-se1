@@ -10,7 +10,8 @@ controller = AccountingController()
 @router.get(
     "", 
     response_model=dict, 
-    dependencies=[Depends(authenticate_user([UserType.Administrator, UserType.ShopManager]))]
+    # Only Admin allowed
+    dependencies=[Depends(authenticate_user([UserType.Administrator]))]
 )
 async def get_balance():
     balance = await controller.get_balance()
@@ -19,7 +20,8 @@ async def get_balance():
 @router.post(
     "/set", 
     status_code=status.HTTP_201_CREATED, 
-    dependencies=[Depends(authenticate_user([UserType.Administrator, UserType.ShopManager]))]
+    # Only Admin allowed
+    dependencies=[Depends(authenticate_user([UserType.Administrator]))]
 )
 async def set_balance(amount: float, response: Response):
     if amount < 0:
@@ -32,7 +34,8 @@ async def set_balance(amount: float, response: Response):
 @router.post(
     "/reset", 
     status_code=status.HTTP_205_RESET_CONTENT, 
-    dependencies=[Depends(authenticate_user([UserType.Administrator, UserType.ShopManager]))]
+    # Only Admin allowed
+    dependencies=[Depends(authenticate_user([UserType.Administrator]))]
 )
 async def reset_balance():
     await controller.reset_balance()
