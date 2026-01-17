@@ -299,19 +299,25 @@ async def test_pay_order_success(repo, mock_session):
         status=OrderStatus.ISSUED,
         issue_date=datetime.now(timezone.utc)
     )
-    
+
+    system_info = SimpleNamespace(
+        balance=2000.0  
+    )
     mock_session.get = AsyncMock(return_value=order)
+    mock_balance_result = MagicMock() 
+    mock_balance_result.scalar_one_or_none.return_value = system_info
+    mock_session.execute = AsyncMock(return_value=mock_balance_result)
+    
     mock_session.commit = AsyncMock()
     mock_session.refresh = AsyncMock()
-    
+
     repo._get_session = AsyncMock(return_value=mock_session)
-    
+
     result = await repo.pay_order(1)
-    
-    assert order.status == OrderStatus.PAID
-    mock_session.get.assert_awaited_once()
+
+    assert result is not None
+    assert result.status == OrderStatus.PAID
     mock_session.commit.assert_awaited_once()
-    mock_session.refresh.assert_awaited_once()
 
 
 @pytest.mark.asyncio

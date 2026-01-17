@@ -103,3 +103,12 @@ async def test_update_product_quantity_calls_service(controller):
 
     controller.service.update_product_quantity.assert_awaited_once_with(1, 10)
     assert result == "UPDATED_QUANTITY"
+
+@pytest.mark.asyncio
+async def test_get_products_needing_reorder_calls_service(controller):
+    controller.service.get_products_needing_reorder.return_value = ["P1", "P2"]
+
+    result = await controller.get_products_needing_reorder()
+
+    controller.service.get_products_needing_reorder.assert_awaited_once_with()
+    assert result == ["P1", "P2"]

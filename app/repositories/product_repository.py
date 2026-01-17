@@ -5,7 +5,7 @@ from app.database.database import AsyncSessionLocal
 from app.models.DAO.product_dao import ProductDAO
 from app.models.DTO.product_dto import ProductCreateDTO, ProductUpdateDTO, ProductPositionUpdateDTO
 from app.models.errors.conflict_error import ConflictError
-
+from app.models.errors.invalid_state_error import InvalidStateError
 
 class ProductRepository:
     def __init__(self, session: Optional[AsyncSession] = None):
@@ -25,6 +25,15 @@ class ProductRepository:
             existing = res.scalar_one_or_none()
             if existing:
                 raise ConflictError("Product barcode already exists")
+
+            if product_dto.position and product_dto.position.strip():
+                res = await session.execute(
+                    select(ProductDAO).where(ProductDAO.position == product_dto.position)
+            )
+                if res.scalar_one_or_none():
+                    raise ConflictError(
+                        f"Position '{product_dto.position}' is already occupied by another product"
+                    )
 
             product = ProductDAO(
                 description=product_dto.description,
@@ -73,6 +82,11 @@ class ProductRepository:
             if not product:
                 return None
 
+            if (await self.has_active_sales(product.barcode) or 
+                    await self.has_active_orders(product.barcode) or 
+                    await self.has_active_returns(product.barcode)):
+                    raise InvalidStateError("Product is involved in active transactions") 
+
 
             if dto.barcode is not None and dto.barcode != product.barcode:
                 res = await session.execute(
@@ -80,7 +94,6 @@ class ProductRepository:
                 )
                 if res.scalar_one_or_none():
                     raise ConflictError("Barcode already exists")
-
 
             if dto.description is not None:
                 product.description = dto.description
@@ -203,3 +216,11 @@ class ProductRepository:
                 )
             )
             return res.scalar_one_or_none() is not None
+        
+    async def get_products_needing_reorder(self) -> list[ProductDAO]:
+        REORDER_THRESHOLD = 10
+        async with await self._get_session() as session:
+            res = await session.execute(
+                select(ProductDAO).where(ProductDAO.quantity <= REORDER_THRESHOLD) 
+            )
+            return list(res.scalars().all())

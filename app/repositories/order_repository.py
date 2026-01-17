@@ -102,6 +102,15 @@ class OrderRepository:
             if order.status != OrderStatus.ISSUED:
                 raise InvalidStateError(f"Order must be in ISSUED state to be paid (current: {order.status})")
 
+            total_cost = order.quantity * order.price_per_unit
+
+            balance_result = await session.execute(select(SystemInfoDAO))
+            system_info = balance_result.scalar_one_or_none()
+            
+            if not system_info or system_info.balance < total_cost:
+                raise MisdirectedRequest("Insufficient balance to pay for this order")
+
+            system_info.balance -= total_cost
 
             order.status = OrderStatus.PAID
 
