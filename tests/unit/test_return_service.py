@@ -1,11 +1,11 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock
+from fastapi import HTTPException
 from types import SimpleNamespace
 from app.services.return_service import ReturnService
 from app.models.return_status import ReturnStatus
 from app.models.errors.conflict_error import ConflictError
 from app.models.errors.notfound_error import NotFoundError
-
 
 @pytest.mark.asyncio
 async def test_create_return_success():
@@ -34,8 +34,9 @@ async def test_create_return_fails_if_unpaid():
     mock_sale.status = "OPEN" # Not paid
     service.sale_repo.get_sale = AsyncMock(return_value=mock_sale)
 
-    with pytest.raises(ConflictError):
+    with pytest.raises(HTTPException) as exc:
         await service.create_return(sale_id=10)
+    assert exc.value.status_code == 420
 
 @pytest.mark.asyncio
 async def test_get_return_not_found():
@@ -52,8 +53,9 @@ async def test_delete_return_reimbursed_conflict():
     mock_dao.status = ReturnStatus.REIMBURSED
     service.repo.get_return = AsyncMock(return_value=mock_dao)
     
-    with pytest.raises(ConflictError):
+    with pytest.raises(HTTPException) as exc:
         await service.delete_return(1)
+    assert exc.value.status_code == 420
 
 @pytest.mark.asyncio
 async def test_delete_return_success():
@@ -73,8 +75,9 @@ async def test_add_item_closed_conflict():
     mock_dao.status = ReturnStatus.CLOSED
     service.repo.get_return = AsyncMock(return_value=mock_dao)
 
-    with pytest.raises(ConflictError):
+    with pytest.raises(HTTPException) as exc:
         await service.add_item(1, "ABC", 1)
+    assert exc.value.status_code == 420
 
 @pytest.mark.asyncio
 async def test_remove_item_closed_conflict():
@@ -83,8 +86,9 @@ async def test_remove_item_closed_conflict():
     mock_dao.status = ReturnStatus.CLOSED
     service.repo.get_return = AsyncMock(return_value=mock_dao)
 
-    with pytest.raises(ConflictError):
+    with pytest.raises(HTTPException) as exc:
         await service.remove_item(1, "ABC", 1)
+    assert exc.value.status_code == 420
 
 @pytest.mark.asyncio
 async def test_close_return_restocks_items():
@@ -141,5 +145,6 @@ async def test_reimburse_return_not_closed_conflict():
     mock_ret.status = ReturnStatus.OPEN
     service.repo.get_return = AsyncMock(return_value=mock_ret)
 
-    with pytest.raises(ConflictError):
+    with pytest.raises(HTTPException) as exc:
         await service.reimburse_return(1)
+    assert exc.value.status_code == 420
