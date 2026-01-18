@@ -19,7 +19,7 @@ These figures will not be used to evaluate neither the project nor the team, the
 |  Dec 8 - 14    |                         |        | 33h    |              |                     |                    |                  | 10h        |
 |  Dec 15 - 21   |                         |        | 30h    |              |                     |                    |                  | 5h         |
 |  Dec 22 - 28   |                         |        | 25h    |              |                     |                    |                  | 6h         |
-| Dec 29 - Jan 4 |                         |        |        | 15h          | 5h                  |                    |                  | 8h         |
+| Dec 29 - Jan 4 |                         |        |        | 15h          | 5h                  |                    |5h                | 8h         |
 |   Jan 5 - 11   |                         |        |        | 11h          | 9h                  |                    |                  | 5h         |
 |  Jan 12 - 18   |                         |        |        |              |                     |25h                 |                  | 10h        |
 |  Jan 19 - 25   |                         |        |        |              |                     |                    |                  |            |
