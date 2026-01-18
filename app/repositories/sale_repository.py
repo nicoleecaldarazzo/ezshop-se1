@@ -1,12 +1,13 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime, timezone
 
 from app.database.database import AsyncSessionLocal
 from app.models.DAO.sale_dao import SaleDAO
 from app.models.DAO.sale_line_dao import SaleLineDAO
+from app.models.DAO.product_dao import ProductDAO 
 from app.models.sale_status import SaleStatus
 
 class SaleRepository:
@@ -24,6 +25,11 @@ class SaleRepository:
             await session.refresh(sale)
             return sale
 
+    async def get_all_sales(self) -> List[SaleDAO]:
+        async with await self._get_session() as session:
+            res = await session.execute(select(SaleDAO).options(selectinload(SaleDAO.lines)))
+            return res.scalars().all()
+
     async def get_sale(self, sale_id: int) -> Optional[SaleDAO]:
         async with await self._get_session() as session:
             res = await session.execute(
@@ -35,52 +41,96 @@ class SaleRepository:
 
     async def add_line(self, sale_id: int, barcode: str, amount: int) -> bool:
         async with await self._get_session() as session:
-            line = SaleLineDAO(
-                sale_id=sale_id,
-                product_barcode=barcode,
-                quantity=amount,
-                price_per_unit=0.0
+            prod_res = await session.execute(select(ProductDAO).where(ProductDAO.barcode == barcode))
+            product = prod_res.scalar_one_or_none()
+            
+            if not product or product.quantity < amount:
+                return False 
+
+            product.quantity -= amount
+            line_res = await session.execute(
+                select(SaleLineDAO).where(SaleLineDAO.sale_id == sale_id, SaleLineDAO.product_barcode == barcode)
             )
-            session.add(line)
+            existing_line = line_res.scalar_one_or_none()
+
+            if existing_line:
+                existing_line.quantity += amount
+            else:
+                new_line = SaleLineDAO(
+                    sale_id=sale_id,
+                    product_barcode=barcode,
+                    quantity=amount,
+                    price_per_unit=product.price_per_unit
+                )
+                session.add(new_line)
             await session.commit()
             return True
 
     async def remove_line(self, sale_id: int, barcode: str, amount: int) -> bool:
         async with await self._get_session() as session:
             res = await session.execute(
-                select(SaleLineDAO).where(
-                    SaleLineDAO.sale_id == sale_id,
-                    SaleLineDAO.product_barcode == barcode
-                )
+                select(SaleLineDAO).where(SaleLineDAO.sale_id == sale_id, SaleLineDAO.product_barcode == barcode)
             )
             line = res.scalar_one_or_none()
-            if not line:
-                return False
+            if not line: return False
 
-            if line.quantity > amount:
-                line.quantity -= amount
-            else:
+            prod_res = await session.execute(select(ProductDAO).where(ProductDAO.barcode == barcode))
+            product = prod_res.scalar_one_or_none()
+            if product: product.quantity += min(amount, line.quantity)
+
+            if amount >= line.quantity:
                 await session.delete(line)
-
+            else:
+                line.quantity -= amount
             await session.commit()
             return True
 
-    async def set_discount(self, sale_id: int, discount: float) -> bool:
+    # Ensure your delete_sale restores inventory like this:
+    async def delete_sale(self, sale_id: int) -> bool:
         async with await self._get_session() as session:
-            sale = await session.get(SaleDAO, sale_id)
-            if not sale:
-                return False
-            sale.discount_rate = discount
+            res = await session.execute(
+                select(SaleDAO).options(selectinload(SaleDAO.lines)).where(SaleDAO.id == sale_id)
+            )
+            sale = res.scalar_one_or_none()
+            if not sale: return False
+            
+            # RESTORE STOCK
+            for line in sale.lines:
+                p_res = await session.execute(select(ProductDAO).where(ProductDAO.barcode == line.product_barcode))
+                product = p_res.scalar_one_or_none()
+                if product:
+                    product.quantity += line.quantity
+            
+            await session.delete(sale)
+            await session.commit()
+            return True
+
+    async def set_line_discount(self, sale_id: int, barcode: str, discount: float) -> bool:
+        async with await self._get_session() as session:
+            res = await session.execute(
+                select(SaleLineDAO).where(SaleLineDAO.sale_id == sale_id, SaleLineDAO.product_barcode == barcode)
+            )
+            line = res.scalar_one_or_none()
+            if not line: return False
+            line.discount_rate = discount
             await session.commit()
             return True
 
     async def set_status(self, sale_id: int, status: SaleStatus) -> bool:
         async with await self._get_session() as session:
             sale = await session.get(SaleDAO, sale_id)
-            if not sale:
-                return False
+            if not sale: return False
             sale.status = status
-            if status == SaleStatus.PENDING and sale.closed_at is None:
+            # FIXED: Always set closed_at when moving to PENDING or PAID
+            if status in [SaleStatus.PENDING, SaleStatus.PAID]:
                 sale.closed_at = datetime.now(timezone.utc)
+            await session.commit()
+            return True
+
+    async def set_discount(self, sale_id: int, discount: float) -> bool:
+        async with await self._get_session() as session:
+            sale = await session.get(SaleDAO, sale_id)
+            if not sale: return False
+            sale.discount_rate = discount
             await session.commit()
             return True
