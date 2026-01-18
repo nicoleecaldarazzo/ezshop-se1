@@ -8,8 +8,8 @@ class SaleDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    lines: List[SaleLineDTO] = []
     status: SaleStatus
-    datetime: Optional[datetime] = None
+    # FIX: Ensure this is named 'lines', not 'items'
+    lines: List[SaleLineDTO] = [] 
     discount_rate: float = 0.0
-    closed_at: Optional[datetime] = None # Crucial for KeyError fix
+    closed_at: Optional[datetime] = None

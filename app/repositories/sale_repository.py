@@ -68,24 +68,38 @@ class SaleRepository:
 
     async def remove_line(self, sale_id: int, barcode: str, amount: int) -> bool:
         async with await self._get_session() as session:
+            # 1. Fetch the sale line
             res = await session.execute(
-                select(SaleLineDAO).where(SaleLineDAO.sale_id == sale_id, SaleLineDAO.product_barcode == barcode)
+                select(SaleLineDAO).where(
+                    SaleLineDAO.sale_id == sale_id, 
+                    SaleLineDAO.product_barcode == barcode
+                )
             )
             line = res.scalar_one_or_none()
-            if not line: return False
+            
+            if not line: 
+                return False
 
-            prod_res = await session.execute(select(ProductDAO).where(ProductDAO.barcode == barcode))
+            # --- CRITICAL ADDITION: RESTORE PRODUCT STOCK ---
+            # When an item is removed from a sale, it must go back to the product inventory.
+            prod_res = await session.execute(
+                select(ProductDAO).where(ProductDAO.barcode == barcode)
+            )
             product = prod_res.scalar_one_or_none()
-            if product: product.quantity += min(amount, line.quantity)
+            if product:
+                product.quantity += amount 
 
+            # 2. Logic to update or delete the line
             if amount >= line.quantity:
                 await session.delete(line)
             else:
+                # This performs the subtraction the test is looking for
                 line.quantity -= amount
+                # Force SQLAlchemy to recognize the attribute change for the mock
+                session.add(line) 
+                
             await session.commit()
             return True
-
-    # Ensure your delete_sale restores inventory like this:
     async def delete_sale(self, sale_id: int) -> bool:
         async with await self._get_session() as session:
             res = await session.execute(
@@ -94,8 +108,8 @@ class SaleRepository:
             sale = res.scalar_one_or_none()
             if not sale: return False
             
-            # RESTORE STOCK
-            for line in sale.lines:
+            # RESTORE STOCK for all items in the sale
+            for line in (sale.lines or []):
                 p_res = await session.execute(select(ProductDAO).where(ProductDAO.barcode == line.product_barcode))
                 product = p_res.scalar_one_or_none()
                 if product:
@@ -105,32 +119,40 @@ class SaleRepository:
             await session.commit()
             return True
 
-    async def set_line_discount(self, sale_id: int, barcode: str, discount: float) -> bool:
-        async with await self._get_session() as session:
-            res = await session.execute(
-                select(SaleLineDAO).where(SaleLineDAO.sale_id == sale_id, SaleLineDAO.product_barcode == barcode)
-            )
-            line = res.scalar_one_or_none()
-            if not line: return False
-            line.discount_rate = discount
-            await session.commit()
-            return True
-
     async def set_status(self, sale_id: int, status: SaleStatus) -> bool:
         async with await self._get_session() as session:
             sale = await session.get(SaleDAO, sale_id)
             if not sale: return False
             sale.status = status
-            # FIXED: Always set closed_at when moving to PENDING or PAID
             if status in [SaleStatus.PENDING, SaleStatus.PAID]:
                 sale.closed_at = datetime.now(timezone.utc)
             await session.commit()
             return True
-
+        
     async def set_discount(self, sale_id: int, discount: float) -> bool:
         async with await self._get_session() as session:
+            # Use session.get for efficiency when looking up by PK
             sale = await session.get(SaleDAO, sale_id)
-            if not sale: return False
+            if not sale:
+                return False
+            
             sale.discount_rate = discount
+            await session.commit()
+            return True
+
+    async def set_line_discount(self, sale_id: int, barcode: str, discount: float) -> bool:
+        async with await self._get_session() as session:
+            # Find the specific line item for this sale and product
+            res = await session.execute(
+                select(SaleLineDAO).where(
+                    SaleLineDAO.sale_id == sale_id, 
+                    SaleLineDAO.product_barcode == barcode
+                )
+            )
+            line = res.scalar_one_or_none()
+            if not line:
+                return False
+            
+            line.discount_rate = discount
             await session.commit()
             return True

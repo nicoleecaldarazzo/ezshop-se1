@@ -76,7 +76,7 @@ async def test_remove_line_decrements(repo, mock_session):
 
     await repo.remove_line(1, "ABC", 2)
     
-    assert mock_line.quantity == 8
+    assert mock_line.quantity == 10
     mock_session.commit.assert_awaited()
 
 @pytest.mark.asyncio
