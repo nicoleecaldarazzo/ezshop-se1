@@ -412,5 +412,5 @@
 
 
 ## Coverage white box
-(./images/dependency_graph.png)
+(./images/Coverage white box.png)
 Report here the screenshot of coverage values obtained with PyTest
