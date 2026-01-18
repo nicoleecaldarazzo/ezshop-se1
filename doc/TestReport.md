@@ -412,5 +412,5 @@
 
 
 ## Coverage white box
-(./images/Coverage white box.png)
+![Test Coverage Report](./images/Coverage_white_box.png)
 Report here the screenshot of coverage values obtained with PyTest
