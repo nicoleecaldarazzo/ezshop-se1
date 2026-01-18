@@ -338,7 +338,18 @@
 | test_set_balance_success | AccountingController | Unit | WB / Statement Coverage |
 | test_set_balance_negative_fails | AccountingController | Unit | WB / Branch Coverage |
 | test_reset_balance | AccountingController | Unit | WB / Statement Coverage |
-
+| test_create_sale_success | SaleRoutes | API | BB / Eq. Partitioning |
+| test_add_item_insufficient_stock | SaleRoutes | API | BB / Boundary |
+| test_remove_item_success | SaleRoutes | API | BB / Eq. Partitioning |
+| test_remove_item_invalid_amount | SaleRoutes | API |BB / Boundary (gt:0) |
+| test_apply_sale_discount_success | SaleRoutes | API | BB / Eq. Partitioning |
+| test_close_sale_empty_deletes | SaleService | Integration | WB / Branch Coverage |
+| test_close_sale_invalid_state_420 | SaleService | Unit | WB / Branch Coverage |
+| test_pay_sale_change_calculation | SaleService | Unit | BB / Boundary |
+| test_compute_points_logic | SaleService | Unit | BB / Eq. Partitioning |
+| test_remove_line_restores_inventory | SaleRepository | Unit | WB / Statement Coverage |
+| test_set_status_updates_closed_at | SaleRepository | Unit | WB / Statement Coverage |
+| test_delete_sale_restores_all_stock | SaleRepository | Unit | WB / Branch Coverage |
 # Coverage
 
 ## Coverage of FR
@@ -383,6 +394,22 @@
 | FR6.14 Close a return transaction | test_close_return_201, test_close_return_calls_service, test_close_return_restocks_items, test_close_return |
 | FR6.15 Rollback or commit a closed return transaction | test_reimburse_return_201, test_reimburse_return_calls_service, test_reimburse_return_success, test_reimburse_return_not_closed_conflict, test_delete_return_reimbursed_conflict, test_reimburse_return |
 | FR8.4 Compute balance | test_get_balance_route_200, test_get_balance_success, test_set_balance_route_201, test_set_balance_success, test_set_balance_negative_fails |
+| Scenario 6.1|test_add_product_to_sale_success_all_roles,test_add_product_deducts_from_inventory,test_add_multiple_products_to_sale|
+| Scenario 6.2 | test_apply_product_discount_success_all_roles,test_apply_product_discount_various_rates,test_apply_discount_to_multiple_products|
+| Scenario 6.3| test_apply_sale_discount_success_all_roles,test_apply_sale_discount_various_rates,test_apply_sale_discount_overwrite_existing|
+| Scenario 6.4| test_close_sale_success_all_roles,test_pay_sale_success_all_roles,test_pay_sale_change_calculation, test_pay_sale_with_discount|
+| Scenario 6.5| test_delete_sale_success_all_roles,test_delete_sale_restores_product_quantity|
+| Scenario 7.1| test_compute_points_success_all_roles,test_compute_points_logic|
+| FR6.1 Create a sale transaction| test_create_and_list_sale_integration, create_sale (API)|
+|FR6.2 Add product to sale|test_add_product_various_quantities,test_add_same_product_multiple_times,test_add_product_insufficient_stock|
+|FR6.3 Remove product from sale|test_remove_product_from_sale_success_all_roles,test_remove_product_restores_inventory,test_remove_entire_product_quantity|
+|FR6.5 Apply discount to sale|test_apply_sale_discount_pending_sale,test_apply_sale_discount_invalid_rate|
+|FR6.6 Apply discount to product|test_apply_product_discount_to_not_open_sale,test_apply_product_discount_to_paid_sale|
+|FR6.7 Close a sale transaction|test_close_sale_sets_closed_at_timestamp,test_close_paid_sale_fails, test_close_empty_sale_deletes_it|
+|FR6.8 Pay a sale transaction|test_pay_sale_invalid_cash_amount,test_pay_sale_insufficient_cash|
+|FR6.10 Compute points for sale|test_compute_points_sale_not_paid,test_compute_points_sale_not_closed|
+|FR6.11 Delete a sale transaction|test_delete_sale_invalid_id, test_delete_sale_not_found,test_delete_sale_unauthorized|
+
 
 ## Coverage white box
 
