@@ -21,7 +21,7 @@ These figures will not be used to evaluate neither the project nor the team, the
 |  Dec 22 - 28   |                         |        | 25h    |              |                     |                    |                  | 6h         |
 | Dec 29 - Jan 4 |                         |        |        | 15h          | 5h                  |                    |                  | 8h         |
 |   Jan 5 - 11   |                         |        |        | 11h          | 9h                  |                    |                  | 5h         |
-|  Jan 12 - 18   |                         |        |        |              |                     |                    |                  | 10h        |
+|  Jan 12 - 18   |                         |        |        |              |                     |25h                 |                  | 10h        |
 |  Jan 19 - 25   |                         |        |        |              |                     |                    |                  |            |
 | Jan 26 - Feb 1 |                         |        |        |              |                     |                    |                  |            |
 |   Feb 2 - 8    |                         |        |        |              |                     |                    |                  |            |
