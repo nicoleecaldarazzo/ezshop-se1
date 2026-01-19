@@ -10,19 +10,19 @@ These figures will not be used to evaluate neither the project nor the team, the
 
 |      Week      | requirement engineering | design | coding | unit testing | integration testing | acceptance testing | containerization | management |
 | :------------: | :---------------------: | :----: | :----: | :----------: | :-----------------: | :----------------: | :--------------: | :--------: |
-| Oct 27 - Nov 2 | 10h                     |        |        |              |                     |                    |                  | 7h         |
-|   Nov 3 - 9    | 10h                     |        |        |              |                     |                    |                  | 6h         |
+| Oct 27 - Nov 2 | 16h                     |        |        |              |                     |                    |                  | 7h         |
+|   Nov 3 - 9    | 12h                     |        |        |              |                     |                    |                  | 6h         |
 |  Nov 10 - 16   | 25h                     |        |        |              |                     |                    |                  | 10h        |
-|  Nov 17 - 23   | 13h                     | 30h    |        |              |                     |                    |                  | 6h         |
-|  Nov 24 - 30   |                         |        |        |              |                     |                    |                  | 5h         |
-|  Dec 1 - 7     |                         |        | 5h     |              |                     |                    |5h                | 5h         |
+|  Nov 17 - 23   | 13h                     | 31h    |        |              |                     |                    |                  | 8h         |
+|  Nov 24 - 30   |                         |        | 16h    |              |                     |                    |                  | 15h        |
+|  Dec 1 - 7     |                         |        | 25h    |              |                     |                    |5h                | 1h         |
 |  Dec 8 - 14    |                         |        | 33h    |              |                     |                    |                  | 10h        |
-|  Dec 15 - 21   |                         |        | 30h    |              |                     |                    |                  | 5h         |
+|  Dec 15 - 21   |                         |        | 30h    |              |                     |                    |                  | 8h         |
 |  Dec 22 - 28   |                         |        | 25h    |              |                     |                    |                  | 6h         |
-| Dec 29 - Jan 4 |                         |        |        | 15h          | 5h                  |                    |5h                | 8h         |
-|   Jan 5 - 11   |                         |        |        | 11h          | 9h                  |                    |                  | 5h         |
-|  Jan 12 - 18   |                         |        |        |              |                     |25h                 |                  | 10h        |
-|  Jan 19 - 25   |                         |        |        |              |                     |                    |                  |            |
+| Dec 29 - Jan 4 |                         |        | 10h    | 25h          | 6h                  |                    |5h                | 8h         |
+|   Jan 5 - 11   |                         |        |        | 21h          | 14h                 |                    |                  | 5h         |
+|  Jan 12 - 18   |                         |        |        |              | 8h                  |25h                 |                  | 10h        |
+|  Jan 19 - 25   |                         |        |        |              |                     |                    |                  |     10h    |
 | Jan 26 - Feb 1 |                         |        |        |              |                     |                    |                  |            |
 |   Feb 2 - 8    |                         |        |        |              |                     |                    |                  |            |
 |  Feb 9 - 15    |                         |        |        |              |                     |                    |                  |            |
