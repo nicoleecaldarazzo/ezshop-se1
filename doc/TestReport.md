@@ -16,7 +16,7 @@
 # Dependency graph
 
      <report the here the dependency graph of EzShop>
-     ![Dependency graph](./images/dependency_graph.png)
+     ![Dependency graph](./images/Coverage_white_box.png)
 
 # Integration approach
 
