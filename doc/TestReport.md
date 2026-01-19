@@ -39,14 +39,18 @@ We adopted a Mixed (Incremental) Integration Strategy structured around Vertical
    •	Incremental Integration: We utilized a Feature Branch workflow on GitLab. Distinct functional features were developed on separate branches and integrated incrementally into the main development branch (dev) via Merge Requests.
 Integration Sequence:
 The integration followed a logical dependency chain based on our role allocation:
-•	Step 1: User Management & Authentication. (Member 1)
-o	Result: Established the security context (Roles, JWT), allowing subsequent modules to implement Role-Based Access Control.
-•	Step 2: Products, Warehouse & Supply Chain. (Member 2)
-o	Result: Provided the catalog and stock data structures required for sales and orders.
-•	Step 3: Sales Transactions and Customer Loyalty. (Members 3 & 4)
-o	Result: Connected the "Cash Register" logic to the Inventory (decreasing stock upon sale) and linked sales to customer loyalty cards.
-•	Step 4: Accounting & Returns. (Member 5)
-o	Result: The final integration step, as the Returns logic required existing Sales data and had to interact with Inventory to restore stock levels.
+
+   •	Step 1: User Management & Authentication. (Member 1)
+     	Result: Established the security context (Roles, JWT), allowing subsequent modules to implement Role-Based Access Control.
+
+   •	Step 2: Products, Warehouse & Supply Chain. (Member 2)
+      Result: Provided the catalog and stock data structures required for sales and orders.
+
+  •	Step 3: Sales Transactions and Customer Loyalty. (Members 3 & 4)
+     Result: Connected the "Cash Register" logic to the Inventory (decreasing stock upon sale) and linked sales to customer loyalty cards.
+
+  •	Step 4: Accounting & Returns. (Member 5)
+     Result: The final integration step, as the Returns logic required existing Sales data and had to interact with Inventory to restore stock levels.
 ________________________________________
 2. Unit Testing Strategy
 Approach:
