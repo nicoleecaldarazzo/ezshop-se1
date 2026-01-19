@@ -44,19 +44,19 @@ The integration followed a logical dependency chain based on our role allocation
 
    •	Step 1: User Management & Authentication. (Member 1)
      	 
-  Result: Established the security context (Roles, JWT), allowing subsequent modules to implement Role-Based Access Control.
+   Result: Established the security context (Roles, JWT), allowing subsequent modules to implement Role-Based Access Control.
 
    •	Step 2: Products, Warehouse & Supply Chain. (Member 2)
        
-  Result: Provided the catalog and stock data structures required for sales and orders.
+   Result: Provided the catalog and stock data structures required for sales and orders.
 
    •	Step 3: Sales Transactions and Customer Loyalty. (Members 3 & 4)
        
-  Result: Connected the "Cash Register" logic to the Inventory (decreasing stock upon sale) and linked sales to customer loyalty cards.
+   Result: Connected the "Cash Register" logic to the Inventory (decreasing stock upon sale) and linked sales to customer loyalty cards.
 
    •	Step 4: Accounting & Returns. (Member 5)
        
-  Result: The final integration step, as the Returns logic required existing Sales data and had to interact with Inventory to restore stock levels.
+   Result: The final integration step, as the Returns logic required existing Sales data and had to interact with Inventory to restore stock levels.
 ________________________________________
 2. Unit Testing Strategy
 
