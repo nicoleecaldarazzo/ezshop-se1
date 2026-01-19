@@ -37,27 +37,28 @@ We adopted a Mixed (Incremental) Integration Strategy structured around Vertical
    •	Bottom-Up Coding: Within each vertical slice, we followed a bottom-up coding sequence: DAO -> DTO -> Repository -> Controller -> Route. We built the persistent storage layer first to ensure data integrity before adding business logic and API endpoints.
  
    •	Incremental Integration: We utilized a Feature Branch workflow on GitLab. Distinct functional features were developed on separate branches and integrated incrementally into the main development branch (dev) via Merge Requests.
+   
 Integration Sequence:
 The integration followed a logical dependency chain based on our role allocation:
 
    •	Step 1: User Management & Authentication. (Member 1)
-     	Result: Established the security context (Roles, JWT), allowing subsequent modules to implement Role-Based Access Control.
+     	 Result: Established the security context (Roles, JWT), allowing subsequent modules to implement Role-Based Access Control.
 
    •	Step 2: Products, Warehouse & Supply Chain. (Member 2)
-      Result: Provided the catalog and stock data structures required for sales and orders.
+       Result: Provided the catalog and stock data structures required for sales and orders.
 
-  •	Step 3: Sales Transactions and Customer Loyalty. (Members 3 & 4)
-     Result: Connected the "Cash Register" logic to the Inventory (decreasing stock upon sale) and linked sales to customer loyalty cards.
+   •	Step 3: Sales Transactions and Customer Loyalty. (Members 3 & 4)
+       Result: Connected the "Cash Register" logic to the Inventory (decreasing stock upon sale) and linked sales to customer loyalty cards.
 
-  •	Step 4: Accounting & Returns. (Member 5)
-     Result: The final integration step, as the Returns logic required existing Sales data and had to interact with Inventory to restore stock levels.
+   •	Step 4: Accounting & Returns. (Member 5)
+       Result: The final integration step, as the Returns logic required existing Sales data and had to interact with Inventory to restore stock levels.
 ________________________________________
 2. Unit Testing Strategy
 Approach:
-We performed White Box Testing using pytest. After implementing the code for a vertical slice, each member wrote unit tests to verify their own domain logic before integration.
+ We performed White Box Testing using pytest. After implementing the code for a vertical slice, each member wrote unit tests to verify their own domain logic before integration.
 Scope & Methodology:
-•	Isolation: We tested individual DAOs and Controllers to ensure internal business rules were correct (e.g., verifying that a password is hashed before saving).
-•	Coverage: Tests focused on validating the "Functional Responsibilities" defined in our project plan. For example, ensuring that the logic for issuing an order correctly records the transaction in the database.
+ •	Isolation: We tested individual DAOs and Controllers to ensure internal business rules were correct (e.g., verifying that a password is hashed before saving).
+ •	Coverage: Tests focused on validating the "Functional Responsibilities" defined in our project plan. For example, ensuring that the logic for issuing an order correctly records the transaction in the database.
 ________________________________________
 3. API Testing Strategy
 Approach:
