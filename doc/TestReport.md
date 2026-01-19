@@ -31,11 +31,12 @@
 1. Integration Approach
 Strategy:
 We adopted a Mixed (Incremental) Integration Strategy structured around Vertical Slicing.
- •	Vertical Slicing: Instead of separating work by technical layers (e.g., one person doing only DB), each team member was responsible for the full stack implementation of a specific functional domain (Model, DAO, Controller, and Routes).
 
- •	Bottom-Up Coding: Within each vertical slice, we followed a bottom-up coding sequence: DAO -> DTO -> Repository -> Controller -> Route. We built the persistent storage layer first to ensure data integrity before adding business logic and API endpoints.
+   •	Vertical Slicing: Instead of separating work by technical layers (e.g., one person doing only DB), each team member was responsible for the full stack implementation of a specific functional domain (Model, DAO, Controller, and Routes).
+
+   •	Bottom-Up Coding: Within each vertical slice, we followed a bottom-up coding sequence: DAO -> DTO -> Repository -> Controller -> Route. We built the persistent storage layer first to ensure data integrity before adding business logic and API endpoints.
  
- •	Incremental Integration: We utilized a Feature Branch workflow on GitLab. Distinct functional features were developed on separate branches and integrated incrementally into the main development branch (dev) via Merge Requests.
+   •	Incremental Integration: We utilized a Feature Branch workflow on GitLab. Distinct functional features were developed on separate branches and integrated incrementally into the main development branch (dev) via Merge Requests.
 Integration Sequence:
 The integration followed a logical dependency chain based on our role allocation:
 •	Step 1: User Management & Authentication. (Member 1)
