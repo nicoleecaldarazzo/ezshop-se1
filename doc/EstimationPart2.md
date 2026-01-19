@@ -24,11 +24,11 @@ Compute two separate values of size
 ## Computation of effort 
 From timesheet.md sum all effort spent, in **ALL** activities (task1, task2, task3) at the end of the project on Jan 18. 
 
-TOTAL=343 h
+TOTAL=459 h
 
 ## Computation of productivity
 
-productivity = ((LOC of production code)+ (LOC of test code)) / effort = 33 loc/hour
+productivity = ((LOC of production code)+ (LOC of test code)) / effort = 25 loc/hour
 
 
 ## Comparison
@@ -38,8 +38,8 @@ productivity = ((LOC of production code)+ (LOC of test code)) / effort = 33 loc/
 | production code size | unknown  |2562|
 | test code size | unknown |8919|
 | total size  |6000 LOC|11481 LOC|
-| effort ||343 h|
-| productivity  | 10 loc / hour |33 loc/hour|
+| effort |600 h|459 h|
+| productivity  | 10 loc / hour |25 loc/hour|
 
 
 Report, as estimate of effort, the value obtained via activity decomposition technique.  The comparison is meaningful for productivity, since the stimates for size and effort were not based on the Official requirements.
