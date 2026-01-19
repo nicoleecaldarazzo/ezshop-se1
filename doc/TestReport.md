@@ -42,38 +42,128 @@
 | test_get_token_user_not_found | AuthController | Unit | WB / Branch Coverage |
 | test_get_token_wrong_password | AuthController | Unit | WB / Branch Coverage |
 | test_create_user_success | UserController | Unit | WB / Statement Coverage |
-|     test_create_customer_success[admin, manager, cashier]     |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
-|       test_create_customer_bad_request[invalid payloads]      |   CustomerRoutes   |     API     |       BB / Boundary + Eq. Partitioning       |
-|              test_create_customer_unauthenticated             |   CustomerRoutes   |     API     |             BB / Boundary (auth)             |
-|     test_update_customer_success[admin, manager, cashier]     |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
-|     test_update_customer_invalid_payload[invalid payloads]    |   CustomerRoutes   |     API     |                 BB / Boundary                |
-|                 test_update_customer_not_found                |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
-|     test_delete_customer_success[admin, manager, cashier]     |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
-|                 test_delete_customer_not_found                |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
-|    test_get_customer_by_id_success[admin, manager, cashier]   |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
-|             test_get_customer_invalid_id[abc, -1]             |   CustomerRoutes   |     API     |                 BB / Boundary                |
-|      test_list_customers_success[admin, manager, cashier]     |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
-|   test_create_customer_card_success[admin, manager, cashier]  |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
-|           test_create_customer_card_unauthenticated           |   CustomerRoutes   |     API     |             BB / Boundary (auth)             |
-| test_attach_card_to_customer_success[admin, manager, cashier] |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
-|                   test_attach_card_not_found                  |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
-|               test_attach_card_already_attached               |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
-|      test_modify_card_points_add[admin, manager, cashier]     |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
-|    test_modify_card_points_remove[admin, manager, cashier]    |   CustomerRoutes   |     API     |             BB / Eq. Partitioning            |
-|              test_modify_card_points_insufficient             |   CustomerRoutes   |     API     |      BB / Boundary (insufficient points)     |
-|                    test_customer_lifecycle                    |   CustomerRoutes   | Integration |       Scenario-based (End-to-End flow)       |
-|             test_create_customer_with_card_success            |   CustomerRoutes   | Integration | Scenario-based (customer + card association) |
-|           test_post_customers_201_created_with_card           |   CustomerRoutes   | Integration |             BB / Eq. Partitioning            |
-|              test_patch_cards_insufficient_points             |   CustomerRoutes   | Integration |                 BB / Boundary                |
-|               test_create_customer_calls_service              | CustomerController |     Unit    |            WB / Statement Coverage           |
-|                 test_create_card_calls_service                | CustomerController |     Unit    |            WB / Statement Coverage           |
-|                 test_attach_card_calls_service                | CustomerController |     Unit    |            WB / Statement Coverage           |
-|                 test_create_customer_conflict                 | CustomerRepository |     Unit    |             WB / Branch Coverage             |
-|                   test_create_card_conflict                   | CustomerRepository |     Unit    |             WB / Branch Coverage             |
-|                test_update_card_points_success                | CustomerRepository |     Unit    |            WB / Statement Coverage           |
-|       test_create_customer_invalid_id_raises_bad_request      |   CustomerService  |     Unit    |             WB / Branch Coverage             |
-|    test_create_customer_with_existing_card_raises_conflict    |   CustomerService  |     Unit    |             WB / Branch Coverage             |
-|       test_update_card_points_insufficient_points_raises      |   CustomerService  |     Unit    |             WB / Branch Coverage             |
+| test_create_customer_card_success | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_create_customer_card_unauthenticated | CustomerRoutes | API | BB / Boundary (auth) |
+| test_create_customer_success | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_create_customer_bad_request | CustomerRoutes | API | BB / Boundary + Eq. Partitioning |
+| test_create_customer_unauthenticated | CustomerRoutes | API | BB / Boundary (auth) |
+| test_create_customer_with_invalid_card | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_list_customers_success | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_list_customers_unauthenticated | CustomerRoutes | API | BB / Boundary (auth) |
+| test_list_customers_includes_created | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_get_customer_by_id_success | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_get_customer_not_found | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_get_customer_invalid_id | CustomerRoutes | API | BB / Boundary |
+| test_get_customer_unauthenticated | CustomerRoutes | API | BB / Boundary (auth) |
+| test_update_customer_success | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_update_customer_not_found | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_update_customer_invalid_payload | CustomerRoutes | API | BB / Boundary |
+| test_update_customer_unauthenticated | CustomerRoutes | API | BB / Boundary (auth) |
+| test_update_customer_invalid_id | CustomerRoutes | API | BB / Boundary |
+| test_update_customer_no_changes | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_delete_customer_success | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_delete_customer_not_found | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_delete_customer_unauthenticated | CustomerRoutes | API | BB / Boundary (auth) |
+| test_attach_card_to_customer_success | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_attach_card_customer_not_found | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_attach_card_not_found | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_attach_card_already_attached | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_attach_card_unauthenticated | CustomerRoutes | API | BB / Boundary (auth) |
+| test_modify_card_points_add | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_modify_card_points_remove | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_modify_card_points_insufficient | CustomerRoutes | API | BB / Boundary (insufficient points) |
+| test_modify_card_points_not_found | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_modify_card_points_unauthenticated | CustomerRoutes | API | BB / Boundary (auth) |
+| test_modify_card_points_as_role | CustomerRoutes | API | BB / Eq. Partitioning |
+| test_customer_lifecycle | CustomerRoutes | Integration | Scenario-based (End-to-End flow) |
+| test_create_customer_with_card_success | CustomerRoutes | Integration | Scenario-based (customer + card association) |
+| test_create_customer_with_valid_card_already_assigned | CustomerRoutes | Integration | BB / Eq. Partitioning |
+| test_post_customers_201_created_with_card | CustomerRoutes | Integration | BB / Eq. Partitioning |
+| test_post_customers_400_invalid_input | CustomerRoutes | Integration | BB / Boundary + Eq. Partitioning |
+| test_get_customers_200_list_of_customers | CustomerRoutes | Integration | BB / Eq. Partitioning |
+| test_get_customer_200_found | CustomerRoutes | Integration | BB / Eq. Partitioning |
+| test_get_customer_400_invalid_id | CustomerRoutes | Integration | BB / Boundary |
+| test_get_customer_404_not_found | CustomerRoutes | Integration | BB / Eq. Partitioning |
+| test_put_customer_201_updated | CustomerRoutes | Integration | BB / Eq. Partitioning |
+| test_put_customer_400_invalid_input | CustomerRoutes | Integration | BB / Boundary |
+| test_put_customer_404_not_found | CustomerRoutes | Integration | BB / Eq. Partitioning |
+| test_put_customer_409_conflict | CustomerRoutes | Integration | BB / Eq. Partitioning |
+| test_delete_customer_204_deleted | CustomerRoutes | Integration | BB / Eq. Partitioning |
+| test_delete_customer_404_not_found | CustomerRoutes | Integration | BB / Eq. Partitioning |
+| test_post_customers_cards_201_created | CustomerRoutes | Integration | BB / Eq. Partitioning |
+| test_patch_attach_card_201_attached | CustomerRoutes | Integration | BB / Eq. Partitioning |
+| test_patch_attach_card_400_invalid_ids | CustomerRoutes | Integration | BB / Boundary |
+| test_patch_attach_card_404_not_found | CustomerRoutes | Integration | BB / Eq. Partitioning |
+| test_patch_attach_card_409_already_attached | CustomerRoutes | Integration | BB / Eq. Partitioning |
+| test_patch_cards_add_points_success | CustomerRoutes | Integration | BB / Eq. Partitioning |
+| test_patch_cards_subtract_points_success | CustomerRoutes | Integration | BB / Eq. Partitioning |
+| test_patch_cards_insufficient_points | CustomerRoutes | Integration | BB / Boundary |
+| test_patch_cards_card_id_404_not_found | CustomerRoutes | Integration | BB / Eq. Partitioning |
+| test_create_customer_calls_service | CustomerController | Unit | WB / Statement Coverage |
+| test_get_customer_calls_service | CustomerController | Unit | WB / Statement Coverage |
+| test_list_customers_calls_service | CustomerController | Unit | WB / Statement Coverage |
+| test_update_customer_calls_service | CustomerController | Unit | WB / Statement Coverage |
+| test_delete_customer_calls_service | CustomerController | Unit | WB / Statement Coverage |
+| test_create_card_calls_service | CustomerController | Unit | WB / Statement Coverage |
+| test_attach_card_calls_service | CustomerController | Unit | WB / Statement Coverage |
+| test_update_card_points_calls_service | CustomerController | Unit | WB / Statement Coverage |
+| test_get_card_calls_service | CustomerController | Unit | WB / Statement Coverage |
+| test_create_customer_success | CustomerRepository | Unit | WB / Statement Coverage |
+| test_create_customer_conflict | CustomerRepository | Unit | WB / Branch Coverage |
+| test_get_customer_by_name_and_list | CustomerRepository | Unit | WB / Statement Coverage |
+| test_delete_customer | CustomerRepository | Unit | WB / Statement Coverage |
+| test_update_customer_name_only | CustomerRepository | Unit | WB / Statement Coverage |
+| test_update_customer_detach_card | CustomerRepository | Unit | WB / Statement Coverage |
+| test_update_customer_update_card_points | CustomerRepository | Unit | WB / Statement Coverage |
+| test_update_customer_card_points_no_existing_card | CustomerRepository | Unit | WB / Branch Coverage |
+| test_create_card_success | CustomerRepository | Unit | WB / Statement Coverage |
+| test_create_card_conflict | CustomerRepository | Unit | WB / Branch Coverage |
+| test_attach_card_conflict_customer_already_has_card | CustomerRepository | Unit | WB / Branch Coverage |
+| test_attach_card_success | CustomerRepository | Unit | WB / Statement Coverage |
+| test_attach_card_conflicts | CustomerRepository | Unit | WB / Branch Coverage |
+| test_attach_card_missing_customer_or_card | CustomerRepository | Unit | WB / Eq. Partitioning |
+| test_update_card_points_success | CustomerRepository | Unit | WB / Statement Coverage |
+| test_update_card_points_not_found | CustomerRepository | Unit | WB / Branch Coverage |
+| test_create_customer_ok_without_card | CustomerService | Unit | WB / Statement Coverage |
+| test_create_customer_invalid_id_raises_bad_request | CustomerService | Unit | WB / Branch Coverage |
+| test_create_customer_repo_returns_none_raises | CustomerService | Unit | WB / Branch Coverage |
+| test_create_customer_with_existing_card_raises_conflict | CustomerService | Unit | WB / Branch Coverage |
+| test_create_customer_with_card_attaches_existing_card | CustomerService | Unit | WB / Statement Coverage |
+| test_create_customer_card_creation_fails | CustomerService | Unit | WB / Branch Coverage |
+| test_create_customer_card_generation_fails_after_retries | CustomerService | Unit | WB / Branch Coverage |
+| test_create_customer_card_ok | CustomerService | Unit | WB / Statement Coverage |
+| test_get_customer_not_found_raises | CustomerService | Unit | WB / Branch Coverage |
+| test_get_customer_ok | CustomerService | Unit | WB / Statement Coverage |
+| test_get_customer_ok_uses_repo | CustomerService | Unit | WB / Statement Coverage |
+| test_get_customer_invalid_id_raises_bad_request | CustomerService | Unit | WB / Branch Coverage |
+| test_get_customer_not_found_raises_not_found | CustomerService | Unit | WB / Branch Coverage |
+| test_update_customer_invalid_id_raises | CustomerService | Unit | WB / Branch Coverage |
+| test_update_customer_not_found_raises | CustomerService | Unit | WB / Branch Coverage |
+| test_update_customer_repo_returns_none_raises | CustomerService | Unit | WB / Branch Coverage |
+| test_update_customer_ok | CustomerService | Unit | WB / Statement Coverage |
+| test_delete_customer_ok | CustomerService | Unit | WB / Statement Coverage |
+| test_delete_customer_non_existing_raises | CustomerService | Unit | WB / Branch Coverage |
+| test_get_card_not_found_raises | CustomerService | Unit | WB / Branch Coverage |
+| test_create_card_repo_returns_none_raises | CustomerService | Unit | WB / Branch Coverage |
+| test_get_card_ok | CustomerService | Unit | WB / Statement Coverage |
+| test_attach_card_empty_card_id_raises | CustomerService | Unit | WB / Branch Coverage |
+| test_attach_card_card_not_found_raises | CustomerService | Unit | WB / Branch Coverage |
+| test_attach_card_repo_returns_none_raises | CustomerService | Unit | WB / Branch Coverage |
+| test_attach_card_customer_already_has_card_raises | CustomerService | Unit | WB / Branch Coverage |
+| test_attach_card_success | CustomerService | Unit | WB / Statement Coverage |
+| test_check_customer_has_card_ok | CustomerService | Unit | WB / Statement Coverage |
+| test_check_customer_has_card_raises_conflict | CustomerService | Unit | WB / Branch Coverage |
+| test_check_card_attached_ok | CustomerService | Unit | WB / Statement Coverage |
+| test_check_card_attached_raises_conflict | CustomerService | Unit | WB / Branch Coverage |
+| test_to_customer_response_without_card | CustomerService | Unit | WB / Statement Coverage |
+| test_to_customer_response_with_card | CustomerService | Unit | WB / Statement Coverage |
+| test_update_card_points_card_not_found_raises | CustomerService | Unit | WB / Branch Coverage |
+| test_update_card_points_adds_points | CustomerService | Unit | WB / Statement Coverage |
+| test_update_card_points_subtracts_points | CustomerService | Unit | WB / Statement Coverage |
+| test_update_card_points_insufficient_points_raises | CustomerService | Unit | WB / Branch Coverage |
+| test_update_card_points_invalid_card_id_raises | CustomerService | Unit | WB / Branch Coverage |
+| test_get_card_empty_id_raises | CustomerService | Unit | WB / Branch Coverage |
+| test_get_card_by_card_id_empty_returns_none | CustomerService | Unit | WB / Statement Coverage |
 | test_post_products_201_created | ProductRoutes | API | BB / Eq. Partitioning |
 | test_get_products_reorder_200_empty_list | ProductRoutes | API | BB / Boundary |
 | test_post_products_201_created_without_optional_fields | ProductRoutes | API | BB / Boundary |
@@ -378,13 +468,14 @@
 | FR4.5 Pay an issued reorder warning | test_post_orders_201_created, test_post_orders_400_invalid_barcode, test_post_orders_400_empty_barcode, test_post_orders_400_negative_quantity, test_post_orders_400_zero_quantity, test_post_orders_400_negative_price, test_post_orders_400_zero_price, test_post_orders_404_product_not_found, test_patch_pay_order_201_success, test_patch_pay_order_422_invalid_id, test_patch_pay_order_404_not_found, test_patch_pay_order_409_wrong_status, test_patch_pay_order_409_already_completed, test_create_order_success, test_create_order_invalid_barcode_empty_raises, test_create_order_invalid_barcode_whitespace_raises, test_create_order_invalid_barcode_format_raises, test_create_order_invalid_barcode_non_numeric_raises, test_create_order_zero_quantity_raises, test_create_order_negative_quantity_raises, test_create_order_zero_price_raises, test_create_order_negative_price_raises, test_create_order_product_not_found_raises, test_create_order_repo_returns_none_raises, test_pay_order_success, test_pay_order_invalid_id_raises, test_pay_order_not_found_raises, test_pay_order_wrong_status_raises, test_pay_order_repo_returns_none_raises, test_create_order_success, test_create_order_product_not_found_raises, test_create_order_sets_issued_status, test_pay_order_success, test_pay_order_not_found_returns_none, test_pay_order_not_issued_raises_conflict, test_pay_order_completed_raises_conflict, test_create_order_calls_service, test_pay_order_calls_service |
 | FR4.6 Record order arrival | test_patch_arrival_201_success, test_patch_arrival_422_invalid_id, test_patch_arrival_404_not_found, test_patch_arrival_409_wrong_status, test_patch_arrival_409_already_completed, test_patch_arrival_404_product_not_found, test_record_order_arrival_success, test_record_order_arrival_invalid_id_raises, test_record_order_arrival_not_found_raises, test_record_order_arrival_wrong_status_raises, test_record_order_arrival_product_not_found_raises, test_record_order_arrival_repo_returns_none_raises, test_record_order_arrival_success, test_record_order_arrival_order_not_found_returns_none, test_record_order_arrival_not_paid_raises_conflict, test_record_order_arrival_already_completed_raises_conflict, test_record_order_arrival_product_not_found_raises, test_record_order_arrival_updates_product_quantity_correctly, test_record_order_arrival_calls_service |
 | FR4.7 List all orders (issued, payed, completed) | test_get_orders_200_list_of_orders, test_get_orders_200_empty_list, test_list_orders_success, test_list_orders_empty, test_list_orders_success, test_list_orders_empty, test_get_order_by_id_found, test_get_order_by_id_not_found, test_list_orders_calls_service |
-|    FR5.1 Define or modify a customer    | test_create_customer_success[admin, manager, cashier], test_create_customer_bad_request[invalid payloads], test_update_customer_success[admin, manager, cashier], test_update_customer_invalid_payload[invalid payloads], test_update_customer_not_found |
-|         FR5.2 Delete a customer         |                                                                                   test_delete_customer_success[admin, manager, cashier], test_delete_customer_not_found                                                                                  |
-|         FR5.3 Search a customer         |                                                               test_get_customer_by_id_success[admin, manager, cashier], test_get_customer_invalid_id[abc, -1], test_get_customer_not_found                                                               |
-|         FR5.4 List all customers        |                                                                                test_list_customers_success[admin, manager, cashier], test_list_customers_includes_created                                                                                |
-|       FR5.5 Create a loyalty card       |                                                                           test_create_customer_card_success[admin, manager, cashier], test_create_customer_card_unauthenticated                                                                          |
-| FR5.6 Attach loyalty card to a customer |                                             test_attach_card_to_customer_success[admin, manager, cashier], test_attach_card_customer_not_found, test_attach_card_not_found, test_attach_card_already_attached                                            |
-|  FR5.7 Modify points on a loyalty card  |                                  test_modify_card_points_add[admin, manager, cashier], test_modify_card_points_remove[admin, manager, cashier], test_modify_card_points_insufficient, test_modify_card_points_not_found                                  |
+| FR5.1 Define or modify a customer | test_create_customer_success, test_create_customer_bad_request, test_create_customer_with_invalid_card, test_update_customer_success, test_update_customer_invalid_payload, test_update_customer_not_found, test_update_customer_invalid_id, test_update_customer_no_changes, test_put_customer_201_updated, test_put_customer_400_invalid_input, test_put_customer_404_not_found, test_put_customer_409_conflict, test_create_customer_ok_without_card, test_update_customer_ok |
+| FR5.2 Delete a customer | test_delete_customer_success, test_delete_customer_not_found, test_delete_customer_unauthenticated, test_delete_customer_204_deleted, test_delete_customer_404_not_found, test_delete_customer_ok, test_delete_customer_non_existing_raises |
+| FR5.3 Search a customer | test_get_customer_by_id_success, test_get_customer_not_found, test_get_customer_invalid_id, test_get_customer_unauthenticated, test_get_customer_200_found, test_get_customer_400_invalid_id, test_get_customer_404_not_found, test_get_customer_ok, test_get_customer_not_found_raises |
+| FR5.4 List all customers | test_list_customers_success, test_list_customers_includes_created, test_list_customers_unauthenticated, test_get_customers_200_list_of_customers |
+| FR5.5 Create a loyalty card | test_create_customer_card_success, test_create_customer_card_unauthenticated, test_post_customers_cards_201_created, test_create_customer_card_ok, test_create_customer_card_generation_fails_after_retries |
+| FR5.6 Attach loyalty card to a customer | test_attach_card_to_customer_success, test_attach_card_customer_not_found, test_attach_card_not_found, test_attach_card_already_attached, test_attach_card_unauthenticated, test_patch_attach_card_201_attached, test_patch_attach_card_400_invalid_ids, test_patch_attach_card_404_not_found, test_patch_attach_card_409_already_attached, test_attach_card_success |
+| FR5.7 Modify points on a loyalty card | test_modify_card_points_add, test_modify_card_points_remove, test_modify_card_points_insufficient, test_modify_card_points_not_found, test_modify_card_points_unauthenticated, test_modify_card_points_as_role, test_patch_cards_add_points_success, test_patch_cards_subtract_points_success, test_patch_cards_insufficient_points, test_patch_cards_card_id_404_not_found, test_update_card_points_adds_points, test_update_card_points_subtracts_points, test_update_card_points_insufficient_points_raises |
+| Scenario 5 (Customer lifecycle end-to-end) | test_customer_lifecycle, test_create_customer_with_card_success, test_create_customer_with_valid_card_already_assigned |
 | Scenario 8.1 | test_create_return_201, test_add_item_201, test_close_return_201, test_reimburse_return_201, test_create_return_success, test_add_item_calls_service, test_close_return_restocks_items |
 | Scenario 8.2 | test_create_return_201, test_add_item_201, test_close_return_201, test_reimburse_return_201, test_create_return_success, test_add_item_calls_service, test_close_return_restocks_items |
 | Scenario 10.1 | test_reimburse_return_201, test_reimburse_return_success, test_reimburse_return_calls_service, test_reimburse_return |
