@@ -19,6 +19,7 @@ Compute two separate values of size
 -LOC of production code     `cloc <EzShop\app> --include-lang=Python`  
 -LOC of test code      `cloc <EzShop\tests> --include-lang=Python`  
 
+![](./images/photo_6012754335671978869_y.jpg)
 
 ## Computation of effort 
 From timesheet.md sum all effort spent, in **ALL** activities (task1, task2, task3) at the end of the project on Jan 18. 
