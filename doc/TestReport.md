@@ -50,11 +50,15 @@ The integration followed a logical dependency chain based on our role allocation
        
    Result: Provided the catalog and stock data structures required for sales and orders.
 
-   •	Step 3: Sales Transactions and Customer Loyalty. (Members 3 & 4)
+   •	Step 3: Sales Transactions (Members 3 )
        
-   Result: Connected the "Cash Register" logic to the Inventory (decreasing stock upon sale) and linked sales to customer loyalty cards.
+   Result: Connected the "Cash Register" logic to the Inventory (decreasing stock upon sale)
 
-   •	Step 4: Accounting & Returns. (Member 5)
+  •	  Step 4: Customer Loyalty. (Members 4)
+       
+   Result: Create customer loyalty cards an points.
+
+   •	Step 5: Accounting & Returns. (Member 5)
        
    Result: The final integration step, as the Returns logic required existing Sales data and had to interact with Inventory to restore stock levels.
 ________________________________________
@@ -520,15 +524,9 @@ Calculating loyalty points required a dependency between the Sales module (which
 
 | Functional Requirement or scenario | Test(s) |
 | :--------------------------------: | :-----: |
-| Scenario 1.1 | test_create_user_route_success, test_create_user_success |
-| FR-ACC-2 | test_create_user_missing_password, test_create_user_empty_password, test_create_user_empty_type |
-| FR-ACC-3 | test_create_user_route_success, test_create_user_success |
-| Scenario 1.2 | test_get_user_not_found |
-| FR-ACC-5 | test_get_user_not_found |
-| Scenario 2.1 | test_get_token_success, test_get_token_user_not_found, test_get_token_wrong_password |
-| FR-AUTH-2 | test_get_token_success, test_get_token_user_not_found, test_get_token_wrong_password |
-| FR-AUTH-3 | test_get_token_success |
-| FR-AUTH-4 | test_get_token_user_not_found, test_get_token_wrong_password |
+| FR1.1, Scenario 2-1 | test_create_user_route_success, test_create_user_success, test_create_user_missing_password, test_create_user_empty_password, test_create_user_empty_type |
+| FR1.4 , Scenario 2-3 | test_get_user_not_found |
+| FR1.5, Scenario 5-1 | test_get_token_success, test_get_token_user_not_found, test_get_token_wrong_password |
 | FR3.1 Define a new product type, or modify an existing product type | test_post_products_201_created, test_post_products_201_created_without_optional_fields, test_post_products_400_invalid_barcode, test_post_products_400_negative_price, test_post_products_400_negative_quantity, test_post_products_409_duplicate_barcode, test_put_product_201_updated, test_put_product_201_partial_update, test_put_product_422_invalid_input, test_put_product_404_not_found, test_put_product_409_barcode_conflict, test_put_product_409_barcode_has_active_sales, test_create_product_ok, test_create_product_invalid_barcode_raises, test_create_product_invalid_price_raises, test_create_product_negative_quantity_raises, test_create_product_invalid_position_raises, test_create_product_without_optional_fields, test_create_product_repo_failure_raises, test_update_product_ok, test_update_product_invalid_id_raises, test_update_product_not_found_raises, test_update_product_barcode_with_active_sales_raises, test_update_product_invalid_new_barcode_raises, test_update_product_repo_not_found_raises, test_update_product_triggers_quantity_validation, test_update_product_triggers_position_validation, test_create_product_success, test_create_product_duplicate_barcode_raises, test_create_product_sets_all_fields, test_update_product_success, test_update_product_not_found_returns_none, test_update_product_barcode_conflict_raises, test_update_product_same_barcode_allowed, test_update_product_partial_update, test_update_product_quantity_field, test_create_product_calls_service, test_update_product_calls_service, test_create_product_duplicate_position_raises, test_update_product_position_duplicate_position_raises |
 | FR3.2 Delete a product type | test_delete_product_204_deleted, test_delete_product_422_invalid_id, test_delete_product_404_not_found, test_delete_product_409_has_active_sales, test_delete_product_409_has_active_orders, test_delete_product_ok, test_delete_product_invalid_id_raises, test_delete_product_with_active_sales_raises, test_delete_product_with_active_orders_raises, test_delete_product_with_active_returns_raises, test_delete_product_with_multiple_conflicts_raises, test_delete_product_repo_not_found_raises, test_delete_product_success, test_delete_product_not_found_returns_false, test_delete_product_calls_service |
 | FR3.3 List all products types | test_get_products_200_list_of_products, test_get_products_200_empty_list, test_list_products_empty, test_list_products_multiple, test_list_products_success, test_list_products_empty, test_list_products_calls_service |
@@ -547,7 +545,10 @@ Calculating loyalty points required a dependency between the Sales module (which
 | FR5.5 Create a loyalty card | test_create_customer_card_success, test_create_customer_card_unauthenticated, test_post_customers_cards_201_created, test_create_customer_card_ok, test_create_customer_card_generation_fails_after_retries |
 | FR5.6 Attach loyalty card to a customer | test_attach_card_to_customer_success, test_attach_card_customer_not_found, test_attach_card_not_found, test_attach_card_already_attached, test_attach_card_unauthenticated, test_patch_attach_card_201_attached, test_patch_attach_card_400_invalid_ids, test_patch_attach_card_404_not_found, test_patch_attach_card_409_already_attached, test_attach_card_success |
 | FR5.7 Modify points on a loyalty card | test_modify_card_points_add, test_modify_card_points_remove, test_modify_card_points_insufficient, test_modify_card_points_not_found, test_modify_card_points_unauthenticated, test_modify_card_points_as_role, test_patch_cards_add_points_success, test_patch_cards_subtract_points_success, test_patch_cards_insufficient_points, test_patch_cards_card_id_404_not_found, test_update_card_points_adds_points, test_update_card_points_subtracts_points, test_update_card_points_insufficient_points_raises |
-| Scenario 5 (Customer lifecycle end-to-end) | test_customer_lifecycle, test_create_customer_with_card_success, test_create_customer_with_valid_card_already_assigned |
+| Scenario 4-1 Create customer record | test_post_customers_201_created_with_card, test_post_customers_400_invalid_input, test_create_customer_success, test_create_customer_ok_without_card, test_create_customer_invalid_id_raises_bad_request |
+| Scenario 4-2 Attach Loyalty card to customer record | test_patch_attach_card_201_attached, test_patch_attach_card_400_invalid_ids, test_patch_attach_card_404_not_found, test_patch_attach_card_409_already_attached, test_attach_card_success, test_attach_card_missing_customer_or_card, test_attach_card_conflicts |
+| Scenario 4-3 Detach Loyalty card from customer record | test_update_customer_detach_card |
+| Scenario 4-4 Update customer record | test_put_customer_201_updated, test_put_customer_400_invalid_input, test_put_customer_404_not_found, test_put_customer_409_conflict, test_update_customer_name_only, test_update_customer_update_card_points, test_update_customer_repo_returns_none_raises, test_update_customer_not_found_raises |
 | Scenario 8.1 | test_create_return_201, test_add_item_201, test_close_return_201, test_reimburse_return_201, test_create_return_success, test_add_item_calls_service, test_close_return_restocks_items |
 | Scenario 8.2 | test_create_return_201, test_add_item_201, test_close_return_201, test_reimburse_return_201, test_create_return_success, test_add_item_calls_service, test_close_return_restocks_items |
 | Scenario 10.1 | test_reimburse_return_201, test_reimburse_return_success, test_reimburse_return_calls_service, test_reimburse_return |
