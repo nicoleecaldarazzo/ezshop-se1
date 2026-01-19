@@ -31,7 +31,7 @@
 1. Integration Approach
 
 Strategy:
-We adopted a Mixed (Incremental) Integration Strategy structured around Vertical Slicing.
+ We adopted a Mixed (Incremental) Integration Strategy structured around Vertical Slicing.
 
    •	Vertical Slicing: Instead of separating work by technical layers (e.g., one person doing only DB), each team member was responsible for the full stack implementation of a specific functional domain (Model, DAO, Controller, and Routes).
 
@@ -44,19 +44,19 @@ The integration followed a logical dependency chain based on our role allocation
 
    •	Step 1: User Management & Authentication. (Member 1)
      	 
-          Result: Established the security context (Roles, JWT), allowing subsequent modules to implement Role-Based Access Control.
+      Result: Established the security context (Roles, JWT), allowing subsequent modules to implement Role-Based Access Control.
 
    •	Step 2: Products, Warehouse & Supply Chain. (Member 2)
        
-         Result: Provided the catalog and stock data structures required for sales and orders.
+      Result: Provided the catalog and stock data structures required for sales and orders.
 
    •	Step 3: Sales Transactions and Customer Loyalty. (Members 3 & 4)
        
-         Result: Connected the "Cash Register" logic to the Inventory (decreasing stock upon sale) and linked sales to customer loyalty cards.
+      Result: Connected the "Cash Register" logic to the Inventory (decreasing stock upon sale) and linked sales to customer loyalty cards.
 
    •	Step 4: Accounting & Returns. (Member 5)
        
-         Result: The final integration step, as the Returns logic required existing Sales data and had to interact with Inventory to restore stock levels.
+      Result: The final integration step, as the Returns logic required existing Sales data and had to interact with Inventory to restore stock levels.
 ________________________________________
 2. Unit Testing Strategy
 
@@ -65,27 +65,36 @@ Approach:
 
 Scope & Methodology:
 
-     •	Isolation: We tested individual DAOs and Controllers to ensure internal business rules were correct (e.g., verifying that a password is hashed before saving).
+ • Isolation: We tested individual DAOs and Controllers to ensure internal business rules were correct (e.g., verifying that a password is hashed before saving).
      
-     •	Coverage: Tests focused on validating the "Functional Responsibilities" defined in our project plan. For example, ensuring that the logic for issuing an order correctly records the transaction in the database.
+ • Coverage: Tests focused on validating the "Functional Responsibilities" defined in our project plan. For example, ensuring that the logic for issuing an order correctly records the transaction in the database.
 ________________________________________
 3. API Testing Strategy
+
 Approach:
-We utilized a Black Box / Acceptance Testing approach driven by the provided OpenAPI (Swagger) specifications.
+ We utilized a Black Box / Acceptance Testing approach driven by the provided OpenAPI (Swagger) specifications.
+
 Process:
-•	Validation: After our internal unit tests passed, we ran the external Test Suite (Professor's) against our integrated application.
-•	Compliance: This phase ensured that our implementation strictly adhered to the interface contract. We verified that endpoints such as POST/auth and GET/balance returned the exact JSON structure and HTTP status codes required by the specification, treating the system as a "closed box".
+
+ • Validation: After our internal unit tests passed, we ran the external Test Suite (Professor's) against our integrated application.
+
+ • Compliance: This phase ensured that our implementation strictly adhered to the interface contract. We verified that endpoints such as POST/auth and GET/balance returned the exact JSON structure and HTTP status codes required by the specification, treating the system as a "closed box".
 ________________________________________
 4. Main Challenges & Critical Integration Points
+
 Challenge:
-Because each member worked on an isolated functional domain, the primary challenge was ensuring Cross-Module Data Consistency when one module needed to update data owned by another. We successfully managed the following critical integration points:
-•	Inventory Synchronization (Sales  Inventory):
+ Because each member worked on an isolated functional domain, the primary challenge was ensuring Cross-Module Data Consistency when one module needed to update data owned by another. We successfully managed the following critical integration points:
+
+ •	Inventory Synchronization (Sales -> Inventory):
 The Sales module had to interact with the Inventory module. We ensured that when POST /sales/{id}/items was called, the system checked stock availability in the product_repository before allowing the sale.
-•	Returns Management (Returns  Inventory):
+ 
+ •	Returns Management (Returns -> Inventory):
 A complex challenge was the "Closing Returns" logic. When a return was finalized via PATCH /returns/{id}/close, the system had to trigger a product_repository update to physically restore the item to the shelf, ensuring the warehouse count reflected the returned goods.
-•	Supply Chain Updates (Order Arrival):
+ 
+ •	Supply Chain Updates (Order Arrival):
 We implemented logic to ensure that the PATCH /orders/{id}/arrival endpoint automatically triggered a quantity increase in the product_repository upon the arrival of a supplier order.
-•	Loyalty Calculation (Sales  Customers):
+ 
+ •	Loyalty Calculation (Sales -> Customers):
 Calculating loyalty points required a dependency between the Sales module (which knows the transaction value) and the Customer module. We ensured the GET /sales/{id}/points endpoint correctly utilized logic shared with the Customer domain.
 
 
