@@ -26,8 +26,9 @@
     <Some steps may  correspond to unit testing (ex step1 in ex above)>
 
     <One step will  correspond to API testing >
+   
     
-    1. Integration Approach
+1. Integration Approach
 Strategy:
 We adopted a Mixed (Incremental) Integration Strategy structured around Vertical Slicing.
 •	Vertical Slicing: Instead of separating work by technical layers (e.g., one person doing only DB), each team member was responsible for the full stack implementation of a specific functional domain (Model, DAO, Controller, and Routes).
