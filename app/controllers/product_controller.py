@@ -49,3 +49,6 @@ class ProductController:
         self, product_id: int, quantity_delta: int
     ) -> ProductResponseDTO:
         return await self.service.update_product_quantity(product_id, quantity_delta)
+    
+    async def get_products_needing_reorder(self) -> List[ProductResponseDTO]:
+        return await self.service.get_products_needing_reorder()

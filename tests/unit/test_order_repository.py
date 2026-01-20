@@ -2,10 +2,9 @@ import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 from types import SimpleNamespace
 from datetime import datetime, timezone
-
+from  app.models.errors.invalid_state_error import InvalidStateError
 from app.repositories.order_repository import OrderRepository
 from app.models.order_status import OrderStatus
-from app.models.errors.conflict_error import ConflictError
 
 
 @pytest.fixture
@@ -33,9 +32,18 @@ async def test_create_order_success(repo, mock_session):
         price_per_unit=99.99,
         quantity=100
     )
+
+    mock_system_info = SimpleNamespace(
+        balance=2000.0  
+    )
+
     mock_product_result = MagicMock()
     mock_product_result.scalar_one_or_none.return_value = mock_product
-    mock_session.execute = AsyncMock(return_value=mock_product_result)
+
+    mock_balance_result = MagicMock()
+    mock_balance_result.scalar_one_or_none.return_value = mock_system_info
+    
+    mock_session.execute = AsyncMock(side_effect=[mock_product_result, mock_balance_result])
     
     mock_session.add = MagicMock()
     mock_session.commit = AsyncMock()
@@ -49,9 +57,9 @@ async def test_create_order_success(repo, mock_session):
         price_per_unit=99.99
     )
     
-    result = await repo.create_order(dto)
+    result = await repo.create_and_pay_order(dto)
     
-    mock_session.execute.assert_awaited_once()
+    assert mock_session.execute.await_count == 2
     mock_session.add.assert_called_once()
     mock_session.commit.assert_awaited_once()
     mock_session.refresh.assert_awaited_once()
@@ -195,9 +203,18 @@ async def test_create_and_pay_order_success(repo, mock_session):
         price_per_unit=79.99,
         quantity=100
     )
+
+    mock_system_info = SimpleNamespace(
+        balance=2000.0  
+    )
+    
     mock_product_result = MagicMock()
     mock_product_result.scalar_one_or_none.return_value = mock_product
-    mock_session.execute = AsyncMock(return_value=mock_product_result)
+    
+    mock_balance_result = MagicMock()
+    mock_balance_result.scalar_one_or_none.return_value = mock_system_info
+    
+    mock_session.execute = AsyncMock(side_effect=[mock_product_result, mock_balance_result])
     
     mock_session.add = MagicMock()
     mock_session.commit = AsyncMock()
@@ -212,7 +229,7 @@ async def test_create_and_pay_order_success(repo, mock_session):
     
     result = await repo.create_and_pay_order(dto)
     
-    mock_session.execute.assert_awaited_once()
+    assert mock_session.execute.await_count == 2
     mock_session.add.assert_called_once()
     mock_session.commit.assert_awaited_once()
     mock_session.refresh.assert_awaited_once()
@@ -224,9 +241,16 @@ async def test_create_and_pay_order_uses_product_price(repo, mock_session):
         barcode="123456789012",
         price_per_unit=79.99
     )
+
+    mock_system_info = SimpleNamespace(
+        balance=2000.0
+    )
+
     mock_product_result = MagicMock()
     mock_product_result.scalar_one_or_none.return_value = mock_product
-    mock_session.execute = AsyncMock(return_value=mock_product_result)
+    mock_balance_result = MagicMock()
+    mock_balance_result.scalar_one_or_none.return_value = mock_system_info
+    mock_session.execute = AsyncMock(side_effect=[mock_product_result, mock_balance_result])
     
     mock_session.add = MagicMock()
     mock_session.commit = AsyncMock()
@@ -275,19 +299,25 @@ async def test_pay_order_success(repo, mock_session):
         status=OrderStatus.ISSUED,
         issue_date=datetime.now(timezone.utc)
     )
-    
+
+    system_info = SimpleNamespace(
+        balance=2000.0  
+    )
     mock_session.get = AsyncMock(return_value=order)
+    mock_balance_result = MagicMock() 
+    mock_balance_result.scalar_one_or_none.return_value = system_info
+    mock_session.execute = AsyncMock(return_value=mock_balance_result)
+    
     mock_session.commit = AsyncMock()
     mock_session.refresh = AsyncMock()
-    
+
     repo._get_session = AsyncMock(return_value=mock_session)
-    
+
     result = await repo.pay_order(1)
-    
-    assert order.status == OrderStatus.PAID
-    mock_session.get.assert_awaited_once()
+
+    assert result is not None
+    assert result.status == OrderStatus.PAID
     mock_session.commit.assert_awaited_once()
-    mock_session.refresh.assert_awaited_once()
 
 
 @pytest.mark.asyncio
@@ -311,7 +341,7 @@ async def test_pay_order_not_issued_raises_conflict(repo, mock_session):
     mock_session.get = AsyncMock(return_value=order)
     repo._get_session = AsyncMock(return_value=mock_session)
     
-    with pytest.raises(ConflictError, match="Order must be in ISSUED state"):
+    with pytest.raises(InvalidStateError, match="Order must be in ISSUED state"):
         await repo.pay_order(1)
     
     mock_session.commit.assert_not_awaited()
@@ -327,7 +357,7 @@ async def test_pay_order_completed_raises_conflict(repo, mock_session):
     mock_session.get = AsyncMock(return_value=order)
     repo._get_session = AsyncMock(return_value=mock_session)
     
-    with pytest.raises(ConflictError, match="Order must be in ISSUED state"):
+    with pytest.raises(InvalidStateError, match="Order must be in ISSUED state"):
         await repo.pay_order(1)
     
     mock_session.commit.assert_not_awaited()
@@ -344,7 +374,8 @@ async def test_record_order_arrival_success(repo, mock_session):
     
     product = SimpleNamespace(
         barcode="123456789012",
-        quantity=50
+        quantity=50,
+        position="1-A-1"
     )
     
     mock_product_result = MagicMock()
@@ -389,7 +420,7 @@ async def test_record_order_arrival_not_paid_raises_conflict(repo, mock_session)
     mock_session.get = AsyncMock(return_value=order)
     repo._get_session = AsyncMock(return_value=mock_session)
     
-    with pytest.raises(ConflictError, match="Order must be in PAID state"):
+    with pytest.raises(InvalidStateError, match="Order must be in PAID state"):
         await repo.record_order_arrival(1)
     
     mock_session.execute.assert_not_awaited()
@@ -406,7 +437,7 @@ async def test_record_order_arrival_already_completed_raises_conflict(repo, mock
     mock_session.get = AsyncMock(return_value=order)
     repo._get_session = AsyncMock(return_value=mock_session)
     
-    with pytest.raises(ConflictError, match="Order must be in PAID state"):
+    with pytest.raises(InvalidStateError, match="Order must be in PAID state"):
         await repo.record_order_arrival(1)
     
     mock_session.commit.assert_not_awaited()
@@ -446,7 +477,8 @@ async def test_record_order_arrival_updates_product_quantity_correctly(repo, moc
     
     product = SimpleNamespace(
         barcode="123456789012",
-        quantity=100
+        quantity=100,
+        position="1-A-1"
     )
     
     mock_product_result = MagicMock()

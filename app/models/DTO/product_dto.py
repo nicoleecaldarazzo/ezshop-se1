@@ -16,7 +16,7 @@ class ProductUpdateDTO(BaseModel):
     barcode: Optional[str] = Field(default=None, pattern=BARCODE_REGEX)
     price_per_unit: Optional[float] = Field(default=None, gt=0)
     note: Optional[str] = Field(default=None, max_length=500)
-    quantity: Optional[int] = Field(default=None, ge=0)
+    quantity: Optional[int] = Field(default=None, gt=0)
     position: Optional[str] = Field(default=None, max_length=50)
 
 class ProductResponseDTO(BaseModel):

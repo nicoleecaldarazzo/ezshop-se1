@@ -235,7 +235,7 @@ def test_get_products_search_200_found():
     with patch("app.routes.product_route.controller") as mock_controller:
         mock_controller.search_products = AsyncMock(return_value=fake_results)
 
-        response = client.get(f"{BASE}/search?description=Laptop", 
+        response = client.get(f"{BASE}/search?query=Laptop", 
                             headers={"Authorization": "Bearer fake"})
 
         assert response.status_code == 200
@@ -248,7 +248,7 @@ def test_get_products_search_200_no_results():
     with patch("app.routes.product_route.controller") as mock_controller:
         mock_controller.search_products = AsyncMock(return_value=[])
 
-        response = client.get(f"{BASE}/search?description=NonExistent", 
+        response = client.get(f"{BASE}/search?query=NonExistent", 
                             headers={"Authorization": "Bearer fake"})
 
         assert response.status_code == 200
@@ -352,7 +352,7 @@ def test_get_product_404_not_found():
         assert "Product with id" in response.json()["detail"]
 
 
-def test_put_product_200_updated():
+def test_put_product_201_updated():
     payload = {
         "description": "Updated Laptop HP",
         "price_per_unit": 849.99,
@@ -375,14 +375,14 @@ def test_put_product_200_updated():
         response = client.put(f"{BASE}/1", json=payload, 
                             headers={"Authorization": "Bearer fake"})
 
-        assert response.status_code == 200
+        assert response.status_code == 201
         data = response.json()
         assert data["description"] == "Updated Laptop HP"
         assert data["price_per_unit"] == 849.99
         assert data["quantity"] == 60
 
 
-def test_put_product_200_partial_update():
+def test_put_product_201_partial_update():
     payload = {
         "price_per_unit": 899.99
     }
@@ -403,7 +403,7 @@ def test_put_product_200_partial_update():
         response = client.put(f"{BASE}/1", json=payload, 
                             headers={"Authorization": "Bearer fake"})
 
-        assert response.status_code == 200
+        assert response.status_code == 201
         data = response.json()
         assert data["price_per_unit"] == 899.99
 
@@ -519,7 +519,7 @@ def test_delete_product_409_has_active_orders():
         assert "active orders" in response.json()["detail"]
 
 
-def test_patch_product_position_200_updated():
+def test_patch_product_position_201_updated():
     fake_updated = ProductResponseDTO(
         id=1,
         description="Laptop HP",
@@ -536,12 +536,12 @@ def test_patch_product_position_200_updated():
         response = client.patch(f"{BASE}/1/position?position=3-C-5", 
                                headers={"Authorization": "Bearer fake"})
 
-        assert response.status_code == 200
+        assert response.status_code == 201
         data = response.json()
         assert data["position"] == "3-C-5"
 
 
-def test_patch_product_position_200_clear_position():
+def test_patch_product_position_201_clear_position():
     fake_updated = ProductResponseDTO(
         id=1,
         description="Laptop HP",
@@ -558,7 +558,7 @@ def test_patch_product_position_200_clear_position():
         response = client.patch(f"{BASE}/1/position?position=", 
                                headers={"Authorization": "Bearer fake"})
 
-        assert response.status_code == 200
+        assert response.status_code == 201
 
 
 def test_patch_product_position_422_missing_query():
@@ -591,7 +591,7 @@ def test_patch_product_position_404_not_found():
         assert response.status_code == 404
 
 
-def test_patch_product_quantity_200_add_quantity():
+def test_patch_product_quantity_201_add_quantity():
     fake_updated = ProductResponseDTO(
         id=1,
         description="Laptop HP",
@@ -608,12 +608,12 @@ def test_patch_product_quantity_200_add_quantity():
         response = client.patch(f"{BASE}/1/quantity?quantity=100", 
                                headers={"Authorization": "Bearer fake"})
 
-        assert response.status_code == 200
+        assert response.status_code == 201
         data = response.json()
         assert data["quantity"] == 150
 
 
-def test_patch_product_quantity_200_subtract_quantity():
+def test_patch_product_quantity_201_subtract_quantity():
     fake_updated = ProductResponseDTO(
         id=1,
         description="Laptop HP",
@@ -630,12 +630,12 @@ def test_patch_product_quantity_200_subtract_quantity():
         response = client.patch(f"{BASE}/1/quantity?quantity=-20", 
                                headers={"Authorization": "Bearer fake"})
 
-        assert response.status_code == 200
+        assert response.status_code == 201
         data = response.json()
         assert data["quantity"] == 30
 
 
-def test_patch_product_quantity_200_set_to_zero():
+def test_patch_product_quantity_201_set_to_zero():
     fake_updated = ProductResponseDTO(
         id=1,
         description="Laptop HP",
@@ -652,7 +652,7 @@ def test_patch_product_quantity_200_set_to_zero():
         response = client.patch(f"{BASE}/1/quantity?quantity=-50", 
                                headers={"Authorization": "Bearer fake"})
 
-        assert response.status_code == 200
+        assert response.status_code == 201
         data = response.json()
         assert data["quantity"] == 0
 
@@ -686,3 +686,13 @@ def test_patch_product_quantity_404_not_found():
 
         assert response.status_code == 404
         assert "not found" in response.json()["detail"]
+
+def test_get_products_reorder_200_empty_list():
+    with patch("app.routes.product_route.controller") as mock_controller:
+        mock_controller.get_products_needing_reorder = AsyncMock(return_value=[])
+
+        response = client.get(f"{BASE}/reorder", headers={"Authorization": "Bearer fake"})
+
+        assert response.status_code == 200
+        assert response.json() == []
+        mock_controller.get_products_needing_reorder.assert_awaited_once()

@@ -23,11 +23,13 @@ class CustomerRepository:
 
     async def create_customer(self, customer_dto: CustomerCreateDTO) -> CustomerDAO:
         async with await self._get_session() as session:
-            existing = await session.get(CustomerDAO, customer_dto.id)
-            if existing:
-                raise ConflictError("Customer ID already exists") 
+            existing = await session.execute(
+                select(CustomerDAO).where(CustomerDAO.name == customer_dto.name)
+            )
+            if existing.scalar_one_or_none():
+                raise ConflictError("Customer name already exists")
 
-            customer = CustomerDAO(id=customer_dto.id, name=customer_dto.name)
+            customer = CustomerDAO(name=customer_dto.name)
             session.add(customer)
             await session.commit()
             await session.refresh(customer)

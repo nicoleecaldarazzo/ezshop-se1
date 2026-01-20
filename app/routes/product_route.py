@@ -50,12 +50,19 @@ async def list_products():
     response_model=List[ProductResponseDTO],
     dependencies=[auth_admin_manager],
 )
-async def search_products(description: str = Query(..., min_length=1)):
+async def search_products(query: str = Query(..., min_length=1)):  
     from app.models.DTO.product_dto import ProductSearchDTO
     
-    search_dto = ProductSearchDTO(description=description)
+    search_dto = ProductSearchDTO(description=query)  
     return await controller.search_products(search_dto)
 
+@router.get(
+    "/reorder",
+    response_model=List[ProductResponseDTO],
+    dependencies=[auth_admin_manager],
+)
+async def get_products_needing_reorder():
+    return await controller.get_products_needing_reorder()
 
 @router.get(
     "/barcode/{barcode}",
@@ -80,6 +87,7 @@ async def get_product(id: int = PositiveId):
 @router.put(
     "/{id}",
     response_model=ProductResponseDTO,
+    status_code=status.HTTP_201_CREATED,
     dependencies=[auth_admin_manager],
 )
 async def update_product(id: int = PositiveId, payload: ProductUpdateDTO = ...):
@@ -99,6 +107,7 @@ async def delete_product(id: int = PositiveId):
 @router.patch(
     "/{id}/position",
     response_model=ProductResponseDTO,
+    status_code=status.HTTP_201_CREATED,
     dependencies=[auth_admin_manager],
 )
 async def update_product_position(id: int = PositiveId, position: str = Query(...)):
@@ -109,6 +118,7 @@ async def update_product_position(id: int = PositiveId, position: str = Query(..
 @router.patch(
     "/{id}/quantity",
     response_model=ProductResponseDTO,
+    status_code=status.HTTP_201_CREATED,
     dependencies=[auth_admin_manager],
 )
 async def update_product_quantity(id: int = PositiveId, quantity: int = Query(...)):

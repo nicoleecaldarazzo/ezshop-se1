@@ -12,6 +12,7 @@ from app.models.DTO.product_dto import (
 from app.models.errors.notfound_error import NotFoundError
 from app.models.errors.bad_request import BadRequestError
 from app.models.errors.conflict_error import ConflictError
+from app.models.errors.invalid_state_error import InvalidStateError
 from app.models.DAO.product_dao import ProductDAO
 
 
@@ -23,10 +24,25 @@ class ProductService:
         if id <= 0:
             raise BadRequestError(f"{entity_name} must be greater than 0")
 
-    def _validate_barcode(self, barcode: str) -> None:
+    import re
 
-        if not re.match(r"^\d{12,14}$", barcode):
+    def _validate_barcode(self, barcode: str) -> None:
+        if not (isinstance(barcode, str) and re.match(r"^\d{12,14}$", barcode)):
             raise BadRequestError("Barcode must be a string of 12-14 digits")
+        provided_check_digit = int(barcode[-1])
+        payload_digits = list(map(int, barcode[:-1]))[::-1]
+        total_sum = 0
+        for i, digit in enumerate(payload_digits):
+            if i % 2 == 0:
+                total_sum += digit * 3
+            else:
+                total_sum += digit * 1
+        calculated_check_digit = (10 - (total_sum % 10)) % 10
+        if provided_check_digit != calculated_check_digit:
+            raise BadRequestError(
+                f"Invalid barcode: check digit mismatch. "
+                f"Expected {calculated_check_digit} based on GS1 algorithm."
+            )
 
     def _validate_price(self, price: float) -> None:
         if price <= 0:
@@ -78,9 +94,9 @@ class ProductService:
             errors.append("returns (OPEN, CLOSED, or REIMBURSED)")
 
         if errors:
-            raise ConflictError(
+            raise InvalidStateError(
                 f"Product cannot be deleted because it has active {', '.join(errors)}"
-            )
+            )         
 
     async def _validate_barcode_can_be_updated(self, current_barcode: str) -> None:
 
@@ -131,8 +147,13 @@ class ProductService:
         self._validate_id(product_id, "Product ID")
         product = await self._get_product(product_id)
 
+
+        
         if product_dto.barcode is not None:
+            
             self._validate_barcode(product_dto.barcode)
+            
+            
             if product_dto.barcode != product.barcode:
                 await self._validate_barcode_can_be_updated(product.barcode)
 
@@ -178,10 +199,11 @@ class ProductService:
 
     async def update_product_position(self, product_id: int, position_dto: ProductPositionUpdateDTO) -> ProductResponseDTO:
         self._validate_id(product_id, "Product ID")
-        await self._get_product(product_id)
 
         if position_dto.position:
             self._validate_position(position_dto.position)
+
+        await self._get_product(product_id)
 
         updated = await self.repo.update_product_position(product_id, position_dto)
         if not updated:
@@ -202,4 +224,8 @@ class ProductService:
             return self._to_product_response(updated)
         except ValueError as e:
             raise BadRequestError(str(e))
+        
+    async def get_products_needing_reorder(self) -> List[ProductResponseDTO]:
+        products = await self.repo.get_products_needing_reorder()
+        return [self._to_product_response(p) for p in products]
         

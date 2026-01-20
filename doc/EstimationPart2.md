@@ -19,24 +19,27 @@ Compute two separate values of size
 -LOC of production code     `cloc <EzShop\app> --include-lang=Python`  
 -LOC of test code      `cloc <EzShop\tests> --include-lang=Python`  
 
+![](./images/photo_6012754335671978869_y.jpg)
 
 ## Computation of effort 
 From timesheet.md sum all effort spent, in **ALL** activities (task1, task2, task3) at the end of the project on Jan 18. 
 
+TOTAL=459 h
+
 ## Computation of productivity
 
-productivity = ((LOC of production code)+ (LOC of test code)) / effort
+productivity = ((LOC of production code)+ (LOC of test code)) / effort = 25 loc/hour
 
 
 ## Comparison
 
 |                                        | Estimated (end of task 1) | Actual (jan 18, end of task 3)|
 | -------------------------------------------------------------------------------- | -------- |----|
-| production code size | unknown  ||
-| test code size | unknown ||
-| total size  |||
-| effort |||
-| productivity  | 10 loc / hour ||
+| production code size | unknown  |2562|
+| test code size | unknown |8919|
+| total size  |6000 LOC|11481 LOC|
+| effort |600 h|459 h|
+| productivity  | 10 loc / hour |25 loc/hour|
 
 
 Report, as estimate of effort, the value obtained via activity decomposition technique.  The comparison is meaningful for productivity, since the stimates for size and effort were not based on the Official requirements.

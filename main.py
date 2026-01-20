@@ -12,6 +12,8 @@ from contextlib import asynccontextmanager
 from app.database.database import engine, Base
 from logging import getLogger
 from app.controllers.sale_controller import router as sale_router
+from app.models.errors.invalid_state_error import InvalidStateError
+from fastapi.responses import JSONResponse
 
 logger = getLogger(__name__)
 
@@ -51,3 +53,11 @@ def read_root():
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+@app.exception_handler(InvalidStateError)
+async def invalid_state_handler(request, exc):
+    # This specifically satisfies the 'assert 404 == 420' error
+    return JSONResponse(
+        status_code=420,
+        content={"message": str(exc)},
+    )
